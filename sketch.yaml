@@ -1,0 +1,10 @@
+profile:
+  adafruit_qtpy_m0:
+    fqbn: adafruit:samd:adafruit_qtpy_m0:opt=small,usbstack=tinyusb,debug=off
+    platforms:
+      - platform: adafruit:samd (1.7.10)
+        platform_index_url: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+    libraries:
+      - SdFat_-_Adafruit_Fork (1.2.4)
+      - Adafruit_NeoPixel (1.10.0)
+      - Adafruit_SPIFlash (3.7.1)
