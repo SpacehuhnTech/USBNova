@@ -1,4 +1,4 @@
-/* 
+/*
  * Note2: If your flash is not formatted as FAT12 previously, you could format it using
  * follow sketch https://github.com/adafruit/Adafruit_SPIFlash/tree/master/examples/SdFat_format
  */
@@ -16,57 +16,68 @@ void setup() {
     debug_init();
 
     msc::init();
-    keyboard::begin();
-    //sd::init();
-    //selector::init();
+    keyboard::init();
+    selector::init();
+    led::init();
 
     Serial.begin(115200);
+
     // while ( !Serial ) delay(10);   // wait for native usb
-    
-    // Wait a bit
-    delay(1000);
 
-    msc::prepare_read("payload.dd");
+    /*
+        // Wait a bit
+        delay(1000);
 
-    // Read script from SD Card
-    char   last_buffer[READ_BUFFER];
-    size_t last_buffer_len { 0 };
+        msc::prepare_read("payload.dd");
 
-    char   buffer[READ_BUFFER];
-    size_t buffer_len { 0 };
+        // Read script from SD Card
+        char   last_buffer[READ_BUFFER];
+        size_t last_buffer_len { 0 };
 
-    do {
-        buffer_len = msc::read_line(buffer, READ_BUFFER);
+        char   buffer[READ_BUFFER];
+        size_t buffer_len { 0 };
 
-        duckparser::parse(buffer, buffer_len);
+        do {
+            buffer_len = msc::read_line(buffer, READ_BUFFER);
 
-        int repeats = duckparser::getRepeats();
-        if (repeats > 0) {
-            debug("[repeat x");
-            debug(repeats);
-            debugln("]");
+            duckparser::parse(buffer, buffer_len);
 
-            for (int i = 0; i<repeats; ++i) {
-                debugln("[repeating]");
-                duckparser::parse(last_buffer, last_buffer_len);
+            int repeats = duckparser::getRepeats();
+            if (repeats > 0) {
+                debug("[repeat x");
+                debug(repeats);
+                debugln("]");
+
+                for (int i = 0; i<repeats; ++i) {
+                    debugln("[repeating]");
+                    duckparser::parse(last_buffer, last_buffer_len);
+                }
             }
-        }
 
-        memcpy(last_buffer, buffer, buffer_len);
-        last_buffer_len = buffer_len;
-#ifdef ENABLE_DEBUG
+            memcpy(last_buffer, buffer, buffer_len);
+            last_buffer_len = buffer_len;
+     #ifdef ENABLE_DEBUG
 
-        for (size_t i = 0; i<buffer_len; ++i) {
-            debug(buffer[i]);
-        }
-#endif // ifdef ENABLE_DEBUG 3THIS ISA N3moal,lSCRUPT 1
-    } while(buffer_len > 0);
+            for (size_t i = 0; i<buffer_len; ++i) {
+                debug(buffer[i]);
+            }
+     #endif // ifdef ENABLE_DEBUG 3THIS ISA N3moal,lSCRUPT 1
+        } while(buffer_len > 0);
+     */
 }
 
 void loop() {
-    if(msc::changed()) {
+    if (selector::read()) {
+        led::setColor(255, 0, 0);
+    } else {
+        led::setColor(0, 255, 0);
+    }
+    delay(100);
+
+    /*
+       if(msc::changed()) {
         FatFile file;
-        
+
         if(file.open("/payload.dd")) {
             size_t fsize = file.fileSize();
 
@@ -79,5 +90,5 @@ void loop() {
 
             file.close();
         }
-    }
+       }*/
 }

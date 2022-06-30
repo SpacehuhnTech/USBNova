@@ -5,7 +5,7 @@
 #include <cstdint> // uint8_t, unsigned long
 
 namespace led {
-    void begin();
+    void init();
     void setColor(int r, int g, int b);
     void start_blink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv);
     void stop_blink();

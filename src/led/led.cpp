@@ -42,7 +42,7 @@ namespace led {
         }
     }
 
-    void begin() {
+    void init() {
         led.begin();
         led.show();
     }

@@ -7,3 +7,4 @@
 * Install core `arduino-cli core install adafruit:samd`
 * Check your boards `arduino-cli board list`
 * Compile `arduino-cli compile --profile adafruit_qtpy_m0`
+* Compile `arduino-cli upload -p COM3`

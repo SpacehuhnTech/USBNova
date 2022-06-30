@@ -158,7 +158,7 @@ namespace duckparser {
                 word_node* w = cmd->next;
 
                 keyboard::setLocale(locale::get(w->str));
-                
+
                 ignore_delay = true;
             }
 
@@ -213,7 +213,7 @@ namespace duckparser {
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
                 if (w) {
-                    keyboard::report k;
+                    keyboard::_t k;
 
                     k.modifiers = (uint8_t)toInt(w->str, w->len);
                     w           = w->next;

@@ -13,12 +13,10 @@
 #define READ_BUFFER 2048
 
 // ===== LED Settings ===== //
-#define LED_PIN A0
+#define LED_PIN 11
 
 // ===== SELECTOR SWITCH ===== //
-#define SELECTOR_1 A7
-#define SELECTOR_2 A6
-#define SELECTOR_3 A3
+#define SELECTOR A0
 
 // ===== Parser Settings ===== //
 #define CASE_SENSETIVE false
