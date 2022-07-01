@@ -8,6 +8,7 @@ namespace keyboard {
     // ====== PRIVATE ====== //
     hid_locale_t* locale { locale::get_default() };
     report_t prev_report = report_t{ KEY_NONE, KEY_NONE, { KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE } };
+    uint8_t const report_id = 0;
 
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
@@ -83,17 +84,15 @@ namespace keyboard {
             TinyUSBDevice.remoteWakeup();
         }
 
-        // skip if hid is not ready e.g still transferring previous report
-        if (!usb_hid.ready()) return;
-
-        uint8_t const report_id = 0;
+        // Wait until ready to send next report
+        while (!usb_hid.ready()) delay(1);
 
         usb_hid.keyboardReport(report_id, k->modifiers, k->keys);
     }
 
     void release() {
         prev_report = makeReport();
-        usb_hid.keyboardRelease(0);
+        send(&prev_report);
     }
 
     void pressKey(uint8_t key, uint8_t modifiers) {
@@ -156,20 +155,6 @@ namespace keyboard {
 
                 // Return the number of extra bytes we used from the string pointer
                 return res - 1;
-            }
-        }
-
-        // Extended ASCII
-        for (uint8_t i = 0; i < locale->extended_ascii_len; ++i) {
-            uint8_t key_code = pgm_read_byte(locale->extended_ascii + (i * 3));
-
-            if (b[0] == key_code) {
-                uint8_t modifiers = pgm_read_byte(locale->extended_ascii + (i * 3) + 1);
-                uint8_t key       = pgm_read_byte(locale->extended_ascii + (i * 3) + 2);
-
-                pressKey(key, modifiers);
-
-                return 0;
             }
         }
 

@@ -213,7 +213,7 @@ namespace duckparser {
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
                 if (w) {
-                    keyboard::_t k;
+                    keyboard::report_t k;
 
                     k.modifiers = (uint8_t)toInt(w->str, w->len);
                     w           = w->next;

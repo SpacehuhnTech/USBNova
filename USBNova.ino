@@ -14,13 +14,39 @@
 
 void setup() {
     debug_init();
+    debugln("Started");
 
     msc::init();
     keyboard::init();
     selector::init();
     led::init();
 
-    Serial.begin(115200);
+    // Setup Mode
+    if(selector::read()) {
+        led::setColor(0, 255, 0);
+        debugln("Setup Mode");
+
+    }
+
+    // Attack Mode
+    else {
+        led::setColor(255, 0, 0);
+        debugln("Attack Mode");
+        
+        // Start reading file
+        msc::prepareRead("/payload.script");
+        
+        // Read and parse file
+        char buffer[READ_BUFFER];
+        size_t len;
+        do {
+            len = msc::readLine(buffer, READ_BUFFER);
+            duckparser::parse(buffer, len);
+        } while(len > 0);
+    }
+
+
+    //Serial.begin(115200);
 
     // while ( !Serial ) delay(10);   // wait for native usb
 
@@ -28,7 +54,7 @@ void setup() {
         // Wait a bit
         delay(1000);
 
-        msc::prepare_read("payload.dd");
+        msc::prepareRead("payload.dd");
 
         // Read script from SD Card
         char   last_buffer[READ_BUFFER];
@@ -38,7 +64,7 @@ void setup() {
         size_t buffer_len { 0 };
 
         do {
-            buffer_len = msc::read_line(buffer, READ_BUFFER);
+            buffer_len = msc::readLine(buffer, READ_BUFFER);
 
             duckparser::parse(buffer, buffer_len);
 
@@ -67,13 +93,6 @@ void setup() {
 }
 
 void loop() {
-    if (selector::read()) {
-        led::setColor(255, 0, 0);
-    } else {
-        led::setColor(0, 255, 0);
-    }
-    delay(100);
-
     /*
        if(msc::changed()) {
         FatFile file;

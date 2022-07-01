@@ -7,6 +7,6 @@
 namespace msc {
     void init();
     bool changed();
-    bool prepare_read(const char* path);
-    size_t read_line(char* buffer, size_t len);
+    bool prepareRead(const char* path);
+    size_t readLine(char* buffer, size_t len);
 }

@@ -72,13 +72,13 @@ namespace msc {
         return tmp;
     }
 
-    bool prepare_read(const char* path) {
+    bool prepareRead(const char* path) {
         if (!path) return false;
 
         return file.open(path);
     }
 
-    size_t read_line(char* buffer, size_t len) {
+    size_t readLine(char* buffer, size_t len) {
         size_t read { 0 };
 
         // Read as long as the file has data and buffer is not full
