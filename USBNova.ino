@@ -32,64 +32,53 @@ void setup() {
     else {
         led::setColor(255, 0, 0);
         debugln("Attack Mode");
+
+        delay(1000);
         
         // Start reading file
         msc::prepareRead("/payload.script");
         
         // Read and parse file
         char buffer[READ_BUFFER];
-        size_t len;
+
+        size_t len = 0;
+        uint32_t prev_pos = 0;
+        uint32_t cur_pos = 0;
+        int repeats = 0;
+
         do {
+            if(!msc::getInLine()) cur_pos = msc::getPosition();
             len = msc::readLine(buffer, READ_BUFFER);
+
             duckparser::parse(buffer, len);
-        } while(len > 0);
-    }
 
+            // For REPEAT/REPLAY
+            repeats = duckparser::getRepeats();
+            for(int i=0; i<repeats; ++i) {
+                msc::gotoPosition(prev_pos);
+                do {
+                    len = msc::readLine(buffer, READ_BUFFER);
+                    duckparser::parse(buffer, len);
+                } while(msc::getInLine());
+            }
+            
+            if(!msc::getInLine()) prev_pos = cur_pos;
 
-    //Serial.begin(115200);
+            // For LOOP_START/LOOP_STOP
+            if(duckparser::loopBegin()) {
+                uint32_t start_pos = msc::getPosition();
+                int loops = duckparser::getLoops();
 
-    // while ( !Serial ) delay(10);   // wait for native usb
-
-    /*
-        // Wait a bit
-        delay(1000);
-
-        msc::prepareRead("payload.dd");
-
-        // Read script from SD Card
-        char   last_buffer[READ_BUFFER];
-        size_t last_buffer_len { 0 };
-
-        char   buffer[READ_BUFFER];
-        size_t buffer_len { 0 };
-
-        do {
-            buffer_len = msc::readLine(buffer, READ_BUFFER);
-
-            duckparser::parse(buffer, buffer_len);
-
-            int repeats = duckparser::getRepeats();
-            if (repeats > 0) {
-                debug("[repeat x");
-                debug(repeats);
-                debugln("]");
-
-                for (int i = 0; i<repeats; ++i) {
-                    debugln("[repeating]");
-                    duckparser::parse(last_buffer, last_buffer_len);
+                for(int i=0; i<loops; ++i) {
+                    msc::gotoPosition(start_pos);
+                    do {
+                        len = msc::readLine(buffer, READ_BUFFER);
+                        duckparser::parse(buffer, len);
+                    } while(!duckparser::loopEnd());
                 }
             }
-
-            memcpy(last_buffer, buffer, buffer_len);
-            last_buffer_len = buffer_len;
-     #ifdef ENABLE_DEBUG
-
-            for (size_t i = 0; i<buffer_len; ++i) {
-                debug(buffer[i]);
-            }
-     #endif // ifdef ENABLE_DEBUG 3THIS ISA N3moal,lSCRUPT 1
-        } while(buffer_len > 0);
-     */
+        } while(len > 0);
+    }
 }
 
 void loop() {

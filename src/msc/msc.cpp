@@ -14,23 +14,23 @@ namespace msc {
 
     FatFileSystem fatfs;
     FatFile file;
-    
+
     bool fs_changed = false; // Flag which goes to true when PC write to flash
+    bool in_line    = false;
 
     // Callback invoked when received READ10 command.
     // Copy disk's data to buffer (up to bufsize) and
     // return number of copied bytes (must be multiple of block size)
-    int32_t read_cb(uint32_t lba, void *buffer, uint32_t bufsize) {
+    int32_t read_cb(uint32_t lba, void* buffer, uint32_t bufsize) {
         // Note: SPIFLash Block API: readBlocks/writeBlocks/syncBlocks
         // already include 4K sector caching internally. We don't need to cache it, yahhhh!!
-        return flash.readBlocks(lba, (uint8_t *)buffer, bufsize / 512) ? bufsize : -1;
+        return flash.readBlocks(lba, (uint8_t*)buffer, bufsize / 512) ? bufsize : -1;
     }
 
     // Callback invoked when received WRITE10 command.
     // Process data in buffer to disk's storage and
     // return number of written bytes (must be multiple of block size)
-    int32_t write_cb(uint32_t lba, uint8_t *buffer, uint32_t bufsize)
-    {
+    int32_t write_cb(uint32_t lba, uint8_t* buffer, uint32_t bufsize) {
         digitalWrite(LED_BUILTIN, HIGH);
 
         // Note: SPIFLash Block API: readBlocks/writeBlocks/syncBlocks
@@ -40,8 +40,7 @@ namespace msc {
 
     // Callback invoked when WRITE10 command is completed (status received and accepted by host).
     // used to flush any pending cache.
-    void flush_cb(void)
-    {
+    void flush_cb(void) {
         // sync with flash
         flash.syncBlocks();
 
@@ -52,7 +51,7 @@ namespace msc {
 
         digitalWrite(LED_BUILTIN, LOW);
     }
-    
+
     // ===== PUBLIC ===== //
     void init() {
         flash.begin();
@@ -68,6 +67,7 @@ namespace msc {
 
     bool changed() {
         bool tmp = fs_changed;
+
         fs_changed = false;
         return tmp;
     }
@@ -76,6 +76,14 @@ namespace msc {
         if (!path) return false;
 
         return file.open(path);
+    }
+
+    uint32_t getPosition() {
+        return file.curPosition();
+    }
+
+    void gotoPosition(uint32_t pos) {
+        file.seekSet(pos);
     }
 
     size_t readLine(char* buffer, size_t len) {
@@ -96,17 +104,25 @@ namespace msc {
             // If linebreak found, break loop
             if (c == '\n') {
                 while (file.peek() == '\n') file.read();
+                in_line = false;
                 break;
             }
             // If no linebreak found, but file ended, add linebreak as last character
             else if (!file.available()) {
                 buffer[read] = '\n';
+                in_line      = false;
                 ++read;
+            } else {
+                in_line = true;
             }
         }
 
         return read;
 
         // return file.readBytesUntil('\n', buffer, len);
+    }
+
+    bool getInLine() {
+        return in_line;
     }
 }

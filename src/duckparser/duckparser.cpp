@@ -14,15 +14,19 @@ extern "C" {
 
 namespace duckparser {
     // ====== PRIVATE ===== //
-    bool inString  = false;
-    bool inComment = false;
+    bool in_string       = false;
+    bool in_comment      = false;
+    bool in_large_string = false;
+    bool loop_begin      = false;
+    bool loop_end        = false;
 
-    int defaultDelay = 5;
-    int repeatNum    = 0;
+    int default_delay = 5;
+    int repeat_num    = 0;
+    int loop_num      = 0;
 
-    unsigned long interpretTime  = 0;
-    unsigned long sleepStartTime = 0;
-    unsigned long sleepTime      = 0;
+    unsigned long interpret_time   = 0;
+    unsigned long sleep_start_time = 0;
+    unsigned long sleep_time       = 0;
 
     void type(const char* str, size_t len) {
         keyboard::write(str, len);
@@ -48,6 +52,14 @@ namespace duckparser {
         else if (compare(str, len, "TAB", CASE_SENSETIVE)) keyboard::pressKey(KEY_TAB);
         else if (compare(str, len, "END", CASE_SENSETIVE)) keyboard::pressKey(KEY_END);
         else if (compare(str, len, "ESC", CASE_SENSETIVE) || compare(str, len, "ESCAPE", CASE_SENSETIVE)) keyboard::pressKey(KEY_ESC);
+        else if (compare(str, len, "SPACE", CASE_SENSETIVE)) keyboard::pressKey(KEY_SPACE);
+        else if (compare(str, len, "PAUSE", CASE_SENSETIVE) || compare(str, len, "BREAK", CASE_SENSETIVE)) keyboard::pressKey(KEY_PAUSE);
+        else if (compare(str, len, "CAPSLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_CAPSLOCK);
+        else if (compare(str, len, "NUMLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_NUMLOCK);
+        else if (compare(str, len, "PRINTSCREEN", CASE_SENSETIVE)) keyboard::pressKey(KEY_SYSRQ);
+        else if (compare(str, len, "SCROLLLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_SCROLLLOCK);
+
+        // Function Keys
         else if (compare(str, len, "F1", CASE_SENSETIVE)) keyboard::pressKey(KEY_F1);
         else if (compare(str, len, "F2", CASE_SENSETIVE)) keyboard::pressKey(KEY_F2);
         else if (compare(str, len, "F3", CASE_SENSETIVE)) keyboard::pressKey(KEY_F3);
@@ -60,18 +72,32 @@ namespace duckparser {
         else if (compare(str, len, "F10", CASE_SENSETIVE)) keyboard::pressKey(KEY_F10);
         else if (compare(str, len, "F11", CASE_SENSETIVE)) keyboard::pressKey(KEY_F11);
         else if (compare(str, len, "F12", CASE_SENSETIVE)) keyboard::pressKey(KEY_F12);
-        else if (compare(str, len, "SPACE", CASE_SENSETIVE)) keyboard::pressKey(KEY_SPACE);
-        else if (compare(str, len, "PAUSE", CASE_SENSETIVE) || compare(str, len, "BREAK", CASE_SENSETIVE)) keyboard::pressKey(KEY_PAUSE);
-        else if (compare(str, len, "CAPSLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_CAPSLOCK);
-        else if (compare(str, len, "NUMLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_NUMLOCK);
-        else if (compare(str, len, "PRINTSCREEN", CASE_SENSETIVE)) keyboard::pressKey(KEY_SYSRQ);
-        else if (compare(str, len, "SCROLLLOCK", CASE_SENSETIVE)) keyboard::pressKey(KEY_SCROLLLOCK);
+
+        // NUMPAD KEYS
+        else if (compare(str, len, "NUM_0", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP0);
+        else if (compare(str, len, "NUM_1", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP1);
+        else if (compare(str, len, "NUM_2", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP2);
+        else if (compare(str, len, "NUM_3", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP3);
+        else if (compare(str, len, "NUM_4", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP4);
+        else if (compare(str, len, "NUM_5", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP5);
+        else if (compare(str, len, "NUM_6", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP6);
+        else if (compare(str, len, "NUM_7", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP7);
+        else if (compare(str, len, "NUM_8", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP8);
+        else if (compare(str, len, "NUM_9", CASE_SENSETIVE)) keyboard::pressKey(KEY_KP9);
+        else if (compare(str, len, "NUM_ASTERIX", CASE_SENSETIVE)) keyboard::pressKey(KEY_KPASTERISK);
+        else if (compare(str, len, "NUM_ENTER", CASE_SENSETIVE)) keyboard::pressKey(KEY_KPENTER);
+        else if (compare(str, len, "NUM_MINUS", CASE_SENSETIVE)) keyboard::pressKey(KEY_KPMINUS);
+        else if (compare(str, len, "NUM_DOT", CASE_SENSETIVE)) keyboard::pressKey(KEY_KPDOT);
+        else if (compare(str, len, "NUM_PLUS", CASE_SENSETIVE)) keyboard::pressKey(KEY_KPPLUS);
 
         // Modifiers
         else if (compare(str, len, "CTRL", CASE_SENSETIVE) || compare(str, len, "CONTROL", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LCTRL);
         else if (compare(str, len, "SHIFT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LSHIFT);
         else if (compare(str, len, "ALT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LALT);
+        else if (compare(str, len, "ALTGR", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_RALT);
         else if (compare(str, len, "WINDOWS", CASE_SENSETIVE) || compare(str, len, "GUI", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LMETA);
+
+        // Numpad Keys
 
         // Utf8 character
         else keyboard::press(str);
@@ -111,20 +137,20 @@ namespace duckparser {
     }
 
     void sleep(unsigned long time) {
-        unsigned long offset = millis() - interpretTime;
+        unsigned long offset = millis() - interpret_time;
 
         if (time > offset) {
-            sleepStartTime = millis();
-            sleepTime      = time - offset;
+            sleep_start_time = millis();
+            sleep_time       = time - offset;
 
-            delay(sleepTime);
+            delay(sleep_time);
         }
     }
 
     // ====== PUBLIC ===== //
 
     void parse(const char* str, size_t len) {
-        interpretTime = millis();
+        interpret_time = millis();
 
         // Split str into a list of lines
         line_list* l = parse_lines(str, len);
@@ -137,22 +163,81 @@ namespace duckparser {
 
         while (n) {
             ignore_delay = false;
+            loop_begin = false;
+            loop_end = false;
 
             word_list* wl  = n->words;
             word_node* cmd = wl->first;
 
+            // String of the entire line excluding the command keyword (i.e. "STRING ")
             const char* line_str = cmd->str + cmd->len + 1;
             size_t line_str_len  = n->len - cmd->len - 1;
 
             char last_char = n->str[n->len];
             bool line_end  = last_char == '\r' || last_char == '\n';
 
-            // REM (= Comment -> do nothing)
-            if (inComment || compare(cmd->str, cmd->len, "REM", CASE_SENSETIVE)) {
-                inComment    = !line_end;
+            // Check if we're in a large string
+            if (in_large_string) {
+                // Stop it
+                if (compare(cmd->str, cmd->len, "LSTRING_END", CASE_SENSETIVE)) {
+                    in_large_string = false;
+                    ignore_delay = true;
+                }
+                // or type out the entire line
+                else {
+                    type(n->str, n->len);
+                    keyboard::pressKey(KEY_ENTER);
+                }
+            }
+            // LSTRING_BEGIN (-> type each character including linebreaks until LSTRING_END)
+            else if (compare(cmd->str, cmd->len, "LSTRING_BEGIN", CASE_SENSETIVE)) {
+                in_large_string = true;
                 ignore_delay = true;
             }
+            // REM or # (= Comment -> do nothing)
+            else if (in_comment || compare(cmd->str, cmd->len, "REM", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "#", CASE_SENSETIVE)) {
+                in_comment   = !line_end;
+                ignore_delay = true;
+            }
+            // default_delay/DEFAULT_DELAY (set default delay per command)
+            else if (compare(cmd->str, cmd->len, "default_delay", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
+                default_delay = toInt(line_str, line_str_len);
+                ignore_delay  = true;
+            }
+            // DELAY (-> sleep for x ms)
+            else if (compare(cmd->str, cmd->len, "DELAY", CASE_SENSETIVE)) {
+                sleep(toInt(line_str, line_str_len));
+                ignore_delay = true;
+            }
+            // STRING (-> type each character)
+            else if (in_string || compare(cmd->str, cmd->len, "STRING", CASE_SENSETIVE)) {
+                // Type the entire line
+                if (in_string) {
+                    type(n->str, n->len);
+                }
+                // Type the everything after "STRING "
+                else {
+                    type(line_str, line_str_len);
+                }
 
+                in_string = !line_end;
+            }
+            // REPEAT (-> repeat last command n times)
+            else if (compare(cmd->str, cmd->len, "REPEAT", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "REPLAY", CASE_SENSETIVE)) {
+                repeat_num   = toInt(line_str, line_str_len) + 1;
+                ignore_delay = true;
+            }
+            // LOOP_BEGIN
+            else if (compare(cmd->str, cmd->len, "LOOP_BEGIN", CASE_SENSETIVE)) {
+                loop_num = toInt(line_str, line_str_len);
+                loop_begin = true;
+                ignore_delay = true;
+            }
+            // LOOP_END
+            else if (compare(cmd->str, cmd->len, "LOOP_END", CASE_SENSETIVE)) {
+                loop_end = true;
+                ignore_delay = true;
+            }
             // LOCALE (-> change keyboard layout)
             else if (compare(cmd->str, cmd->len, "LOCALE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
@@ -161,36 +246,6 @@ namespace duckparser {
 
                 ignore_delay = true;
             }
-
-            // DELAY (-> sleep for x ms)
-            else if (compare(cmd->str, cmd->len, "DELAY", CASE_SENSETIVE)) {
-                sleep(toInt(line_str, line_str_len));
-                ignore_delay = true;
-            }
-
-            // DEFAULTDELAY/DEFAULT_DELAY (set default delay per command)
-            else if (compare(cmd->str, cmd->len, "DEFAULTDELAY", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
-                defaultDelay = toInt(line_str, line_str_len);
-                ignore_delay = true;
-            }
-
-            // REPEAT (-> repeat last command n times)
-            else if (compare(cmd->str, cmd->len, "REPEAT", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "REPLAY", CASE_SENSETIVE)) {
-                repeatNum    = toInt(line_str, line_str_len) + 1;
-                ignore_delay = true;
-            }
-
-            // STRING (-> type each character)
-            else if (inString || compare(cmd->str, cmd->len, "STRING", CASE_SENSETIVE)) {
-                if (inString) {
-                    type(n->str, n->len);
-                } else {
-                    type(line_str, line_str_len);
-                }
-
-                inString = !line_end;
-            }
-
             // LED
             else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
@@ -208,7 +263,6 @@ namespace duckparser {
 
                 led::setColor(c[0], c[1], c[2]);
             }
-
             // KEYCODE
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
@@ -231,7 +285,6 @@ namespace duckparser {
                     keyboard::release();
                 }
             }
-
             // Otherwise go through words and look for keys to press
             else {
                 word_node* w = wl->first;
@@ -246,22 +299,22 @@ namespace duckparser {
 
             n = n->next;
 
-            if (!inString && !inComment && !ignore_delay) sleep(defaultDelay);
+            if (!in_string && !in_comment && !ignore_delay) sleep(default_delay);
 
-            if (line_end && (repeatNum > 0)) --repeatNum;
+            if (line_end && (repeat_num > 0)) --repeat_num;
 
-            interpretTime = millis();
+            interpret_time = millis();
         }
 
         line_list_destroy(l);
     }
 
     int getRepeats() {
-        return repeatNum;
+        return repeat_num;
     }
 
     unsigned int getDelayTime() {
-        unsigned long finishTime  = sleepStartTime + sleepTime;
+        unsigned long finishTime  = sleep_start_time + sleep_time;
         unsigned long currentTime = millis();
 
         if (currentTime > finishTime) {
@@ -270,5 +323,17 @@ namespace duckparser {
             unsigned long remainingTime = finishTime - currentTime;
             return (unsigned int)remainingTime;
         }
+    }
+
+    bool loopBegin() {
+        return loop_begin;
+    }
+
+    bool loopEnd() {
+        return loop_end;
+    }
+
+    int getLoops() {
+        return loop_num;
     }
 }

@@ -8,5 +8,10 @@ namespace msc {
     void init();
     bool changed();
     bool prepareRead(const char* path);
+
+    uint32_t getPosition();
+    void gotoPosition(uint32_t pos);
+
     size_t readLine(char* buffer, size_t len);
+    bool getInLine();
 }
