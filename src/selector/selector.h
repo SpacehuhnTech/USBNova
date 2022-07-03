@@ -5,4 +5,5 @@
 namespace selector {
     void init();
     int read();
+    bool changed();
 }

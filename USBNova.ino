@@ -12,6 +12,12 @@
 #include "src/msc/msc.h"
 #include "src/selector/selector.h"
 
+enum Mode {
+    SETUP, ATTACK
+};
+
+Mode mode;
+
 void setup() {
     debug_init();
     debugln("Started");
@@ -22,56 +28,56 @@ void setup() {
     led::init();
 
     /*
-    // Wait until Serial Monitor was opened
-    while (!Serial) {
+       // Wait until Serial Monitor was opened
+       while (!Serial) {
         delay(1);
-    }
-    */
+       }
+     */
 
-    delay(1000);
-    debugln("Started");
+    debugln("[Started]");
 
-    // Setup Mode
-    if (selector::read()) {
+    mode = selector::read() ? SETUP : ATTACK;
+
+    // ==========  Setup Mode ==========  //
+    if (mode == SETUP) {
+        // Set LED to green
         led::setColor(0, 255, 0);
-        debugln("Setup Mode");
+
+        while (true) {
+            if (selector::changed()) {
+                mode = selector::read() ? SETUP : ATTACK;
+
+                if (mode == ATTACK) {
+                    led::setColor(255, 0, 0); // Turn LED red
+                    start_attack();           // Start attack
+                    led::setColor(0, 255, 0); // Turn LED green
+                    mode = SETUP;
+                }
+            }
+            delay(100);
+        }
     }
-    // Attack Mode
-    else {
+    // ==========  Setup Mode ==========  //
+    else if (mode == ATTACK) {
+        // Set LED to red
         led::setColor(255, 0, 0);
-        debugln("Attack Mode");
 
-        msc::open("/payload.script");
-
-        delay(1000);
-
+        // Start running keystroke injection attack
         start_attack();
     }
 
-    debugln("Finished");
+    debugln("[Finished]");
 }
 
-void loop() {
-    /*
-       if(msc::changed()) {
-        FatFile file;
-
-        if(file.open("/payload.dd")) {
-            size_t fsize = file.fileSize();
-
-            char _buf[fsize + 1];
-
-            file.read(_buf, fsize);
-            _buf[fsize] = '\0';
-
-            Serial.println(_buf);
-
-            file.close();
-        }
-       }*/
-}
+void loop() {}
 
 void start_attack() {
+    // Open main BadUSB script
+    msc::open("/payload.script");
+
+    // Wait 1s to give the computer time to initialize the keyboard
+    delay(1000);
+
     // Read and parse file
     char buffer[READ_BUFFER];
 
@@ -118,7 +124,7 @@ void start_attack() {
         // For LOOP_START/LOOP_STOP
         if (duckparser::loopBegin()) {
             start_pos = msc::getPosition();
-            loops          = duckparser::getLoops();
+            loops     = duckparser::getLoops();
         } else if (duckparser::loopEnd() && (loops > 1)) {
             msc::gotoPosition(start_pos);
             --loops;
