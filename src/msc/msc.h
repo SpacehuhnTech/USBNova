@@ -7,7 +7,8 @@
 namespace msc {
     void init();
     bool changed();
-    bool prepareRead(const char* path);
+    bool open(const char* path);
+    bool openNextFile();
 
     uint32_t getPosition();
     void gotoPosition(uint32_t pos);

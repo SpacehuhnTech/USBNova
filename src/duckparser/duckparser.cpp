@@ -24,6 +24,8 @@ namespace duckparser {
     int repeat_num    = 0;
     int loop_num      = 0;
 
+    std::string import_path = "";
+
     unsigned long interpret_time   = 0;
     unsigned long sleep_start_time = 0;
     unsigned long sleep_time       = 0;
@@ -163,8 +165,8 @@ namespace duckparser {
 
         while (n) {
             ignore_delay = false;
-            loop_begin = false;
-            loop_end = false;
+            loop_begin   = false;
+            loop_end     = false;
 
             word_list* wl  = n->words;
             word_node* cmd = wl->first;
@@ -181,7 +183,7 @@ namespace duckparser {
                 // Stop it
                 if (compare(cmd->str, cmd->len, "LSTRING_END", CASE_SENSETIVE)) {
                     in_large_string = false;
-                    ignore_delay = true;
+                    ignore_delay    = true;
                 }
                 // or type out the entire line
                 else {
@@ -192,7 +194,7 @@ namespace duckparser {
             // LSTRING_BEGIN (-> type each character including linebreaks until LSTRING_END)
             else if (compare(cmd->str, cmd->len, "LSTRING_BEGIN", CASE_SENSETIVE)) {
                 in_large_string = true;
-                ignore_delay = true;
+                ignore_delay    = true;
             }
             // REM or # (= Comment -> do nothing)
             else if (in_comment || compare(cmd->str, cmd->len, "REM", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "#", CASE_SENSETIVE)) {
@@ -229,13 +231,13 @@ namespace duckparser {
             }
             // LOOP_BEGIN
             else if (compare(cmd->str, cmd->len, "LOOP_BEGIN", CASE_SENSETIVE)) {
-                loop_num = toInt(line_str, line_str_len);
-                loop_begin = true;
+                loop_num     = toInt(line_str, line_str_len);
+                loop_begin   = true;
                 ignore_delay = true;
             }
             // LOOP_END
             else if (compare(cmd->str, cmd->len, "LOOP_END", CASE_SENSETIVE)) {
-                loop_end = true;
+                loop_end     = true;
                 ignore_delay = true;
             }
             // LOCALE (-> change keyboard layout)
@@ -284,6 +286,10 @@ namespace duckparser {
                     keyboard::send(&k);
                     keyboard::release();
                 }
+            }
+            // IMPORT (-> open another script)
+            else if (compare(cmd->str, cmd->len, "IMPORT", CASE_SENSETIVE)) {
+                import_path = std::string(line_str, line_str_len);
             }
             // Otherwise go through words and look for keys to press
             else {
@@ -335,5 +341,15 @@ namespace duckparser {
 
     int getLoops() {
         return loop_num;
+    }
+
+    bool import() {
+        return !import_path.empty();
+    }
+
+     std::string getImport() {
+        std::string path = import_path;
+        import_path.clear();
+        return path;
     }
 }

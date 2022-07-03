@@ -2,12 +2,25 @@
 
 #include "msc.h"
 
+#include "../../config.h"
+#include "../../debug.h"
+
+#include <string>
+#include <stack>
+
 #include "SPI.h"
 #include "Adafruit_SPIFlash.h"
 #include "Adafruit_TinyUSB.h"
 
 namespace msc {
     // ===== PRIVATE ===== //
+    typedef struct file_element_t {
+        std::string path;
+        uint32_t    pos;
+    } file_element_t;
+
+    std::stack<file_element_t> file_stack;
+
     Adafruit_FlashTransport_SPI flashTransport(EXTERNAL_FLASH_USE_CS, EXTERNAL_FLASH_USE_SPI);
     Adafruit_SPIFlash flash(&flashTransport);
     Adafruit_USBD_MSC usb_msc;
@@ -72,10 +85,68 @@ namespace msc {
         return tmp;
     }
 
-    bool prepareRead(const char* path) {
+    bool open(const char* path) {
+        debug("Open new file: ");
+        debugln(path);
+
+        // Check if filepath isn't empty
         if (!path) return false;
 
+        // If the stack isn't empty, save the current position
+        if (!file_stack.empty()) {
+            file_stack.top().pos = file.curPosition();
+        }
+
+        // If a file is already open, close it
+        if(file.isOpen()) file.close();
+
+        // Create a new file element and push it to the stack
+        file_element_t file_element;
+        file_element.path = std::string(path);
+        file_element.pos  = 0;
+        file_stack.push(file_element);
+
+        // Open file and return whether it was successful
         return file.open(path);
+    }
+
+    bool openNextFile() {
+        debug("Opening next file: ");
+
+        // Close current file and remove it from stack (it's not needed anymore)
+        debug("Stack (before file close): ");
+        debugln(file_stack.size());
+        debugln(file_stack.top().path.c_str());
+
+        file.close();
+        file_stack.pop();
+
+        debug("Stack (after file close): ");
+        debugln(file_stack.size());
+
+        // If stack is now empty, we're done
+        if (file_stack.empty()){
+            debugln("Stack is empty");
+            return false;
+        }
+        
+        debugln(file_stack.top().path.c_str());
+
+        // Get the next file from the stack
+        file_element_t file_element = file_stack.top();
+
+        // Open the file
+        if (file.open(file_element.path.c_str())) {
+            // Seek to the saved position
+            gotoPosition(file_element.pos);
+            debugln("OK");
+            return true;
+        } else {
+            debug("ERROR failed to open ");
+            debugln(file_element.path.c_str());
+        }
+
+        return false;
     }
 
     uint32_t getPosition() {
@@ -91,7 +162,7 @@ namespace msc {
 
         // Read as long as the file has data and buffer is not full
         // -1 to compensate for a extra linebreak at the end of the file
-        while (file.available() && read < len-1) {
+        while(file.isOpen() && file.available() > 0 && read < len-1) {
             // Read character by character
             char c = file.read();
 
@@ -107,7 +178,7 @@ namespace msc {
                 in_line = false;
                 break;
             }
-            // If no linebreak found, but file ended, add linebreak as last character
+            // If reached end of the file, add linebreak as last character
             else if (!file.available()) {
                 buffer[read] = '\n';
                 in_line      = false;
