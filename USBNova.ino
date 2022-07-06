@@ -23,7 +23,6 @@ void setup() {
     // Initialize all the things
     debug_init();
     msc::init();
-    keyboard::init();
     selector::init();
     led::init();
     preferences::load();
@@ -35,6 +34,10 @@ void setup() {
     led::setEnable(preferences::ledEnabled());
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
     if(preferences::mscEnabled() || mode == SETUP) msc::enableDrive();
+    keyboard::setID(preferences::getVid(), preferences::getPid(), preferences::getVersion());
+
+    // Start Keyboard
+    keyboard::init();
 
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {

@@ -68,6 +68,11 @@ namespace keyboard {
         usb_hid.begin();
     }
 
+    void setID(uint16_t vid, uint16_t pid, uint16_t version) {
+        TinyUSBDevice.setID(vid, pid);
+        TinyUSBDevice.setDeviceVersion(version);
+    }
+
     bool mounted() {
         return TinyUSBDevice.mounted();
     }

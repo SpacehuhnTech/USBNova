@@ -13,7 +13,7 @@ namespace keyboard {
     } report_t;
 
     void init();
-    bool mounted();
+    void setID(uint16_t vid, uint16_t pid, uint16_t version);
 
     void setLocale(hid_locale_t* locale);
 
