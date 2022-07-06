@@ -16,6 +16,7 @@ namespace duckparser {
     // ====== PRIVATE ===== //
     bool in_string       = false;
     bool in_comment      = false;
+    bool in_ml_comment   = false;
     bool in_large_string = false;
     bool loop_begin      = false;
     bool loop_end        = false;
@@ -182,8 +183,16 @@ namespace duckparser {
             char last_char = n->str[n->len];
             bool line_end  = last_char == '\r' || last_char == '\n';
 
+            // Check if we're in a multi line comment
+            if (in_ml_comment) {
+                // Check for the end of the comment block
+                if (compare(cmd->str, cmd->len, "###", CASE_SENSETIVE)) {
+                    in_ml_comment = false;
+                }
+                ignore_delay = true;
+            }
             // Check if we're in a large string
-            if (in_large_string) {
+            else if (in_large_string) {
                 // Stop it
                 if (compare(cmd->str, cmd->len, "LSTRING_END", CASE_SENSETIVE)) {
                     in_large_string = false;
@@ -204,6 +213,11 @@ namespace duckparser {
             else if (in_comment || compare(cmd->str, cmd->len, "REM", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "#", CASE_SENSETIVE)) {
                 in_comment   = !line_end;
                 ignore_delay = true;
+            }
+            // ### (= multiline comment -> do nothing)
+            else if (compare(cmd->str, cmd->len, "###", CASE_SENSETIVE)) {
+                in_ml_comment = true;
+                ignore_delay  = true;
             }
             // default_delay/DEFAULT_DELAY (set default delay per command)
             else if (compare(cmd->str, cmd->len, "default_delay", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
@@ -309,7 +323,7 @@ namespace duckparser {
 
             n = n->next;
 
-            if (!in_string && !in_comment && !ignore_delay) sleep(default_delay);
+            if (!in_string && !in_comment && !in_ml_comment && !ignore_delay) sleep(default_delay);
 
             if (line_end && (repeat_num > 0)) --repeat_num;
 
@@ -351,8 +365,9 @@ namespace duckparser {
         return !import_path.empty();
     }
 
-     std::string getImport() {
+    std::string getImport() {
         std::string path = import_path;
+
         import_path.clear();
         return path;
     }
