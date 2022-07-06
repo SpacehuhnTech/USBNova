@@ -33,11 +33,14 @@ void setup() {
     // Preferences
     led::setEnable(preferences::ledEnabled());
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
-    if(preferences::mscEnabled() || mode == SETUP) msc::enableDrive();
-    keyboard::setID(preferences::getVid(), preferences::getPid(), preferences::getVersion());
-
+    keyboard::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
+    msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
+    
     // Start Keyboard
     keyboard::init();
+
+    // Start USB Drive
+    if(preferences::mscEnabled() || mode == SETUP) msc::enableDrive();
 
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {

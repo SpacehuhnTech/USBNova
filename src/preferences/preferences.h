@@ -9,8 +9,14 @@ namespace preferences {
 
     bool mscEnabled();
     bool ledEnabled();
-    uint16_t getVid();
-    uint16_t getPid();
-    uint16_t getVersion();
+
+    uint16_t getHidVid();
+    uint16_t getHidPid();
+    uint16_t getHidRev();
+
+    std::string getMscVid();
+    std::string getMscPid();
+    std::string getMscRev();
+
     std::string getDefaultLayout();
 }

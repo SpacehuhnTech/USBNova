@@ -6,6 +6,7 @@
 
 namespace msc {
     void init();
+    void setID(const char* vid, const char* pid, const char* rev);
     void enableDrive();
     bool changed();
     bool open(const char* path);
