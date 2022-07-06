@@ -46,18 +46,18 @@ void setup() {
 
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {
-        led::setColor(0, 0, 20); // Set LED to blue
+        led::setColor(preferences::getSetupColor()); // Set LED to blue
 
         while (true) {
             if (selector::changed()) {
                 mode = selector::read() ? SETUP : ATTACK;
 
                 if (mode == ATTACK) {
-                    preferences::load();      // Reload the settings (in case the main script path changed)
+                    preferences::load();                          // Reload the settings (in case the main script path changed)
 
-                    led::setColor(128, 0, 0); // Turn LED red
-                    attack::start();          // Start keystroke injection attack
-                    led::setColor(0, 0, 20);  // Set LED to blue
+                    led::setColor(preferences::getAttackColor()); // Turn LED red
+                    attack::start();                              // Start keystroke injection attack
+                    led::setColor(preferences::getSetupColor());  // Set LED to blue
 
                     mode = SETUP;
                 }
@@ -67,20 +67,20 @@ void setup() {
     }
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
-        delay(1000);              // Wait 1s to give the computer time to initialize the keyboard
+        delay(1000);                                  // Wait 1s to give the computer time to initialize the keyboard
 
-        led::setColor(128, 0, 0); // Turn LED red
-        attack::start();          // Start keystroke injection attack
-        led::setColor(0, 30, 0);  // Turn LED green
+        led::setColor(preferences::getAttackColor()); // Turn LED red
+        attack::start();                              // Start keystroke injection attack
+        led::setColor(preferences::getIdleColor());   // Turn LED green
 
         while (true) {
             if (selector::changed()) {
                 mode = selector::read() ? SETUP : ATTACK;
 
                 if (mode == ATTACK) {
-                    led::setColor(128, 0, 0); // Turn LED red
-                    attack::start();          // Start keystroke injection attack
-                    led::setColor(0, 30, 0);  // Turn LED green
+                    led::setColor(preferences::getAttackColor()); // Turn LED red
+                    attack::start();                              // Start keystroke injection attack
+                    led::setColor(preferences::getIdleColor());   // Turn LED green
                 }
             }
             delay(100);

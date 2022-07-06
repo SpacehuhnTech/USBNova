@@ -55,6 +55,10 @@ namespace led {
         }
     }
 
+    void setColor(int* color) {
+        setColor(color[0], color[1], color[2]);
+    }
+
     void setColor(int r, int g, int b) {
         for (size_t i = 0; i<led.numPixels(); i++) {
             led.setPixelColor(i, r, g, b);

@@ -20,6 +20,10 @@ namespace preferences {
 
     std::string getDefaultLayout();
     int getDefaultDelay();
-    
+
     std::string getMainScript();
+
+    int* getAttackColor();
+    int* getSetupColor();
+    int* getIdleColor();
 }
