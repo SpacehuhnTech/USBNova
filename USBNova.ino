@@ -27,7 +27,7 @@ void setup() {
     selector::init();
     led::init();
     preferences::load();
-    
+
     // Read the mode from the toggle switch position
     mode = selector::read() ? SETUP : ATTACK;
 
@@ -37,26 +37,25 @@ void setup() {
     keyboard::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
     msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
     duckparser::setDefaultDelay(preferences::getDefaultDelay());
-    
+
     // Start Keyboard
     keyboard::init();
 
     // Start USB Drive
-    if(preferences::mscEnabled() || mode == SETUP) msc::enableDrive();
+    if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
 
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {
-        // Set LED to green
-        led::setColor(0, 255, 0);
+        led::setColor(0, 0, 20); // Set LED to blue
 
         while (true) {
             if (selector::changed()) {
                 mode = selector::read() ? SETUP : ATTACK;
 
                 if (mode == ATTACK) {
-                    led::setColor(255, 0, 0); // Turn LED red
-                    attack::start();          // Start attack
-                    led::setColor(0, 255, 0); // Turn LED green
+                    led::setColor(128, 0, 0); // Turn LED red
+                    attack::start();          // Start keystroke injection attack
+                    led::setColor(0, 0, 20);  // Set LED to blue
                     mode = SETUP;
                 }
             }
@@ -65,17 +64,20 @@ void setup() {
     }
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
-        led::setColor(255, 0, 0); // Turn LED red
+        delay(1000);              // Wait 1s to give the computer time to initialize the keyboard
 
-        // Start running keystroke injection attack
-        attack::start();
+        led::setColor(128, 0, 0); // Turn LED red
+        attack::start();          // Start keystroke injection attack
+        led::setColor(0, 30, 0);  // Turn LED green
 
         while (true) {
             if (selector::changed()) {
                 mode = selector::read() ? SETUP : ATTACK;
 
                 if (mode == ATTACK) {
-                    attack::start();
+                    led::setColor(128, 0, 0); // Turn LED red
+                    attack::start();          // Start keystroke injection attack
+                    led::setColor(0, 30, 0);  // Turn LED green
                 }
             }
             delay(100);

@@ -16,9 +16,6 @@ namespace attack {
         // Open main BadUSB script
         msc::open("/main.script");
 
-        // Wait 1s to give the computer time to initialize the keyboard
-        delay(1000);
-
         // Read and parse file
         char buffer[READ_BUFFER];
 
