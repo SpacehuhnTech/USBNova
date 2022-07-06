@@ -22,6 +22,7 @@ namespace preferences {
     std::string msc_rev { "1.0" };
 
     std::string default_layout { "US" };
+    int default_delay { 5 };
 
     // ======== PUBLIC ======== //
     void load() {
@@ -43,8 +44,8 @@ namespace preferences {
         }
 
         // Fetch values.
-        enable_msc     = config_doc["enable_msc"];
-        enable_led     = config_doc["enable_led"];
+        enable_msc     = config_doc["enable_msc"].as<bool>();
+        enable_led     = config_doc["enable_led"].as<bool>();
         hid_vid        = config_doc["hid_vid"].as<std::string>();
         hid_pid        = config_doc["hid_pid"].as<std::string>();
         hid_rev        = config_doc["hid_rev"].as<std::string>();
@@ -52,6 +53,7 @@ namespace preferences {
         msc_pid        = config_doc["msc_pid"].as<std::string>();
         msc_rev        = config_doc["msc_rev"].as<std::string>();
         default_layout = config_doc["default_layout"].as<std::string>();
+        default_delay  = config_doc["default_delay"].as<int>();
     }
 
     bool mscEnabled() {
@@ -88,5 +90,9 @@ namespace preferences {
 
     std::string getDefaultLayout() {
         return default_layout;
+    }
+
+    int getDefaultDelay() {
+        return default_delay;
     }
 }

@@ -19,4 +19,5 @@ namespace preferences {
     std::string getMscRev();
 
     std::string getDefaultLayout();
+    int getDefaultDelay();
 }

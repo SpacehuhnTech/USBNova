@@ -151,6 +151,10 @@ namespace duckparser {
 
     // ====== PUBLIC ===== //
 
+    void setDefaultDelay(int defaultDelay) {
+        default_delay = defaultDelay;
+    }
+
     void parse(const char* str, size_t len) {
         interpret_time = millis();
 

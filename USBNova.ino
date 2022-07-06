@@ -12,6 +12,7 @@
 #include "src/selector/selector.h"
 #include "src/attack/attack.h"
 #include "src/preferences/preferences.h"
+#include "src/duckparser/duckparser.h"
 
 enum Mode {
     SETUP, ATTACK
@@ -35,6 +36,7 @@ void setup() {
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
     keyboard::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
     msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
+    duckparser::setDefaultDelay(preferences::getDefaultDelay());
     
     // Start Keyboard
     keyboard::init();

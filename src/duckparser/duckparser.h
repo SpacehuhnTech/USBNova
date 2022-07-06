@@ -6,6 +6,8 @@
 #include <string> // std::string
 
 namespace duckparser {
+    void setDefaultDelay(int defaultDelay);
+
     void parse(const char* str, size_t len);
 
     int getRepeats();
