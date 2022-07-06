@@ -53,9 +53,12 @@ void setup() {
                 mode = selector::read() ? SETUP : ATTACK;
 
                 if (mode == ATTACK) {
+                    preferences::load();      // Reload the settings (in case the main script path changed)
+
                     led::setColor(128, 0, 0); // Turn LED red
                     attack::start();          // Start keystroke injection attack
                     led::setColor(0, 0, 20);  // Set LED to blue
+
                     mode = SETUP;
                 }
             }

@@ -7,6 +7,7 @@
 
 #include "../msc/msc.h"
 #include "../duckparser/duckparser.h"
+#include "../preferences/preferences.h"
 
 namespace attack {
     // ====== PRIVATE ====== //
@@ -14,7 +15,7 @@ namespace attack {
     // ====== PUBLIC ====== //
     void start() {
         // Open main BadUSB script
-        msc::open("/main.script");
+        msc::open(preferences::getMainScript().c_str());
 
         // Read and parse file
         char buffer[READ_BUFFER];

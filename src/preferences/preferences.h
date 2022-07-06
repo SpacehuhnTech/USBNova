@@ -20,4 +20,6 @@ namespace preferences {
 
     std::string getDefaultLayout();
     int getDefaultDelay();
+    
+    std::string getMainScript();
 }

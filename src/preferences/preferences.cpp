@@ -24,6 +24,8 @@ namespace preferences {
     std::string default_layout { "US" };
     int default_delay { 5 };
 
+    std::string main_script { "main.script" };
+
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
@@ -54,6 +56,7 @@ namespace preferences {
         msc_rev        = config_doc["msc_rev"].as<std::string>();
         default_layout = config_doc["default_layout"].as<std::string>();
         default_delay  = config_doc["default_delay"].as<int>();
+        main_script    = config_doc["main_script"].as<std::string>();
     }
 
     bool mscEnabled() {
@@ -94,5 +97,9 @@ namespace preferences {
 
     int getDefaultDelay() {
         return default_delay;
+    }
+
+    std::string getMainScript() {
+        return main_script;
     }
 }
