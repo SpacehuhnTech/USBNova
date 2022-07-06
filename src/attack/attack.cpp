@@ -14,7 +14,7 @@ namespace attack {
     // ====== PUBLIC ====== //
     void start() {
         // Open main BadUSB script
-        msc::open("/payload.script");
+        msc::open("/main.script");
 
         // Wait 1s to give the computer time to initialize the keyboard
         delay(1000);
