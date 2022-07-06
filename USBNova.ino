@@ -65,11 +65,21 @@ void setup() {
     }
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
-        // Set LED to red
-        led::setColor(255, 0, 0);
+        led::setColor(255, 0, 0); // Turn LED red
 
         // Start running keystroke injection attack
         attack::start();
+
+        while (true) {
+            if (selector::changed()) {
+                mode = selector::read() ? SETUP : ATTACK;
+
+                if (mode == ATTACK) {
+                    attack::start();
+                }
+            }
+            delay(100);
+        }
     }
 
     debugln("[Finished]");
