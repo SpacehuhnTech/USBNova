@@ -6,6 +6,7 @@
 
 namespace msc {
     void init();
+    void enableDrive();
     bool changed();
     bool open(const char* path);
     bool openNextFile();

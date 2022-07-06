@@ -27,13 +27,14 @@ void setup() {
     selector::init();
     led::init();
     preferences::load();
+    
+    // Read the mode from the toggle switch position
+    mode = selector::read() ? SETUP : ATTACK;
 
     // Preferences
     led::setEnable(preferences::ledEnabled());
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
-
-    // Start doing the work
-    mode = selector::read() ? SETUP : ATTACK;
+    if(preferences::mscEnabled() || mode == SETUP) msc::enableDrive();
 
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {

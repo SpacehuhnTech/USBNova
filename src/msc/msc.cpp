@@ -68,14 +68,15 @@ namespace msc {
     // ===== PUBLIC ===== //
     void init() {
         flash.begin();
+        fatfs.begin(&flash);
+    }
 
+    void enableDrive() {
         usb_msc.setID("Adafruit", "External Flash", "1.0"); // Max. 8, 16, 4 characters
         usb_msc.setReadWriteCallback(read_cb, write_cb, flush_cb);
         usb_msc.setCapacity(flash.size() / 512, 512);
         usb_msc.setUnitReady(true);
         usb_msc.begin();
-
-        fatfs.begin(&flash);
     }
 
     bool changed() {
