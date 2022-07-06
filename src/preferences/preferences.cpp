@@ -6,27 +6,27 @@
 #include "../../debug.h"
 
 #include <ArduinoJson.h>
+#include "../msc/msc.h"
 
 namespace preferences {
     // ========== PRIVATE ========= //
-    StaticJsonDocument<256> config_doc;
-
-    bool enable_msc;
-    bool enable_led;
-    std::string vid;
-    std::string pid;
-    std::string default_layout;
+    bool enable_msc { false };
+    bool enable_led { true };
+    std::string vid { "239A" };
+    std::string pid { "80CB" };
+    std::string default_layout { "US" };
 
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
         char buffer[256];
+        StaticJsonDocument<256> config_doc;
 
         msc::open("preferences.json");
         msc::read(buffer, sizeof(buffer));
 
         // Deserialize the JSON document
-        DeserializationError error = deserializeJson(config_doc, json);
+        DeserializationError error = deserializeJson(config_doc, buffer);
 
         // Test if parsing succeeds.
         if (error) {
@@ -38,9 +38,9 @@ namespace preferences {
         // Fetch values.
         enable_msc     = config_doc["enable_msc"];
         enable_led     = config_doc["enable_led"];
-        vid            = config_doc["vid"];
-        pid            = config_doc["pid"];
-        default_layout = config_doc["default_layout"];
+        vid            = config_doc["vid"].as<std::string>();
+        pid            = config_doc["pid"].as<std::string>();
+        default_layout = config_doc["default_layout"].as<std::string>();
     }
 
     bool mscEnabled() {

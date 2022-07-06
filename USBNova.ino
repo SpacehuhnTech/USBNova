@@ -30,6 +30,7 @@ void setup() {
 
     // Preferences
     led::setEnable(preferences::ledEnabled());
+    keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
 
     // Start doing the work
     mode = selector::read() ? SETUP : ATTACK;
