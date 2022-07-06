@@ -98,7 +98,7 @@ namespace msc {
         }
 
         // If a file is already open, close it
-        if(file.isOpen()) file.close();
+        if (file.isOpen()) file.close();
 
         // Create a new file element and push it to the stack
         file_element_t file_element;
@@ -125,11 +125,11 @@ namespace msc {
         debugln(file_stack.size());
 
         // If stack is now empty, we're done
-        if (file_stack.empty()){
+        if (file_stack.empty()) {
             debugln("Stack is empty");
             return false;
         }
-        
+
         debugln(file_stack.top().path.c_str());
 
         // Get the next file from the stack
@@ -157,12 +157,16 @@ namespace msc {
         file.seekSet(pos);
     }
 
+    size_t read(char* buffer, size_t len) {
+        return file.read(buffer, len);
+    }
+
     size_t readLine(char* buffer, size_t len) {
         size_t read { 0 };
 
         // Read as long as the file has data and buffer is not full
         // -1 to compensate for a extra linebreak at the end of the file
-        while(file.isOpen() && file.available() > 0 && read < len-1) {
+        while (file.isOpen() && file.available() > 0 && read < len-1) {
             // Read character by character
             char c = file.read();
 

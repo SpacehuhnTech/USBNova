@@ -6,6 +6,7 @@
 
 namespace led {
     void init();
+    void setEnable(bool enabled);
     void setColor(int r, int g, int b);
     void start_blink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv);
     void stop_blink();

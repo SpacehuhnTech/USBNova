@@ -11,6 +11,7 @@
 #include "src/msc/msc.h"
 #include "src/selector/selector.h"
 #include "src/attack/attack.h"
+#include "src/preferences/preferences.h"
 
 enum Mode {
     SETUP, ATTACK
@@ -19,23 +20,18 @@ enum Mode {
 Mode mode;
 
 void setup() {
+    // Initialize all the things
     debug_init();
-    debugln("Started");
-
     msc::init();
     keyboard::init();
     selector::init();
     led::init();
+    preferences::load();
 
-    /*
-       // Wait until Serial Monitor was opened
-       while (!Serial) {
-        delay(1);
-       }
-     */
+    // Preferences
+    led::setEnable(preferences::ledEnabled());
 
-    debugln("[Started]");
-
+    // Start doing the work
     mode = selector::read() ? SETUP : ATTACK;
 
     // ==========  Setup Mode ==========  //
@@ -49,7 +45,7 @@ void setup() {
 
                 if (mode == ATTACK) {
                     led::setColor(255, 0, 0); // Turn LED red
-                    attack::start();           // Start attack
+                    attack::start();          // Start attack
                     led::setColor(0, 255, 0); // Turn LED green
                     mode = SETUP;
                 }

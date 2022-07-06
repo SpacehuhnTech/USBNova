@@ -13,6 +13,7 @@ namespace msc {
     uint32_t getPosition();
     void gotoPosition(uint32_t pos);
 
+    size_t read(char* buffer, size_t len);
     size_t readLine(char* buffer, size_t len);
     bool getInLine();
 }

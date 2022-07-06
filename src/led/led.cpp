@@ -47,6 +47,14 @@ namespace led {
         led.show();
     }
 
+    void setEnable(bool enabled) {
+        if (enabled) {
+            led.setBrightness(255);
+        } else {
+            led.setBrightness(0);
+        }
+    }
+
     void setColor(int r, int g, int b) {
         for (size_t i = 0; i<led.numPixels(); i++) {
             led.setPixelColor(i, r, g, b);
