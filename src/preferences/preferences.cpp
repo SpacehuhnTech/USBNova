@@ -8,6 +8,8 @@
 #include <ArduinoJson.h>
 #include "../msc/msc.h"
 
+#define JSON_SIZE 1536
+
 namespace preferences {
     // ========== PRIVATE ========= //
     bool enable_msc { false };
@@ -69,15 +71,16 @@ namespace preferences {
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
-        char buffer[1024];
-        StaticJsonDocument<1024> config_doc;
+        char* buffer = (char*)malloc(JSON_SIZE);
+        DynamicJsonDocument config_doc(JSON_SIZE);
 
         // Open the file and read it into a buffer
-        if (!msc::open("preferences.json")) return;
-        msc::read(buffer, sizeof(buffer));
+        if (!msc::open(PREFERENCES_PATH)) return;
+        msc::read(buffer, JSON_SIZE);
 
         // Deserialize the JSON document
         DeserializationError error = deserializeJson(config_doc, buffer);
+        free(buffer);
 
         // Test if parsing succeeds.
         if (error) {
@@ -171,7 +174,7 @@ namespace preferences {
 
     void save() {
         // Create a new JSON document (and string buffer)
-        StaticJsonDocument<1024> json_doc;
+        DynamicJsonDocument json_doc(JSON_SIZE);
         // JsonObject json_obj = json_doc.as<JsonObject>();
         std::string json_str = { "" };
 
@@ -180,16 +183,14 @@ namespace preferences {
 
         // Serialize JSON to buffer
         serializeJsonPretty(json_doc, json_str);
+        json_doc.clear();
 
-        // Write the buffer to file
-        msc::open("preferences.json", true);
-        debugln(json_str.length());
-        debugln(msc::write(json_str.c_str(), json_str.length()));
-        msc::close();
+        // Write the buffer to file (and print results)
+        debugln(json_str.c_str());
+        msc::write(PREFERENCES_PATH, json_str.c_str(), json_str.length());
 
-        //debugln(json_str.length());
-        //debugln(json_str.c_str());
-        debugln("Saved preferences.json");
+        debug("Saved ");
+        debugln(PREFERENCES_PATH);
     }
 
     bool mscEnabled() {

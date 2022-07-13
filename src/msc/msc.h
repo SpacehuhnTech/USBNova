@@ -5,14 +5,15 @@
 #include "SdFat.h"
 
 namespace msc {
-    void init();
+    bool init();
 
     void setID(const char* vid, const char* pid, const char* rev);
     void enableDrive();
 
     bool changed();
+    bool exists(const char* filename);
 
-    bool open(const char* path, bool write = false);
+    bool open(const char* path);
     bool openNextFile();
     
     void close();
@@ -24,5 +25,5 @@ namespace msc {
     size_t readLine(char* buffer, size_t len);
     bool getInLine();
 
-    size_t write(const char* buffer, size_t len);
+    size_t write(const char* path, const char* buffer, size_t len);
 }

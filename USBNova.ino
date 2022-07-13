@@ -24,15 +24,29 @@ Mode mode;
 void setup() {
     // Initialize all the things
     debug_init();
-    msc::init();
     selector::init();
     led::init();
-    preferences::load();
+
+    // Initialize memory and ceck for problems
+    if (!msc::init()) {
+        format::start(); // Format the drive
+
+        // If it still fails, blink red LED
+        if (!msc::init()) {
+            while (true) {
+                led::setColor(255, 0, 0);
+                delay(500);
+                led::setColor(0, 0, 0);
+                delay(500);
+            }
+        }
+    }
 
     // Read the mode from the toggle switch position
     mode = selector::read() ? SETUP : ATTACK;
 
     // Preferences
+    preferences::load();
     led::setEnable(preferences::ledEnabled());
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
     keyboard::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
@@ -46,9 +60,13 @@ void setup() {
     if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
 
     // Format Flash
-    if(mode == SETUP && preferences::getFormat()) {
-        led::setColor(255,255,255);
+    if ((mode == SETUP) && preferences::getFormat()) {
+        led::setColor(255, 255, 255);
         format::start(preferences::getDriveName().c_str());
+    }
+
+    // Create preferences file if it doesn't exist yet
+    if (!msc::exists(PREFERENCES_PATH)) {
         preferences::save();
     }
 

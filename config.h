@@ -21,3 +21,6 @@
 // ===== Parser Settings ===== //
 #define CASE_SENSETIVE false
 #define DEFAULT_SLEEP 5
+
+// ===== Other Stuff ====== //
+#define PREFERENCES_PATH "preferences.json"

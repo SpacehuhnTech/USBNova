@@ -66,9 +66,18 @@ namespace msc {
     }
 
     // ===== PUBLIC ===== //
-    void init() {
-        flash.begin();
-        fatfs.begin(&flash);
+    bool init() {
+        if(!flash.begin()) {
+            debugln("Couldn't find flash chip!");
+            return false;
+        }
+
+        if(!fatfs.begin(&flash)) {
+            debugln("Couldn't mount flash!");
+            return false;
+        }
+
+        return true;
     }
 
     void setID(const char* vid, const char* pid, const char* rev) {
@@ -88,8 +97,12 @@ namespace msc {
         fs_changed = false;
         return tmp;
     }
+    
+    bool exists(const char* filename) {
+        return fatfs.exists(filename);
+    }
 
-    bool open(const char* path, bool write) {
+    bool open(const char* path) {
         debug("Open new file: ");
         debugln(path);
 
@@ -111,7 +124,7 @@ namespace msc {
         file_stack.push(file_element);
 
         // Open file and return whether it was successful
-        return file.open(path, write ? (O_RDWR | O_CREAT) : O_RDONLY);
+        return file.open(path);
     }
 
     bool openNextFile() {
@@ -210,9 +223,17 @@ namespace msc {
         return in_line;
     }
 
-    size_t write(const char* buffer, size_t len) {
-        if (!file.isOpen()) return 0;
+    size_t write(const char* path, const char* buffer, size_t len) {
+        FatFile wfile;
+        wfile.open(path, (O_RDWR | O_CREAT));
+        if (!wfile.isOpen()) return 0;
 
-        return file.write(buffer, len);
+        size_t written = wfile.write(buffer, len);
+        wfile.close();
+
+        debug("Wrote ");
+        debugln(written);
+
+        return written;
     }
 }
