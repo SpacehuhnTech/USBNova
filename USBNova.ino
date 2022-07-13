@@ -13,6 +13,7 @@
 #include "src/attack/attack.h"
 #include "src/preferences/preferences.h"
 #include "src/duckparser/duckparser.h"
+#include "src/format/format.h"
 
 enum Mode {
     SETUP, ATTACK
@@ -44,6 +45,12 @@ void setup() {
     // Start USB Drive
     if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
 
+    // Format Flash
+    if(mode == SETUP && preferences::getFormat()) {
+        led::setColor(255,255,255);
+        format::start(preferences::getDriveName().c_str());
+    }
+    
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {
         led::setColor(preferences::getSetupColor()); // Set LED to blue

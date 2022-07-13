@@ -26,4 +26,7 @@ namespace preferences {
     int* getAttackColor();
     int* getSetupColor();
     int* getIdleColor();
+
+    bool getFormat();
+    std::string getDriveName();
 }
