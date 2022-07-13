@@ -28,6 +28,7 @@ namespace selector {
     bool changed() {
         bool temp = change_flag;
         change_flag = false;
+        delay(50);
         return temp;
     }
 }

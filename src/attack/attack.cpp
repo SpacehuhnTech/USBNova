@@ -14,6 +14,9 @@ namespace attack {
 
     // ====== PUBLIC ====== //
     void start() {
+        // If script doesn't exist, don't do anything
+        if(!msc::exists(preferences::getMainScript().c_str())) return;
+        
         // Open main BadUSB script
         msc::open(preferences::getMainScript().c_str());
 
