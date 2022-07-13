@@ -6,6 +6,7 @@
 
 namespace preferences {
     void load();
+    void save();
 
     bool mscEnabled();
     bool ledEnabled();

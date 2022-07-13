@@ -33,6 +33,39 @@ namespace preferences {
     bool format { false };
     std::string drive_name { "USB Nova" };
 
+    void toJson(JsonDocument& root) {
+        root["enable_msc"] = enable_msc;
+        root["enable_led"] = enable_led;
+
+        root["hid_vid"] = hid_vid;
+        root["hid_pid"] = hid_pid;
+        root["hid_rev"] = hid_rev;
+
+        root["msc_vid"] = msc_vid;
+        root["msc_pid"] = msc_pid;
+        root["msc_rev"] = msc_rev;
+
+        root["default_layout"] = default_layout;
+        root["default_delay"]  = default_delay;
+
+        root["main_script"] = main_script;
+
+        JsonArray attack_color_arr = root.createNestedArray("attack_color");
+        attack_color_arr.add(attack_color[0]);
+        attack_color_arr.add(attack_color[1]);
+        attack_color_arr.add(attack_color[2]);
+
+        JsonArray setup_color_arr = root.createNestedArray("setup_color");
+        setup_color_arr.add(setup_color[0]);
+        setup_color_arr.add(setup_color[1]);
+        setup_color_arr.add(setup_color[2]);
+
+        JsonArray idle_color_arr = root.createNestedArray("idle_color");
+        idle_color_arr.add(idle_color[0]);
+        idle_color_arr.add(idle_color[1]);
+        idle_color_arr.add(idle_color[2]);
+    }
+
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
@@ -83,7 +116,7 @@ namespace preferences {
             arr.add(setup_color[1]);
             arr.add(setup_color[2]);
         }
-        
+
         if (!config_doc.containsKey("idle_color")) {
             JsonArray arr = config_doc.createNestedArray("idle_color");
             arr.add(idle_color[0]);
@@ -134,6 +167,29 @@ namespace preferences {
         if (format) {
             drive_name = config_doc["format"].as<std::string>().substr(0, 11);
         }
+    }
+
+    void save() {
+        // Create a new JSON document (and string buffer)
+        StaticJsonDocument<1024> json_doc;
+        // JsonObject json_obj = json_doc.as<JsonObject>();
+        std::string json_str = { "" };
+
+        // Add values
+        toJson(json_doc);
+
+        // Serialize JSON to buffer
+        serializeJsonPretty(json_doc, json_str);
+
+        // Write the buffer to file
+        msc::open("preferences.json", true);
+        debugln(json_str.length());
+        debugln(msc::write(json_str.c_str(), json_str.length()));
+        msc::close();
+
+        //debugln(json_str.length());
+        //debugln(json_str.c_str());
+        debugln("Saved preferences.json");
     }
 
     bool mscEnabled() {

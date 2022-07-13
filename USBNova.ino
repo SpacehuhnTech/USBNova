@@ -49,8 +49,9 @@ void setup() {
     if(mode == SETUP && preferences::getFormat()) {
         led::setColor(255,255,255);
         format::start(preferences::getDriveName().c_str());
+        preferences::save();
     }
-    
+
     // ==========  Setup Mode ==========  //
     if (mode == SETUP) {
         led::setColor(preferences::getSetupColor()); // Set LED to blue

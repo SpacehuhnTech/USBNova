@@ -70,7 +70,7 @@ namespace msc {
         flash.begin();
         fatfs.begin(&flash);
     }
-    
+
     void setID(const char* vid, const char* pid, const char* rev) {
         usb_msc.setID(vid, pid, rev); // Max. 8, 16, 4 characters
     }
@@ -89,7 +89,7 @@ namespace msc {
         return tmp;
     }
 
-    bool open(const char* path) {
+    bool open(const char* path, bool write) {
         debug("Open new file: ");
         debugln(path);
 
@@ -111,22 +111,14 @@ namespace msc {
         file_stack.push(file_element);
 
         // Open file and return whether it was successful
-        return file.open(path);
+        return file.open(path, write ? (O_RDWR | O_CREAT) : O_RDONLY);
     }
 
     bool openNextFile() {
         debug("Opening next file: ");
 
         // Close current file and remove it from stack (it's not needed anymore)
-        debug("Stack (before file close): ");
-        debugln(file_stack.size());
-        debugln(file_stack.top().path.c_str());
-
-        file.close();
-        file_stack.pop();
-
-        debug("Stack (after file close): ");
-        debugln(file_stack.size());
+        close();
 
         // If stack is now empty, we're done
         if (file_stack.empty()) {
@@ -151,6 +143,19 @@ namespace msc {
         }
 
         return false;
+    }
+
+    void close() {
+        // Close current file and remove it from stack (it's not needed anymore)
+        debug("Stack (before file close): ");
+        debugln(file_stack.size());
+        debugln(file_stack.top().path.c_str());
+
+        file.close();
+        file_stack.pop();
+
+        debug("Stack (after file close): ");
+        debugln(file_stack.size());
     }
 
     uint32_t getPosition() {
@@ -203,5 +208,11 @@ namespace msc {
 
     bool getInLine() {
         return in_line;
+    }
+
+    size_t write(const char* buffer, size_t len) {
+        if (!file.isOpen()) return 0;
+
+        return file.write(buffer, len);
     }
 }
