@@ -59,6 +59,14 @@ void setup() {
     // Start USB Drive
     if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
 
+    // Wait 1s to give the computer time to initialize the keyboard
+    delay(1000);
+
+    // Disable capslock if needed
+    if (preferences::getDisableCapslock()) {
+        keyboard::disableCapslock();
+    }
+
     // Format Flash
     if ((mode == SETUP) && preferences::getFormat()) {
         led::setColor(255, 255, 255);
@@ -93,8 +101,6 @@ void setup() {
     }
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
-        delay(1000);                                  // Wait 1s to give the computer time to initialize the keyboard
-
         led::setColor(preferences::getAttackColor()); // Turn LED red
         attack::start();                              // Start keystroke injection attack
         led::setColor(preferences::getIdleColor());   // Turn LED green

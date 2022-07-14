@@ -10,6 +10,15 @@
 
 #define JSON_SIZE 1536
 
+/*
+How to add new settings:
+1. Add a variable in the top of the namespace
+2. Add it to toJSON()
+3. Add it to load() (missing values)
+4. Add it to load() (fetching)
+5. Add getter functions and add then to the .h file
+*/
+
 namespace preferences {
     // ========== PRIVATE ========= //
     bool enable_msc { false };
@@ -34,6 +43,9 @@ namespace preferences {
 
     bool format { false };
     std::string drive_name { "USB Nova" };
+
+    bool disable_capslock { true };
+    bool run_on_capslock { false };
 
     void toJson(JsonDocument& root) {
         root["enable_msc"] = enable_msc;
@@ -66,6 +78,9 @@ namespace preferences {
         idle_color_arr.add(idle_color[0]);
         idle_color_arr.add(idle_color[1]);
         idle_color_arr.add(idle_color[2]);
+
+        root["disable_capslock"] = disable_capslock;
+        root["run_on_capslock"]  = run_on_capslock;
     }
 
     // ======== PUBLIC ======== //
@@ -80,6 +95,7 @@ namespace preferences {
 
         // Deserialize the JSON document
         DeserializationError error = deserializeJson(config_doc, buffer);
+
         free(buffer);
 
         // Test if parsing succeeds.
@@ -127,6 +143,9 @@ namespace preferences {
             arr.add(idle_color[2]);
         }
 
+        if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
+        if (!config_doc.containsKey("run_on_capslock")) config_doc["run_on_capslock"] = run_on_capslock;
+
         // === Fetch values === //
         enable_msc = config_doc["enable_msc"].as<bool>();
         enable_led = config_doc["enable_led"].as<bool>();
@@ -170,6 +189,9 @@ namespace preferences {
         if (format) {
             drive_name = config_doc["format"].as<std::string>().substr(0, 11);
         }
+
+        disable_capslock = config_doc["disable_capslock"].as<bool>();
+        run_on_capslock  = config_doc["run_on_capslock"].as<bool>();
     }
 
     void save() {
@@ -255,5 +277,13 @@ namespace preferences {
 
     std::string getDriveName() {
         return drive_name;
+    }
+
+    bool getDisableCapslock() {
+        return disable_capslock;
+    }
+
+    bool getRunOnCapslock() {
+        return run_on_capslock;
     }
 }

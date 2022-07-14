@@ -27,4 +27,6 @@ namespace keyboard {
 
     uint8_t write(const char* c);
     void write(const char* str, size_t len);
+
+    void disableCapslock();
 }

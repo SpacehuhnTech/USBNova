@@ -30,4 +30,7 @@ namespace preferences {
 
     bool getFormat();
     std::string getDriveName();
+    
+    bool getDisableCapslock();
+    bool getRunOnCapslock();
 }
