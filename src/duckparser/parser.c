@@ -302,11 +302,11 @@ line_list* parse_lines(const char* str, size_t len) {
             size_t llen = stri - ls; // length of line
 
             // for every line, parse_words and add to list
-            if (llen > 0) {
+            //if (llen > 0) {
                 n        = line_node_create(&str[ls], llen);
                 n->words = parse_words(&str[ls], llen);
                 line_list_push(l, n);
-            }
+            //}
 
             if (delimiter) ++stri;
 

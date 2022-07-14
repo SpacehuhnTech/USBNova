@@ -144,6 +144,12 @@ namespace keyboard {
     }
 
     uint8_t press(const char* strPtr) {
+        // Check for linebreaks
+        if ((*strPtr == '\n') || (*strPtr == '\r')) {
+            pressKey(KEY_ENTER);
+            return 1;
+        }
+
         // Convert string pointer into a byte pointer
         uint8_t* b = (uint8_t*)strPtr;
 
@@ -179,7 +185,6 @@ namespace keyboard {
                 pressKey(comboKey, comboModifiers);
                 release();
                 pressKey(key, modifiers);
-                release();
 
                 // Return the number of extra bytes we used from the string pointer
                 return res-1;
