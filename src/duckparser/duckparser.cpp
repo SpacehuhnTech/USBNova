@@ -3,6 +3,7 @@
 #include "duckparser.h"
 
 #include "../../config.h"
+#include "../../debug.h"
 #include "../keyboard/keyboard.h"
 #include "../led/led.h"
 
@@ -27,9 +28,9 @@ namespace duckparser {
 
     std::string import_path = "";
 
-    unsigned long interpret_time   = 0;
-    unsigned long sleep_start_time = 0;
-    unsigned long sleep_time       = 0;
+    unsigned long interpret_timestamp = 0;
+    unsigned long sleep_start_time    = 0;
+    unsigned long sleep_time          = 0;
 
     void type(const char* str, size_t len) {
         keyboard::write(str, len);
@@ -140,13 +141,18 @@ namespace duckparser {
     }
 
     void sleep(unsigned long time) {
-        unsigned long offset = millis() - interpret_time;
+        // Account for the time lost during interpretation
+        unsigned long offset = (millis() - interpret_timestamp);
 
-        if (time > offset) {
-            sleep_start_time = millis();
-            sleep_time       = time - offset;
+        if (offset > time) return;
+        else time -= offset;
 
-            delay(sleep_time);
+        sleep_start_time = millis();
+        unsigned long sleep_end_time = sleep_start_time + time;
+
+        while (millis() < sleep_end_time) {
+            delay(1);
+            led::update();
         }
     }
 
@@ -157,7 +163,8 @@ namespace duckparser {
     }
 
     void parse(const char* str, size_t len) {
-        interpret_time = millis();
+        interpret_timestamp = millis();
+        led::update();
 
         // Split str into a list of lines
         line_list* l = parse_lines(str, len);
@@ -201,7 +208,10 @@ namespace duckparser {
                 // or type out the entire line
                 else {
                     type(n->str, n->len);
-                    keyboard::pressKey(KEY_ENTER);
+                    if (line_end) {
+                        keyboard::pressKey(KEY_ENTER);
+                        release();
+                    }
                 }
             }
             // LSTRING_BEGIN (-> type each character including linebreaks until LSTRING_END)
@@ -268,20 +278,53 @@ namespace duckparser {
             }
             // LED
             else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
-                word_node* w = cmd->next;
+                // i.e. LED R SOLID
+                if (wl->size == 3) {
+                    word_node* w = cmd->next;
+                    led::Color color;
+                    led::Mode  mode;
 
-                int c[3];
-
-                for (uint8_t i = 0; i<3; ++i) {
-                    if (w) {
-                        c[i] = toInt(w->str, w->len);
-                        w    = w->next;
-                    } else {
-                        c[i] = 0;
+                    if (compare(w->str, w->len, "R", CASE_SENSETIVE)) {
+                        color = led::Color::RED;
+                    } else if (compare(w->str, w->len, "G", CASE_SENSETIVE)) {
+                        color = led::Color::GREEN;
+                    } else { /* if (compare(w->str, w->len, "B", CASE_SENSETIVE)) */
+                        color = led::Color::BLUE;
                     }
+
+                    w = w->next;
+
+                    if (compare(w->str, w->len, "SOLID", CASE_SENSETIVE)) {
+                        mode = led::Mode::SOLID;
+                    } else if (compare(w->str, w->len, "SLOW", CASE_SENSETIVE)) {
+                        mode = led::Mode::SLOW;
+                    } else if (compare(w->str, w->len, "FAST", CASE_SENSETIVE)) {
+                        mode = led::Mode::FAST;
+                    } else { /* if (compare(w->str, w->len, "OFF", CASE_SENSETIVE)) */
+                        mode = led::Mode::OFF;
+                    }
+
+                    led::setMode(color, mode);
+                }
+                // i.e. LED 128 23 42
+                else {
+                    word_node* w = cmd->next;
+
+                    int c[3];
+
+                    for (uint8_t i = 0; i<3; ++i) {
+                        if (w) {
+                            c[i] = toInt(w->str, w->len);
+                            w    = w->next;
+                        } else {
+                            c[i] = 0;
+                        }
+                    }
+
+                    led::setColor(c[0], c[1], c[2]);
                 }
 
-                led::setColor(c[0], c[1], c[2]);
+                ignore_delay = true;
             }
             // KEYCODE
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
@@ -327,7 +370,7 @@ namespace duckparser {
 
             if (line_end && (repeat_num > 0)) --repeat_num;
 
-            interpret_time = millis();
+            interpret_timestamp = millis();
         }
 
         line_list_destroy(l);

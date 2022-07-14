@@ -94,6 +94,7 @@ void setup() {
                     led::setColor(preferences::getAttackColor()); // Turn LED red
                     attack::start();                              // Start keystroke injection attack
                     led::setColor(preferences::getSetupColor());  // Set LED to blue
+                    led::stopBlink();                             // Stop LED blink
 
                     mode = SETUP;
                 }
@@ -104,8 +105,8 @@ void setup() {
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
         // Run on capslock
-        if(preferences::getRunOnIndicator()) {
-            while(!keyboard::indicatorChanged()) {
+        if (preferences::getRunOnIndicator()) {
+            while (!keyboard::indicatorChanged()) {
                 delay(100);
             }
             keyboard::disableCapslock();
@@ -114,6 +115,7 @@ void setup() {
         led::setColor(preferences::getAttackColor()); // Turn LED red
         attack::start();                              // Start keystroke injection attack
         led::setColor(preferences::getIdleColor());   // Turn LED green
+        led::stopBlink();                             // Stop LED blink
 
         while (true) {
             if (selector::changed()) {
@@ -123,6 +125,7 @@ void setup() {
                     led::setColor(preferences::getAttackColor()); // Turn LED red
                     attack::start();                              // Start keystroke injection attack
                     led::setColor(preferences::getIdleColor());   // Turn LED green
+                    led::stopBlink();                             // Stop LED blink
                 }
             }
             delay(100);

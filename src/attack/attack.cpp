@@ -15,8 +15,8 @@ namespace attack {
     // ====== PUBLIC ====== //
     void start() {
         // If script doesn't exist, don't do anything
-        if(!msc::exists(preferences::getMainScript().c_str())) return;
-        
+        if (!msc::exists(preferences::getMainScript().c_str())) return;
+
         // Open main BadUSB script
         msc::open(preferences::getMainScript().c_str());
 
@@ -77,6 +77,7 @@ namespace attack {
                 std::string path = duckparser::getImport();
                 msc::open(path.c_str());
             }
+
             debugln("OK");
         }
     }

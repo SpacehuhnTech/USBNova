@@ -4,7 +4,7 @@
 
 #include "../../config.h"
 
-#include <Arduino.h> // pinMode(), analogWrite(), millis()
+#include <Arduino.h>           // pinMode(), analogWrite(), millis()
 #include <Adafruit_NeoPixel.h> // Adafruit_NeoPixel
 
 namespace led {
@@ -17,31 +17,6 @@ namespace led {
     unsigned long last_blink { 0 };
 
     // ========== PUBLIC ========= //
-    void start_blink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv) {
-        blink_color[0] = r;
-        blink_color[1] = g;
-        blink_color[2] = b;
-        blink_intv     = intv;
-    }
-
-    void stop_blink() {
-        blink_intv = 0;
-        setColor(blink_color[0], blink_color[1], blink_color[2]);
-    }
-
-    void update() {
-        if ((blink_intv > 0) && (millis() - last_blink >= blink_intv)) {
-            last_blink = millis();
-            blink_flag = !blink_flag;
-
-            if (blink_flag) {
-                setColor(blink_color[0], blink_color[1], blink_color[2]);
-            } else {
-                setColor(0, 0, 0);
-            }
-        }
-    }
-
     void init() {
         led.begin();
         led.show();
@@ -65,5 +40,50 @@ namespace led {
         }
 
         led.show();
+    }
+
+    void startBlink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv) {
+        blink_color[0] = r;
+        blink_color[1] = g;
+        blink_color[2] = b;
+        blink_intv     = intv;
+    }
+
+    void stopBlink() {
+        blink_intv = 0;
+    }
+
+    void setMode(Color color, Mode mode) {
+        uint8_t r = (color == RED) ? 255 : 0;
+        uint8_t g = (color == GREEN) ? 255 : 0;
+        uint8_t b = (color == BLUE) ? 255 : 0;
+
+        switch (mode) {
+            case SOLID:
+                setColor(r, g, b);
+                break;
+            case SLOW:
+                startBlink(r, g, b, 1000);
+                break;
+            case FAST:
+                startBlink(r, g, b, 200);
+                break;
+            default:
+                setColor(0, 0, 0);
+                stopBlink();
+        }
+    }
+
+    void update() {
+        if ((blink_intv > 0) && (millis() - last_blink >= blink_intv)) {
+            last_blink = millis();
+            blink_flag = !blink_flag;
+
+            if (blink_flag) {
+                setColor(blink_color[0], blink_color[1], blink_color[2]);
+            } else {
+                setColor(0, 0, 0);
+            }
+        }
     }
 }

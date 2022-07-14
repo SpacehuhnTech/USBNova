@@ -1,8 +1,11 @@
 /* This software is licensed under the MIT License: https://github.com/spacehuhntech/usbnova */
 
 #include "keyboard.h"
+
 #include <Adafruit_TinyUSB.h>
 #include <Arduino.h> // millis(), delay()
+
+#include "../led/led.h"
 
 namespace keyboard {
     // ====== PRIVATE ====== //
@@ -110,7 +113,10 @@ namespace keyboard {
         }
 
         // Wait until ready to send next report
-        while (!usb_hid.ready()) delay(1);
+        while (!usb_hid.ready()) {
+            delay(1);
+            led::update();
+        }
 
         usb_hid.keyboardReport(report_id, k->modifiers, k->keys);
     }
