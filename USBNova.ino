@@ -65,6 +65,8 @@ void setup() {
     // Disable capslock if needed
     if (preferences::getDisableCapslock()) {
         keyboard::disableCapslock();
+        delay(10);
+        keyboard::indicatorChanged();
     }
 
     // Format Flash
@@ -101,6 +103,14 @@ void setup() {
     }
     // ==========  Setup Mode ==========  //
     else if (mode == ATTACK) {
+        // Run on capslock
+        if(preferences::getRunOnIndicator()) {
+            while(!keyboard::indicatorChanged()) {
+                delay(100);
+            }
+            keyboard::disableCapslock();
+        }
+
         led::setColor(preferences::getAttackColor()); // Turn LED red
         attack::start();                              // Start keystroke injection attack
         led::setColor(preferences::getIdleColor());   // Turn LED green

@@ -32,5 +32,5 @@ namespace preferences {
     std::string getDriveName();
     
     bool getDisableCapslock();
-    bool getRunOnCapslock();
+    bool getRunOnIndicator();
 }

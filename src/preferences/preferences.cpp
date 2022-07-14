@@ -11,13 +11,13 @@
 #define JSON_SIZE 1536
 
 /*
-How to add new settings:
-1. Add a variable in the top of the namespace
-2. Add it to toJSON()
-3. Add it to load() (missing values)
-4. Add it to load() (fetching)
-5. Add getter functions and add then to the .h file
-*/
+   How to add new settings:
+   1. Add a variable in the top of the namespace
+   2. Add it to toJSON()
+   3. Add it to load() (missing values)
+   4. Add it to load() (fetching)
+   5. Add getter functions and add then to the .h file
+ */
 
 namespace preferences {
     // ========== PRIVATE ========= //
@@ -45,7 +45,7 @@ namespace preferences {
     std::string drive_name { "USB Nova" };
 
     bool disable_capslock { true };
-    bool run_on_capslock { false };
+    bool run_on_indicator { false };
 
     void toJson(JsonDocument& root) {
         root["enable_msc"] = enable_msc;
@@ -80,7 +80,7 @@ namespace preferences {
         idle_color_arr.add(idle_color[2]);
 
         root["disable_capslock"] = disable_capslock;
-        root["run_on_capslock"]  = run_on_capslock;
+        root["run_on_indicator"]  = run_on_indicator;
     }
 
     // ======== PUBLIC ======== //
@@ -144,7 +144,7 @@ namespace preferences {
         }
 
         if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
-        if (!config_doc.containsKey("run_on_capslock")) config_doc["run_on_capslock"] = run_on_capslock;
+        if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
 
         // === Fetch values === //
         enable_msc = config_doc["enable_msc"].as<bool>();
@@ -191,7 +191,7 @@ namespace preferences {
         }
 
         disable_capslock = config_doc["disable_capslock"].as<bool>();
-        run_on_capslock  = config_doc["run_on_capslock"].as<bool>();
+        run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
     }
 
     void save() {
@@ -283,7 +283,7 @@ namespace preferences {
         return disable_capslock;
     }
 
-    bool getRunOnCapslock() {
-        return run_on_capslock;
+    bool getRunOnIndicator() {
+        return run_on_indicator;
     }
 }

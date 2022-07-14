@@ -7,9 +7,15 @@
 namespace keyboard {
     // ====== PRIVATE ====== //
     hid_locale_t* locale { locale::get_default() };
+
     report_t prev_report    = report_t{ KEY_NONE, { KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE } };
     uint8_t const report_id = 0;
-    bool caps_lock          = false;
+
+    bool caps_lock = false;            // State of capslock
+
+    uint8_t indicator         = 0;     // Indicator LED state
+    bool    indicator_changed = false; // Whether or not any indicator changed since last time
+    bool    indicator_read    = false; // If initial indicator was read
 
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
@@ -49,10 +55,20 @@ namespace keyboard {
 
         // The LED bit map is as follows: (also defined by KEYBOARD_LED_* )
         // Kana (4) | Compose (3) | ScrollLock (2) | CapsLock (1) | Numlock (0)
-        uint8_t ledIndicator = buffer[0];
+        uint8_t tmp = buffer[0];
 
         // Save caps lock state
-        caps_lock = ledIndicator & KEYBOARD_LED_CAPSLOCK;
+        if (tmp != indicator) {
+            indicator         = tmp;
+            caps_lock         = indicator & KEYBOARD_LED_CAPSLOCK;
+            indicator_changed = true;
+        }
+
+        // Making sure that indicator_changed isn't set to true because of an initial read
+        if (!indicator_read) {
+            indicator_read    = true;
+            indicator_changed = false;
+        }
 
         // turn on LED if capslock is set
         // digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_CAPSLOCK);
@@ -228,5 +244,12 @@ namespace keyboard {
             pressKey(KEY_CAPSLOCK);
             release();
         }
+    }
+
+    bool indicatorChanged() {
+        bool res = indicator_changed;
+
+        indicator_changed = false;
+        return res;
     }
 }

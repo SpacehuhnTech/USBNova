@@ -29,4 +29,5 @@ namespace keyboard {
     void write(const char* str, size_t len);
 
     void disableCapslock();
+    bool indicatorChanged();
 }
