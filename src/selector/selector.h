@@ -2,8 +2,15 @@
 
 #pragma once
 
+enum Mode {
+    SETUP, ATTACK
+};
+
 namespace selector {
     void init();
-    int read();
+
+    Mode mode();
+    Mode read();
+
     bool changed();
 }

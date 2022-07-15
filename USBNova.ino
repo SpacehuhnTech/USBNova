@@ -12,12 +12,6 @@
 #include "src/format/format.h"
 #include "src/tasks/tasks.h"
 
-enum Mode {
-    SETUP, ATTACK
-};
-
-Mode mode;
-
 void setup() {
     // Initialize all the things
     debug_init();
@@ -40,9 +34,6 @@ void setup() {
         }
     }
 
-    // Read the mode from the toggle switch position
-    mode = selector::read() ? SETUP : ATTACK;
-
     // Preferences
     preferences::load();
     led::setEnable(preferences::ledEnabled());
@@ -55,7 +46,7 @@ void setup() {
     hid::init();
 
     // Start USB Drive
-    if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
+    if (preferences::mscEnabled() || (selector::mode() == SETUP)) msc::enableDrive();
 
     // Wait 1s to give the computer time to initialize the keyboard
     delay(1000);
@@ -68,7 +59,7 @@ void setup() {
     }
 
     // Format Flash
-    if ((mode == SETUP) && preferences::getFormat()) {
+    if ((selector::mode() == SETUP) && preferences::getFormat()) {
         led::setColor(255, 255, 255);
         format::start(preferences::getDriveName().c_str());
     }
@@ -79,29 +70,23 @@ void setup() {
     }
 
     // ==========  Setup Mode ==========  //
-    if (mode == SETUP) {
+    if (selector::mode() == SETUP) {
         led::setColor(preferences::getSetupColor()); // Set LED to blue
 
         while (true) {
-            if (selector::changed()) {
-                mode = selector::read() ? SETUP : ATTACK;
+            if (selector::changed() && selector::read() == ATTACK) {
+                preferences::load();                          // Reload the settings (in case the main script path changed)
 
-                if (mode == ATTACK) {
-                    preferences::load();                          // Reload the settings (in case the main script path changed)
-
-                    led::setColor(preferences::getAttackColor()); // Turn LED red
-                    attack::start();                              // Start keystroke injection attack
-                    led::setColor(preferences::getSetupColor());  // Set LED to blue
-                    led::stopBlink();                             // Stop LED blink
-
-                    mode = SETUP;
-                }
+                led::setColor(preferences::getAttackColor()); // Turn LED red
+                attack::start();                              // Start keystroke injection attack
+                led::setColor(preferences::getSetupColor());  // Set LED to blue
+                led::stopBlink();                             // Stop LED blink
             }
             delay(100);
         }
     }
     // ==========  Setup Mode ==========  //
-    else if (mode == ATTACK) {
+    else if (selector::mode() == ATTACK) {
         // Run on capslock
         if (preferences::getRunOnIndicator()) {
             while (!hid::indicatorChanged()) {
@@ -116,15 +101,11 @@ void setup() {
         led::stopBlink();                             // Stop LED blink
 
         while (true) {
-            if (selector::changed()) {
-                mode = selector::read() ? SETUP : ATTACK;
-
-                if (mode == ATTACK) {
-                    led::setColor(preferences::getAttackColor()); // Turn LED red
-                    attack::start();                              // Start keystroke injection attack
-                    led::setColor(preferences::getIdleColor());   // Turn LED green
-                    led::stopBlink();                             // Stop LED blink
-                }
+            if (selector::changed() && selector::read() == ATTACK) {
+                led::setColor(preferences::getAttackColor()); // Turn LED red
+                attack::start();                              // Start keystroke injection attack
+                led::setColor(preferences::getIdleColor());   // Turn LED green
+                led::stopBlink();                             // Stop LED blink
             }
             delay(100);
         }

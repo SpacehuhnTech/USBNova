@@ -9,6 +9,7 @@
 namespace selector {
     // ===== PRIVATE ===== //
     bool change_flag = false;
+    Mode initial_mode;
 
     void isr() {
         change_flag = true;
@@ -19,10 +20,16 @@ namespace selector {
         pinMode(SELECTOR, INPUT_PULLUP);
     
         attachInterrupt(digitalPinToInterrupt(SELECTOR), isr, CHANGE);
+
+        initial_mode = read();
     }
 
-    int read() {
-        return digitalRead(SELECTOR);
+    Mode mode() {
+        return initial_mode;
+    }
+
+    Mode read() {
+        return digitalRead(SELECTOR) ? SETUP : ATTACK;
     }
 
     bool changed() {
