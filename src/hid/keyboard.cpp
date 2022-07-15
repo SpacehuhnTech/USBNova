@@ -2,33 +2,14 @@
 
 #include "keyboard.h"
 
-#include <Adafruit_TinyUSB.h>
-#include <Arduino.h> // millis(), delay()
-
-#include "../led/led.h"
+#include "hid.h"
+#include <Arduino.h> // pgm_read_byte
 
 namespace keyboard {
     // ====== PRIVATE ====== //
     hid_locale_t* locale { locale::get_default() };
 
-    report_t prev_report    = report_t{ KEY_NONE, { KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE } };
-    uint8_t const report_id = 0;
-
-    bool caps_lock = false;            // State of capslock
-
-    uint8_t indicator         = 0;     // Indicator LED state
-    bool    indicator_changed = false; // Whether or not any indicator changed since last time
-    bool    indicator_read    = false; // If initial indicator was read
-
-    // HID report descriptor using TinyUSB's template
-    // Single Report (no ID) descriptor
-    uint8_t const desc_hid_report[] = {
-        TUD_HID_REPORT_DESC_KEYBOARD()
-    };
-
-    // USB HID object. For ESP32 these values cannot be changed after this declaration
-    // desc report, desc len, protocol, interval, use out endpoint
-    Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_KEYBOARD, 2, false);
+    report_t prev_report = report_t{ KEY_NONE, { KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE } };
 
     report_t makeReport(uint8_t modifiers = 0, uint8_t key1 = 0, uint8_t key2 = 0, uint8_t key3 = 0, uint8_t key4 = 0, uint8_t key5 = 0, uint8_t key6 = 0);
 
@@ -47,78 +28,14 @@ namespace keyboard {
         return k;
     }
 
-    // Output report callback for LED indicator such as Caplocks
-    void hid_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) {
-        (void)report_id;
-        (void)bufsize;
-
-        // LED indicator is output report with only 1 byte length
-        if (report_type != HID_REPORT_TYPE_OUTPUT)
-            return;
-
-        // The LED bit map is as follows: (also defined by KEYBOARD_LED_* )
-        // Kana (4) | Compose (3) | ScrollLock (2) | CapsLock (1) | Numlock (0)
-        uint8_t tmp = buffer[0];
-
-        // Save caps lock state
-        if (tmp != indicator) {
-            indicator         = tmp;
-            caps_lock         = indicator & KEYBOARD_LED_CAPSLOCK;
-            indicator_changed = true;
-        }
-
-        // Making sure that indicator_changed isn't set to true because of an initial read
-        if (!indicator_read) {
-            indicator_read    = true;
-            indicator_changed = false;
-        }
-
-        // turn on LED if capslock is set
-        // digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_CAPSLOCK);
-    }
-
     // ====== PUBLIC ====== //
-    void init() {
-        // Notes: following commented-out functions has no affect on ESP32
-        // usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
-        // usb_hid.setPollInterval(2);
-        // usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
-        // usb_hid.setStringDescriptor("TinyUSB Keyboard");
-
-        // Set up output report (on control endpoint) for Capslock indicator
-        usb_hid.setReportCallback(NULL, hid_report_callback);
-
-        usb_hid.begin();
-    }
-
-    void setID(uint16_t vid, uint16_t pid, uint16_t version) {
-        TinyUSBDevice.setID(vid, pid);
-        TinyUSBDevice.setDeviceVersion(version);
-    }
-
-    bool mounted() {
-        return TinyUSBDevice.mounted();
-    }
-
     void setLocale(hid_locale_t* locale) {
         if (locale == nullptr) return;
         keyboard::locale = locale;
     }
 
     void send(report_t* k) {
-        if (TinyUSBDevice.suspended()) {
-            // Wake up host if we are in suspend mode
-            // and REMOTE_WAKEUP feature is enabled by host
-            TinyUSBDevice.remoteWakeup();
-        }
-
-        // Wait until ready to send next report
-        while (!usb_hid.ready()) {
-            delay(1);
-            led::update();
-        }
-
-        usb_hid.keyboardReport(report_id, k->modifiers, k->keys);
+        hid::sendKeyboardReport(k->modifiers, k->keys);
     }
 
     void release() {
@@ -251,16 +168,9 @@ namespace keyboard {
     }
 
     void disableCapslock() {
-        if (caps_lock) {
+        if (hid::getIndicator() & 2) { /*KEYBOARD_LED_CAPSLOCK*/
             pressKey(KEY_CAPSLOCK);
             release();
         }
-    }
-
-    bool indicatorChanged() {
-        bool res = indicator_changed;
-
-        indicator_changed = false;
-        return res;
     }
 }

@@ -1,12 +1,8 @@
-/*
- * Note2: If your flash is not formatted as FAT12 previously, you could format it using
- * follow sketch https://github.com/adafruit/Adafruit_SPIFlash/tree/master/examples/SdFat_format
- */
-
 #include "config.h"
 #include "debug.h"
 
-#include "src/keyboard/keyboard.h"
+#include "src/hid/hid.h"
+#include "src/hid/keyboard.h"
 #include "src/led/led.h"
 #include "src/msc/msc.h"
 #include "src/selector/selector.h"
@@ -14,6 +10,7 @@
 #include "src/preferences/preferences.h"
 #include "src/duckparser/duckparser.h"
 #include "src/format/format.h"
+#include "src/tasks/tasks.h"
 
 enum Mode {
     SETUP, ATTACK
@@ -26,6 +23,7 @@ void setup() {
     debug_init();
     selector::init();
     led::init();
+    tasks::setCallback(loop);
 
     // Initialize memory and ceck for problems
     if (!msc::init()) {
@@ -49,12 +47,12 @@ void setup() {
     preferences::load();
     led::setEnable(preferences::ledEnabled());
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
-    keyboard::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
+    hid::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
     msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
     duckparser::setDefaultDelay(preferences::getDefaultDelay());
 
     // Start Keyboard
-    keyboard::init();
+    hid::init();
 
     // Start USB Drive
     if (preferences::mscEnabled() || (mode == SETUP)) msc::enableDrive();
@@ -66,7 +64,7 @@ void setup() {
     if (preferences::getDisableCapslock()) {
         keyboard::disableCapslock();
         delay(10);
-        keyboard::indicatorChanged();
+        hid::indicatorChanged();
     }
 
     // Format Flash
@@ -106,7 +104,7 @@ void setup() {
     else if (mode == ATTACK) {
         // Run on capslock
         if (preferences::getRunOnIndicator()) {
-            while (!keyboard::indicatorChanged()) {
+            while (!hid::indicatorChanged()) {
                 delay(100);
             }
             keyboard::disableCapslock();
@@ -135,4 +133,6 @@ void setup() {
     debugln("[Finished]");
 }
 
-void loop() {}
+void loop() {
+    led::update();
+}

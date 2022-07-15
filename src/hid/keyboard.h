@@ -12,9 +12,6 @@ namespace keyboard {
         uint8_t keys[6];
     } report_t;
 
-    void init();
-    void setID(uint16_t vid, uint16_t pid, uint16_t version);
-
     void setLocale(hid_locale_t* locale);
 
     void send(report_t* k);

@@ -4,7 +4,7 @@
 
 #include "../../config.h"
 #include "../../debug.h"
-#include "../keyboard/keyboard.h"
+#include "../hid/keyboard.h"
 #include "../led/led.h"
 
 #include <Arduino.h> // millis(), delay()
