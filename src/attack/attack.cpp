@@ -8,6 +8,7 @@
 #include "../msc/msc.h"
 #include "../duckparser/duckparser.h"
 #include "../preferences/preferences.h"
+#include "../led/led.h"
 
 namespace attack {
     // ====== PRIVATE ====== //
@@ -16,6 +17,9 @@ namespace attack {
     void start() {
         // If script doesn't exist, don't do anything
         if (!msc::exists(preferences::getMainScript().c_str())) return;
+
+        // Set attack color
+        led::setColor(preferences::getAttackColor());
 
         // Open main BadUSB script
         msc::open(preferences::getMainScript().c_str());
@@ -77,6 +81,10 @@ namespace attack {
                 std::string path = duckparser::getImport();
                 msc::open(path.c_str());
             }
+
+            // Set idle color
+            led::setColor(preferences::getIdleColor());
+            led::stopBlink();
 
             debugln("OK");
         }

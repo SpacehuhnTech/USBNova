@@ -13,12 +13,9 @@
 #include "src/tasks/tasks.h"
 
 void setup() {
-    // Initialize all the things
+    // ===== Initialize the minimum required modules to start the USB device stack ===== //
     debug_init();
     selector::init();
-    led::init();
-    tasks::setCallback(loop);
-
     // Initialize memory and ceck for problems
     if (!msc::init()) {
         format::start(); // Format the drive
@@ -33,30 +30,24 @@ void setup() {
             }
         }
     }
-
-    // Preferences
     preferences::load();
-    led::setEnable(preferences::ledEnabled());
-    keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
     hid::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
     msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
-    duckparser::setDefaultDelay(preferences::getDefaultDelay());
 
+    // ===== Initialize the USB device stack ===== //
     // Start Keyboard
     hid::init();
-
     // Start USB Drive
     if (preferences::mscEnabled() || (selector::mode() == SETUP)) msc::enableDrive();
 
-    // Wait 1s to give the computer time to initialize the keyboard
-    delay(1000);
+    // ===== Initialize the remaining modules ===== //
+    led::init();
+    tasks::setCallback(loop);
+    led::setEnable(preferences::ledEnabled());
+    keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
+    duckparser::setDefaultDelay(preferences::getDefaultDelay());
 
-    // Disable capslock if needed
-    if (preferences::getDisableCapslock()) {
-        keyboard::disableCapslock();
-        delay(10);
-        hid::indicatorChanged();
-    }
+    // ---
 
     // Format Flash
     if ((selector::mode() == SETUP) && preferences::getFormat()) {
@@ -69,18 +60,25 @@ void setup() {
         preferences::save();
     }
 
+    // Wait 1s to give the computer time to initialize the keyboard
+    delay(1000);
+
+    // Disable capslock if needed
+    if (preferences::getDisableCapslock()) {
+        keyboard::disableCapslock();
+        delay(10);
+        hid::indicatorChanged();
+    }
+
     // ==========  Setup Mode ==========  //
     if (selector::mode() == SETUP) {
         led::setColor(preferences::getSetupColor()); // Set LED to blue
 
         while (true) {
             if (selector::changed() && selector::read() == ATTACK) {
-                preferences::load();                          // Reload the settings (in case the main script path changed)
-
-                led::setColor(preferences::getAttackColor()); // Turn LED red
-                attack::start();                              // Start keystroke injection attack
-                led::setColor(preferences::getSetupColor());  // Set LED to blue
-                led::stopBlink();                             // Stop LED blink
+                preferences::load();                         // Reload the settings (in case the main script path changed)
+                attack::start();                             // Start keystroke injection attack
+                led::setColor(preferences::getSetupColor()); // Set LED to blue
             }
             delay(100);
         }
@@ -95,17 +93,11 @@ void setup() {
             keyboard::disableCapslock();
         }
 
-        led::setColor(preferences::getAttackColor()); // Turn LED red
-        attack::start();                              // Start keystroke injection attack
-        led::setColor(preferences::getIdleColor());   // Turn LED green
-        led::stopBlink();                             // Stop LED blink
+        attack::start(); // Start keystroke injection attack
 
         while (true) {
             if (selector::changed() && selector::read() == ATTACK) {
-                led::setColor(preferences::getAttackColor()); // Turn LED red
-                attack::start();                              // Start keystroke injection attack
-                led::setColor(preferences::getIdleColor());   // Turn LED green
-                led::stopBlink();                             // Stop LED blink
+                attack::start(); // Start keystroke injection attack
             }
             delay(100);
         }
