@@ -24,7 +24,7 @@ void setup() {
 
     // Initialize memory and check for problems
     if (!msc::init()) {
-        led::startBlink(255, 0, 0, 200);
+        led::setColor(255, 0, 0, 200);
         return;
     }
 

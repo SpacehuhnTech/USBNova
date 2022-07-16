@@ -309,13 +309,13 @@ namespace duckparser {
 
                     led::setMode(color, mode);
                 }
-                // i.e. LED 128 23 42
+                // i.e. LED 128 23 42 0 (r,g,b, blink)
                 else {
                     word_node* w = cmd->next;
 
-                    int c[3];
+                    int c[4];
 
-                    for (uint8_t i = 0; i<3; ++i) {
+                    for (uint8_t i = 0; i<4; ++i) {
                         if (w) {
                             c[i] = toInt(w->str, w->len);
                             w    = w->next;
@@ -324,7 +324,7 @@ namespace duckparser {
                         }
                     }
 
-                    led::setColor(c[0], c[1], c[2]);
+                    led::setColor(c[0], c[1], c[2], c[3]);
                 }
 
                 ignore_delay = true;

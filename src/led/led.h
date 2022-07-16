@@ -22,10 +22,7 @@ namespace led {
     void setEnable(bool enabled);
 
     void setColor(int* color);
-    void setColor(int r, int g, int b);
-
-    void startBlink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv);
-    void stopBlink();
+    void setColor(int r, int g, int b, unsigned long intv = 0);
 
     void setMode(Color color, Mode mode);
 

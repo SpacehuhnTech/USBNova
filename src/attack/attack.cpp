@@ -91,9 +91,6 @@ namespace attack {
                 msc::open(path.c_str());
             }
 
-            // Stop blinking if no script is running
-            led::stopBlink();
-
             debugln("OK");
         }
     }

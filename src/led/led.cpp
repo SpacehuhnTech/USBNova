@@ -11,10 +11,18 @@ namespace led {
     // ========== PRIVATE ========= //
     Adafruit_NeoPixel led { 1, LED_PIN, NEO_GRB + NEO_KHZ800 };
 
-    uint8_t blink_color[3] { 0, 0, 0 };
+    int blink_color[3] { 0, 0, 0 };
     unsigned long blink_intv { 0 };
-    bool blink_flag { false };
     unsigned long last_blink { 0 };
+    bool blink_flag { false };
+
+    void change_color(int r, int g, int b) {
+        for (size_t i = 0; i<led.numPixels(); i++) {
+            led.setPixelColor(i, r, g, b);
+        }
+
+        led.show();
+    }
 
     // ========== PUBLIC ========= //
     void init() {
@@ -31,26 +39,17 @@ namespace led {
     }
 
     void setColor(int* color) {
-        setColor(color[0], color[1], color[2]);
+        setColor(color[0], color[1], color[2], color[3]);
     }
 
-    void setColor(int r, int g, int b) {
-        for (size_t i = 0; i<led.numPixels(); i++) {
-            led.setPixelColor(i, r, g, b);
-        }
+    void setColor(int r, int g, int b, unsigned long intv) {
+        change_color(r, g, b);
 
-        led.show();
-    }
-
-    void startBlink(uint8_t r, uint8_t g, uint8_t b, unsigned long intv) {
         blink_color[0] = r;
         blink_color[1] = g;
         blink_color[2] = b;
         blink_intv     = intv;
-    }
-
-    void stopBlink() {
-        blink_intv = 0;
+        blink_flag = false;
     }
 
     void setMode(Color color, Mode mode) {
@@ -63,14 +62,13 @@ namespace led {
                 setColor(r, g, b);
                 break;
             case SLOW:
-                startBlink(r, g, b, 1000);
+                setColor(r, g, b, 1000);
                 break;
             case FAST:
-                startBlink(r, g, b, 200);
+                setColor(r, g, b, 200);
                 break;
             default:
                 setColor(0, 0, 0);
-                stopBlink();
         }
     }
 
@@ -80,9 +78,9 @@ namespace led {
             blink_flag = !blink_flag;
 
             if (blink_flag) {
-                setColor(blink_color[0], blink_color[1], blink_color[2]);
+                change_color(blink_color[0], blink_color[1], blink_color[2]);
             } else {
-                setColor(0, 0, 0);
+                change_color(0, 0, 0);
             }
         }
     }
