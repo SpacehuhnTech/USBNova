@@ -72,10 +72,14 @@ void setup() {
     // Setup background tasks
     tasks::setCallback(update);
 
+    // Make sure we don't start with a mode change
+    selector::changed();
+
     // Start attack
     if (selector::mode() == ATTACK && !preferences::getRunOnIndicator()) {
         delay(preferences::getInitialDelay()); // Wait to give computer time to init keyboard
         attack::start(); // Start keystroke injection attack
+        led::setColor(preferences::getIdleColor()); // Set LED to green
     }
 
     started = true;

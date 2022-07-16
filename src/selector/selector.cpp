@@ -37,7 +37,7 @@ namespace selector {
     }
 
     bool changed() {
-        if(change_flag && millis() - change_time > CHANGE_DELAY) {
+        if(change_flag && (millis() - change_time) > CHANGE_DELAY) {
             change_flag = false;
             return true;
         }

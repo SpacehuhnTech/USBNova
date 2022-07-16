@@ -32,7 +32,7 @@ namespace duckparser {
     unsigned long sleep_time          = 0;
 
     void type(const char* str, size_t len) {
-        for (size_t i = 0; i < len; ++i) {
+        for (size_t i=0; i<len; ++i) {
             i += keyboard::write(&str[i]);
             tasks::update();
         }
@@ -153,8 +153,7 @@ namespace duckparser {
         unsigned long sleep_end_time = sleep_start_time + time;
 
         while (millis() < sleep_end_time) {
-            //delay(1);
-            yield();
+            delay(1);
             tasks::update();
         }
     }

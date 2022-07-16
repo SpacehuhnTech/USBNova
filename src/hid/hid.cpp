@@ -84,7 +84,9 @@ namespace hid {
         }
 
         // Wait until ready to send next report
-        while (!usb_hid.ready());
+        while (!usb_hid.ready()){
+            delay(1);
+        }
 
         usb_hid.keyboardReport(RID::KEYBOARD, modifier, keys);
     }
