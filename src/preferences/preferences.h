@@ -33,4 +33,6 @@ namespace preferences {
     
     bool getDisableCapslock();
     bool getRunOnIndicator();
+
+    int getInitialDelay();
 }

@@ -74,7 +74,7 @@ void setup() {
 
     // Start attack
     if (selector::mode() == ATTACK && !preferences::getRunOnIndicator()) {
-        delay(1000); // Wait 1s to give the computer time to initialize the keyboard
+        delay(preferences::getInitialDelay()); // Wait to give computer time to init keyboard
         attack::start(); // Start keystroke injection attack
     }
 

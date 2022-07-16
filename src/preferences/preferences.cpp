@@ -47,6 +47,8 @@ namespace preferences {
     bool disable_capslock { true };
     bool run_on_indicator { false };
 
+    int initial_delay { 1000 };
+
     // Array help functions
     void add_array(JsonDocument& doc, const char* name, int* array, int size) {
         JsonArray jarr = doc.createNestedArray(name);
@@ -86,6 +88,8 @@ namespace preferences {
 
         root["disable_capslock"] = disable_capslock;
         root["run_on_indicator"]  = run_on_indicator;
+
+        root["initial_delay"] = initial_delay;
     }
 
     // ======== PUBLIC ======== //
@@ -133,6 +137,8 @@ namespace preferences {
 
         if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
         if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
+        
+        if (!config_doc.containsKey("initial_delay")) config_doc["initial_delay"] = initial_delay;
 
         // === Fetch values === //
         enable_msc = config_doc["enable_msc"].as<bool>();
@@ -163,6 +169,8 @@ namespace preferences {
 
         disable_capslock = config_doc["disable_capslock"].as<bool>();
         run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
+        
+        initial_delay  = config_doc["initial_delay"].as<int>();
     }
 
     void save() {
@@ -256,5 +264,9 @@ namespace preferences {
 
     bool getRunOnIndicator() {
         return run_on_indicator;
+    }
+    
+    int getInitialDelay() {
+        return initial_delay;
     }
 }
