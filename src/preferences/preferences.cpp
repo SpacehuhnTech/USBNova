@@ -47,6 +47,22 @@ namespace preferences {
     bool disable_capslock { true };
     bool run_on_indicator { false };
 
+    // Array help functions
+    void add_array(JsonDocument& doc, const char* name, int* array, int size) {
+        JsonArray jarr = doc.createNestedArray(name);
+        for(size_t i = 0; i < size; ++i) {
+            jarr.add(array[i]);
+        }
+    }
+
+    void read_array(JsonDocument& doc, const char* name, int* array, int size) {
+        JsonArray jarr = doc[name].as<JsonArray>();
+
+        for (size_t i = 0; i<jarr.size() && i<size; ++i) {
+            array[i] = jarr[i].as<int>();
+        }
+    }
+
     void toJson(JsonDocument& root) {
         root["enable_msc"] = enable_msc;
         root["enable_led"] = enable_led;
@@ -64,20 +80,9 @@ namespace preferences {
 
         root["main_script"] = main_script;
 
-        JsonArray attack_color_arr = root.createNestedArray("attack_color");
-        attack_color_arr.add(attack_color[0]);
-        attack_color_arr.add(attack_color[1]);
-        attack_color_arr.add(attack_color[2]);
-
-        JsonArray setup_color_arr = root.createNestedArray("setup_color");
-        setup_color_arr.add(setup_color[0]);
-        setup_color_arr.add(setup_color[1]);
-        setup_color_arr.add(setup_color[2]);
-
-        JsonArray idle_color_arr = root.createNestedArray("idle_color");
-        idle_color_arr.add(idle_color[0]);
-        idle_color_arr.add(idle_color[1]);
-        idle_color_arr.add(idle_color[2]);
+        add_array(root, "attack_color", attack_color, 3);
+        add_array(root, "setup_color", setup_color, 3);
+        add_array(root, "idle_color", idle_color, 3);
 
         root["disable_capslock"] = disable_capslock;
         root["run_on_indicator"]  = run_on_indicator;
@@ -122,26 +127,9 @@ namespace preferences {
 
         if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
 
-        if (!config_doc.containsKey("attack_color")) {
-            JsonArray arr = config_doc.createNestedArray("attack_color");
-            arr.add(attack_color[0]);
-            arr.add(attack_color[1]);
-            arr.add(attack_color[2]);
-        }
-
-        if (!config_doc.containsKey("setup_color")) {
-            JsonArray arr = config_doc.createNestedArray("setup_color");
-            arr.add(setup_color[0]);
-            arr.add(setup_color[1]);
-            arr.add(setup_color[2]);
-        }
-
-        if (!config_doc.containsKey("idle_color")) {
-            JsonArray arr = config_doc.createNestedArray("idle_color");
-            arr.add(idle_color[0]);
-            arr.add(idle_color[1]);
-            arr.add(idle_color[2]);
-        }
+        if (!config_doc.containsKey("attack_color")) add_array(config_doc, "attack_color", attack_color, 3);
+        if (!config_doc.containsKey("setup_color")) add_array(config_doc, "setup_color", setup_color, 3);
+        if (!config_doc.containsKey("idle_color")) add_array(config_doc, "idle_color", idle_color, 3);
 
         if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
         if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
@@ -163,26 +151,9 @@ namespace preferences {
 
         main_script = config_doc["main_script"].as<std::string>();
 
-        // Attack LED Color
-        JsonArray attack_color_array = config_doc["attack_color"].as<JsonArray>();
-
-        for (size_t i = 0; i<attack_color_array.size() && i<3; ++i) {
-            attack_color[i] = attack_color_array[i].as<int>();
-        }
-
-        // Setup LED Color
-        JsonArray setup_color_array = config_doc["setup_color"].as<JsonArray>();
-
-        for (size_t i = 0; i<setup_color_array.size() && i<3; ++i) {
-            setup_color[i] = setup_color_array[i].as<int>();
-        }
-
-        // Idle LED Color
-        JsonArray idle_color_array = config_doc["idle_color"].as<JsonArray>();
-
-        for (size_t i = 0; i<idle_color_array.size() && i<3; ++i) {
-            idle_color[i] = idle_color_array[i].as<int>();
-        }
+        read_array(config_doc, "attack_color", attack_color, 3);
+        read_array(config_doc, "setup_color", setup_color, 3);
+        read_array(config_doc, "idle_color", idle_color, 3);
 
         // Format Flash (Drive name/Disk label max 11 characters)
         format = config_doc.containsKey("format");
