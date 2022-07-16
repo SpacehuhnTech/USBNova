@@ -9,6 +9,8 @@
 #include "../duckparser/duckparser.h"
 #include "../preferences/preferences.h"
 #include "../led/led.h"
+#include "../hid/hid.h"
+#include "../hid/keyboard.h"
 
 namespace attack {
     // ====== PRIVATE ====== //
@@ -20,6 +22,13 @@ namespace attack {
 
         // Set attack color
         led::setColor(preferences::getAttackColor());
+
+        // Disable capslock if needed
+        if (preferences::getDisableCapslock()) {
+            keyboard::disableCapslock();
+            delay(10);
+            hid::indicatorChanged();
+        }
 
         // Open main BadUSB script
         msc::open(preferences::getMainScript().c_str());
@@ -82,8 +91,7 @@ namespace attack {
                 msc::open(path.c_str());
             }
 
-            // Set idle color
-            led::setColor(preferences::getIdleColor());
+            // Stop blinking if no script is running
             led::stopBlink();
 
             debugln("OK");

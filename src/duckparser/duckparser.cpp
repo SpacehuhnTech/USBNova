@@ -6,6 +6,7 @@
 #include "../../debug.h"
 #include "../hid/keyboard.h"
 #include "../led/led.h"
+#include "../tasks/tasks.h"
 
 #include <Arduino.h> // millis(), delay()
 
@@ -31,7 +32,10 @@ namespace duckparser {
     unsigned long sleep_time          = 0;
 
     void type(const char* str, size_t len) {
-        keyboard::write(str, len);
+        for (size_t i = 0; i < len; ++i) {
+            i += keyboard::write(&str[i]);
+            tasks::update();
+        }
     }
 
     void press(const char* str, size_t len) {
@@ -149,8 +153,9 @@ namespace duckparser {
         unsigned long sleep_end_time = sleep_start_time + time;
 
         while (millis() < sleep_end_time) {
-            delay(1);
-            led::update();
+            //delay(1);
+            yield();
+            tasks::update();
         }
     }
 

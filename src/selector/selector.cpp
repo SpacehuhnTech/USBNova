@@ -6,13 +6,17 @@
 
 #include "../../config.h"
 
+#define CHANGE_DELAY 50
+
 namespace selector {
     // ===== PRIVATE ===== //
     bool change_flag = false;
     Mode initial_mode;
+    unsigned long change_time = 0;
 
     void isr() {
         change_flag = true;
+        change_time = millis();
     }
 
     // ===== PUBLIC ===== //
@@ -33,9 +37,10 @@ namespace selector {
     }
 
     bool changed() {
-        bool temp = change_flag;
-        change_flag = false;
-        delay(50);
-        return temp;
+        if(change_flag && millis() - change_time > CHANGE_DELAY) {
+            change_flag = false;
+            return true;
+        }
+        return false; 
     }
 }

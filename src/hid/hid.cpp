@@ -5,8 +5,6 @@
 #include <Adafruit_TinyUSB.h>
 #include <Arduino.h> // delay()
 
-#include "../tasks/tasks.h"
-
 namespace hid {
     // ====== PRIVATE ====== //
     uint8_t indicator         = 0;     // Indicator LED state
@@ -86,10 +84,7 @@ namespace hid {
         }
 
         // Wait until ready to send next report
-        while (!usb_hid.ready()) {
-            delay(1);
-            tasks::update();
-        }
+        while (!usb_hid.ready());
 
         usb_hid.keyboardReport(RID::KEYBOARD, modifier, keys);
     }

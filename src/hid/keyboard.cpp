@@ -157,7 +157,8 @@ namespace keyboard {
         uint8_t res = press(c);
 
         release();
-
+        
+        // returns the number of extra bytes we used from the string pointer
         return res;
     }
 
