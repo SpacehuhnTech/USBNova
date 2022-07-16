@@ -34,7 +34,7 @@ namespace duckparser {
     void type(const char* str, size_t len) {
         for (size_t i=0; i<len; ++i) {
             i += keyboard::write(&str[i]);
-            tasks::update();
+            if(i%10==0) tasks::update();
         }
     }
 
@@ -373,6 +373,7 @@ namespace duckparser {
             if (line_end && (repeat_num > 0)) --repeat_num;
 
             interpret_timestamp = millis();
+            tasks::update();
         }
 
         line_list_destroy(l);
