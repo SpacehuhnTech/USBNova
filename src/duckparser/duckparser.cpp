@@ -9,9 +9,7 @@
 
 #include <Arduino.h> // millis(), delay()
 
-extern "C" {
- #include "parser.h" // parse_lines
-}
+#include "parser.h" // parse_lines
 
 namespace duckparser {
     // ====== PRIVATE ===== //
