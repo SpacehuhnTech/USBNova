@@ -6,6 +6,7 @@
 
 namespace msc {
     bool init();
+    bool format(const char* drive_name = "USB Nova");
 
     void setID(const char* vid, const char* pid, const char* rev);
     void enableDrive();

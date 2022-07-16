@@ -9,7 +9,6 @@
 #include "src/attack/attack.h"
 #include "src/preferences/preferences.h"
 #include "src/duckparser/duckparser.h"
-#include "src/format/format.h"
 #include "src/tasks/tasks.h"
 
 void setup() {
@@ -18,16 +17,12 @@ void setup() {
     selector::init();
     // Initialize memory and ceck for problems
     if (!msc::init()) {
-        format::start(); // Format the drive
-
-        // If it still fails, blink red LED
-        if (!msc::init()) {
-            while (true) {
-                led::setColor(255, 0, 0);
-                delay(500);
-                led::setColor(0, 0, 0);
-                delay(500);
-            }
+        // Blink red and do nothing 
+        while (true) {
+            led::setColor(255, 0, 0);
+            delay(500);
+            led::setColor(0, 0, 0);
+            delay(500);
         }
     }
     preferences::load();
@@ -52,7 +47,7 @@ void setup() {
     // Format Flash
     if ((selector::mode() == SETUP) && preferences::getFormat()) {
         led::setColor(255, 255, 255);
-        format::start(preferences::getDriveName().c_str());
+        msc::format(preferences::getDriveName().c_str());
     }
 
     // Create preferences file if it doesn't exist yet

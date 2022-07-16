@@ -8,9 +8,11 @@
 #include <string>
 #include <stack>
 
-#include "SPI.h"
-#include "Adafruit_SPIFlash.h"
-#include "Adafruit_TinyUSB.h"
+#include <SPI.h>
+#include <Adafruit_SPIFlash.h>
+#include <Adafruit_TinyUSB.h>
+
+#include "format.h"
 
 namespace msc {
     // ===== PRIVATE ===== //
@@ -72,12 +74,21 @@ namespace msc {
             return false;
         }
 
+        // Try formatting the drive if initialization failed
         if(!fatfs.begin(&flash)) {
-            debugln("Couldn't mount flash!");
-            return false;
+            format();
+
+            if(!fatfs.begin(&flash)) {
+                debugln("Couldn't mount flash!");
+                return false;
+            }
         }
 
         return true;
+    }
+    
+    bool format(const char* drive_name) {
+        return format::start(drive_name);
     }
 
     void setID(const char* vid, const char* pid, const char* rev) {
