@@ -10,6 +10,7 @@
 #include "src/preferences/preferences.h"
 #include "src/duckparser/duckparser.h"
 #include "src/tasks/tasks.h"
+#include "src/cli/cli.h"
 
 bool started = false;
 
@@ -82,12 +83,16 @@ void setup() {
         led::setColor(preferences::getIdleColor()); // Set LED to green
     }
 
+    // Setup CLI
+    cli::init();
+
     started = true;
     debugln("[Started]");
 }
 
 void loop() {
     taks:update();
+    cli::update();
 
     if (started && selector::changed() && selector::read() == ATTACK) {
         // ==========  Setup Mode ==========  //
