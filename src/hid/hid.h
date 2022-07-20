@@ -17,6 +17,7 @@ namespace hid {
     bool mounted();
 
     void sendKeyboardReport(uint8_t modifier, uint8_t* keys);
+    void sendMouseReport(uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal);
 
     uint8_t getIndicator();
     bool indicatorChanged();

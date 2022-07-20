@@ -11,9 +11,9 @@ namespace keyboard {
 
     report_t prev_report = report_t{ KEY_NONE, { KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE, KEY_NONE } };
 
-    report_t makeReport(uint8_t modifiers = 0, uint8_t key1 = 0, uint8_t key2 = 0, uint8_t key3 = 0, uint8_t key4 = 0, uint8_t key5 = 0, uint8_t key6 = 0);
+    report_t make_report(uint8_t modifiers = 0, uint8_t key1 = 0, uint8_t key2 = 0, uint8_t key3 = 0, uint8_t key4 = 0, uint8_t key5 = 0, uint8_t key6 = 0);
 
-    report_t makeReport(uint8_t modifiers, uint8_t key1, uint8_t key2, uint8_t key3, uint8_t key4, uint8_t key5, uint8_t key6) {
+    report_t make_report(uint8_t modifiers, uint8_t key1, uint8_t key2, uint8_t key3, uint8_t key4, uint8_t key5, uint8_t key6) {
         report_t k;
 
         k.modifiers = modifiers;
@@ -39,7 +39,7 @@ namespace keyboard {
     }
 
     void release() {
-        prev_report = makeReport();
+        prev_report = make_report();
         send(&prev_report);
     }
 

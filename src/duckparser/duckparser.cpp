@@ -5,12 +5,15 @@
 #include "../../config.h"
 #include "../../debug.h"
 #include "../hid/keyboard.h"
+#include "../hid/mouse.h"
 #include "../led/led.h"
 #include "../tasks/tasks.h"
 
 #include <Arduino.h> // millis(), delay()
 
-#include "parser.h" // parse_lines
+#include "parser.h"  // parse_lines
+
+#define TU_BIT(n) (1U << (n))
 
 namespace duckparser {
     // ====== PRIVATE ===== //
@@ -32,9 +35,9 @@ namespace duckparser {
     unsigned long sleep_time          = 0;
 
     void type(const char* str, size_t len) {
-        for (size_t i=0; i<len; ++i) {
+        for (size_t i = 0; i<len; ++i) {
             i += keyboard::write(&str[i]);
-            if(i%10==0) tasks::update();
+            if (i%10==0) tasks::update();
         }
     }
 
@@ -113,7 +116,16 @@ namespace duckparser {
         keyboard::release();
     }
 
-    unsigned int toInt(const char* str, size_t len) {
+    int to_int(const char* str, size_t len) {
+        char newstr[len+1];
+
+        memcpy(newstr, (void*)str, len);
+        newstr[len+1] = '\0';
+
+        return atoi(newstr);
+    }
+
+    unsigned int to_uint(const char* str, size_t len) {
         if (!str || (len == 0)) return 0;
 
         unsigned int val = 0;
@@ -233,12 +245,12 @@ namespace duckparser {
             }
             // default_delay/DEFAULT_DELAY (set default delay per command)
             else if (compare(cmd->str, cmd->len, "default_delay", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
-                default_delay = toInt(line_str, line_str_len);
+                default_delay = to_uint(line_str, line_str_len);
                 ignore_delay  = true;
             }
             // DELAY (-> sleep for x ms)
             else if (compare(cmd->str, cmd->len, "DELAY", CASE_SENSETIVE)) {
-                sleep(toInt(line_str, line_str_len));
+                sleep(to_uint(line_str, line_str_len));
                 ignore_delay = true;
             }
             // STRING (-> type each character)
@@ -256,12 +268,12 @@ namespace duckparser {
             }
             // REPEAT (-> repeat last command n times)
             else if (compare(cmd->str, cmd->len, "REPEAT", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "REPLAY", CASE_SENSETIVE)) {
-                repeat_num   = toInt(line_str, line_str_len) + 1;
+                repeat_num   = to_uint(line_str, line_str_len) + 1;
                 ignore_delay = true;
             }
             // LOOP_BEGIN
             else if (compare(cmd->str, cmd->len, "LOOP_BEGIN", CASE_SENSETIVE)) {
-                loop_num     = toInt(line_str, line_str_len);
+                loop_num     = to_uint(line_str, line_str_len);
                 loop_begin   = true;
                 ignore_delay = true;
             }
@@ -316,7 +328,7 @@ namespace duckparser {
 
                     for (uint8_t i = 0; i<4; ++i) {
                         if (w) {
-                            c[i] = toInt(w->str, w->len);
+                            c[i] = to_uint(w->str, w->len);
                             w    = w->next;
                         } else {
                             c[i] = 0;
@@ -334,12 +346,12 @@ namespace duckparser {
                 if (w) {
                     keyboard::report_t k;
 
-                    k.modifiers = (uint8_t)toInt(w->str, w->len);
+                    k.modifiers = (uint8_t)to_uint(w->str, w->len);
                     w           = w->next;
 
                     for (uint8_t i = 0; i<6; ++i) {
                         if (w) {
-                            k.keys[i] = (uint8_t)toInt(w->str, w->len);
+                            k.keys[i] = (uint8_t)to_uint(w->str, w->len);
                             w         = w->next;
                         } else {
                             k.keys[i] = 0;
@@ -349,6 +361,42 @@ namespace duckparser {
                     keyboard::send(&k);
                     keyboard::release();
                 }
+            }
+            // MOUSE x y, MOVE x y
+            else if (compare(cmd->str, cmd->len, "MOUSE", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "MOVE", CASE_SENSETIVE)) {
+                word_node* w = cmd->next;
+                int x        = w ? to_int(w->str, w->len) : 0;
+                w = w->next;
+                int y = w ? to_int(w->str, w->len) : 0;
+
+                mouse::move(x, y);
+            }
+            // MOUSE_CLICK button, CLICK button
+            else if (compare(cmd->str, cmd->len, "MOUSE_CLICK", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "CLICK", CASE_SENSETIVE)) {
+                word_node* w = cmd->next;
+                int button   = TU_BIT(w ? to_uint(w->str, w->len) : 0);
+                mouse::click(button);
+            }
+            // MOUSE_PRESS button, PRESS button
+            else if (compare(cmd->str, cmd->len, "MOUSE_PRESS", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "PRESS", CASE_SENSETIVE)) {
+                word_node* w = cmd->next;
+                int button   = TU_BIT(w ? to_uint(w->str, w->len) : 0);
+                mouse::press(button);
+            }
+            // MOUSE_RELEASE button, RELEASE button
+            else if (compare(cmd->str, cmd->len, "MOUSE_RELEASE", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "RELEASE", CASE_SENSETIVE)) {
+                word_node* w = cmd->next;
+                int button   = TU_BIT(w ? to_uint(w->str, w->len) : 0);
+                mouse::release(button);
+            }
+            // MOUSE_SCROLL v h, SCROLL v h
+            else if (compare(cmd->str, cmd->len, "MOUSE_SCROLL", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "SCROLL", CASE_SENSETIVE)) {
+                word_node* w = cmd->next;
+                int vertical = w ? to_int(w->str, w->len) : 0;
+                w = w->next;
+                int horizontal = w ? to_int(w->str, w->len) : 0;
+
+                mouse::scroll(vertical, horizontal);
             }
             // IMPORT (-> open another script)
             else if (compare(cmd->str, cmd->len, "IMPORT", CASE_SENSETIVE)) {

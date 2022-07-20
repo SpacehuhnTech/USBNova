@@ -90,6 +90,21 @@ namespace hid {
 
         usb_hid.keyboardReport(RID::KEYBOARD, modifier, keys);
     }
+    
+    void sendMouseReport(uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal) {
+        if (TinyUSBDevice.suspended()) {
+            // Wake up host if we are in suspend mode
+            // and REMOTE_WAKEUP feature is enabled by host
+            TinyUSBDevice.remoteWakeup();
+        }
+        
+        // Wait until ready to send next report
+        while (!usb_hid.ready()){
+            delay(1);
+        }
+        
+        usb_hid.mouseReport(RID::MOUSE, buttons, x, y, vertical, horizontal);
+    }
 
     uint8_t getIndicator() {
         return indicator;
