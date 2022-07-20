@@ -6,7 +6,7 @@
 
 #include "../../config.h"
 
-#define CHANGE_DELAY 50
+#define CHANGE_DELAY 200
 
 namespace selector {
     // ===== PRIVATE ===== //
