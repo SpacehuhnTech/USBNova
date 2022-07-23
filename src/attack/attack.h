@@ -3,5 +3,6 @@
 #pragma once
 
 namespace attack {
+    void start(const char* path);
     void start();
 }

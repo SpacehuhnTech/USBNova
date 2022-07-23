@@ -16,10 +16,10 @@ namespace attack {
     // ====== PRIVATE ====== //
 
     // ====== PUBLIC ====== //
-    void start() {
+    void start(const char* path) {
         // If script doesn't exist, don't do anything
-        if (!msc::exists(preferences::getMainScript().c_str())) return;
-
+        if (!msc::exists(path)) return;
+        
         // Set attack color
         led::setColor(preferences::getAttackColor());
 
@@ -93,5 +93,9 @@ namespace attack {
 
             debugln("OK");
         }
+    }
+
+    void start() {
+        start(preferences::getMainScript().c_str());
     }
 }

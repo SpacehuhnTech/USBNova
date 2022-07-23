@@ -193,6 +193,64 @@ namespace preferences {
         debug("Saved ");
         debugln(PREFERENCES_PATH);
     }
+    
+    void reset() {
+        enable_msc = false;
+        enable_led = true;
+
+        hid_vid = "239A";
+        hid_pid = "80CB";
+        hid_rev = "0100";
+
+        msc_vid = "Adafruit";
+        msc_pid = "External Flash";
+        msc_rev = "1.0";
+
+        default_layout = "US";
+        default_delay = 5;
+
+        main_script = "main.script";
+
+        attack_color[0] = 128;
+        attack_color[1] = 0;
+        attack_color[2] = 0;
+        attack_color[3] = 0;
+
+        setup_color[0] = 0;
+        setup_color[1] = 0;
+        setup_color[2] = 20;
+        setup_color[3] = 0;
+
+        idle_color[0] = 0;
+        idle_color[1] = 30;
+        idle_color[2] = 0;
+        idle_color[3] = 0;
+
+        format = false;
+        drive_name = "USB Nova";
+
+        disable_capslock = true;
+        run_on_indicator = false;
+
+        initial_delay = 1000;
+    }
+    
+    void print() {
+        // Create a new JSON document (and string buffer)
+        DynamicJsonDocument json_doc(JSON_SIZE);
+        // JsonObject json_obj = json_doc.as<JsonObject>();
+        std::string json_str = { "" };
+
+        // Add values
+        toJson(json_doc);
+
+        // Serialize JSON to buffer
+        serializeJsonPretty(json_doc, json_str);
+        json_doc.clear();
+
+        // Write the buffer to file (and print results)
+        debugln(json_str.c_str());
+    }
 
     bool mscEnabled() {
         return enable_msc;

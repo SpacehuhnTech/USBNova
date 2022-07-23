@@ -90,6 +90,27 @@ namespace msc {
     bool format(const char* drive_name) {
         return format::start(drive_name);
     }
+    
+    void print() {
+        File file;
+        FatFile rdir;
+        rdir.open("/");
+
+        // Open next file in root.
+        // Warning, openNext starts at the current directory position
+        // so a rewind of the directory may be required.
+        while(file.openNext(&rdir, O_RDONLY)) {
+            file.printFileSize(&Serial);
+            Serial.write(' ');
+            file.printName(&Serial);
+            if (file.isDir()) {
+                // Indicate a directory.
+                Serial.write('/');
+            }
+            Serial.println();
+            file.close();
+        }
+    }
 
     void setID(const char* vid, const char* pid, const char* rev) {
         usb_msc.setID(vid, pid, rev); // Max. 8, 16, 4 characters

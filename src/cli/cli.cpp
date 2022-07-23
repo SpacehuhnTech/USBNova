@@ -5,6 +5,12 @@
 #include <SimpleCLI.h>
 
 #include "../duckparser/duckparser.h"
+#include "../preferences/preferences.h"
+#include "../selector/selector.h"
+#include "../led/led.h"
+#include "../attack/attack.h"
+#include "../msc/msc.h"
+#include "../../config.h"
 
 #define BUFFER_SIZE 1024
 
@@ -54,27 +60,78 @@ namespace cli {
     // ====== PUBLIC ====== //
     void init() {
         Serial.begin(115200);
-        /*
-        // help
-        cli.addCmd("format", [](cmd* c) {
-            cli.help();
+        
+        // error
+        cli.setOnError([](cmd_error* e) {
+            CommandError cmdError(e);
+
+            Serial.print("ERROR: ");
+            Serial.println(cmdError.toString());
+
+            if (cmdError.hasCommand()) {
+                Serial.print("Did you mean \"");
+                Serial.print(cmdError.getCommand().toString());
+                Serial.println("\"?");
+            }
         });
 
+        // help
+        cli.addCmd("help", [](cmd* c) {
+            Serial.println("[ = Available Commands =]");
+            Serial.println(cli.toString());
+            Serial.println("Enter any BadUSB Scripts to run it.");
+        }).setDescription(" Get a list of available commands.");
+
         // version
-        cli.addCmd("format", [](cmd* c) {
+        cli.addCmd("version", [](cmd* c) {
+            Serial.println("[ = USB Nova =]");
+            Serial.print("Version ");
             Serial.println(VERSION);
-        });
+            Serial.println("Source: https://github.com/spacehuhntech/usbnova");
+            Serial.println("Made with <3 by Spacehuhn (spacehuhn.com)");
+            Serial.println();
+        }).setDescription(" Print the firmware version.");
 
         // format
         cli.addCmd("format", [](cmd* c) {
-            msc::format();
-        });
+            led::setColor(255, 255, 255);
+            msc::format(preferences::getDriveName().c_str());
+            preferences::save();
+            if(selector::mode() == SETUP) {
+                led::setColor(preferences::getSetupColor());
+            } else {
+                led::setColor(preferences::getIdleColor());
+            }
+            
+            Serial.println("Done formatting!");
+            Serial.println();
+        }).setDescription(" Fromat the internal memory.");
 
         // reset
-        cli.addCmd("rest", [](cmd* c) {
+        cli.addCmd("reset", [](cmd* c) {
             preferences::reset();
-        });
-        */
+            preferences::save();
+            
+            Serial.println("Done resetting!");
+            Serial.println();
+        }).setDescription(" Reset the preferences.");
+        
+        // TODO: preferences
+        cli.addSingleArgCmd("preferences", [](cmd* c) {
+            preferences::print();
+        }).setDescription(" Print preferences.");
+
+        // ls
+        cli.addSingleArgCmd("ls", [](cmd* c) {
+            msc::print();
+        }).setDescription(" Show available files on the drive.");
+
+        // run
+        cli.addSingleArgCmd("run", [](cmd* c) {
+            Command cmd(c);
+            Argument arg = cmd.getArgument(0);
+            attack::start(arg.getValue().c_str());
+        }).setDescription(" Start a BadUSB Script.");
     }
 
     void update() {

@@ -7,6 +7,8 @@
 namespace preferences {
     void load();
     void save();
+    void reset();
+    void print();
 
     bool mscEnabled();
     bool ledEnabled();
