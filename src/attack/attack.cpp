@@ -50,7 +50,7 @@ namespace attack {
             if (!msc::getInLine()) cur_pos = msc::getPosition();
             len = msc::readLine(buffer, READ_BUFFER);
             debugln(len);
-            debugln(std::string(buffer, len-1).c_str());
+            //debugln(std::string(buffer, len-1).c_str());
 
             // Reached end of file
             if (len == 0) {
@@ -93,6 +93,8 @@ namespace attack {
 
             debugln("OK");
         }
+
+        debugln("Attack finished");
     }
 
     void start() {

@@ -134,7 +134,7 @@ namespace msc {
         return fatfs.exists(filename);
     }
 
-    bool open(const char* path) {
+    bool open(const char* path, bool add_to_stack) {
         debug("Open new file: ");
         debugln(path);
 
@@ -142,7 +142,7 @@ namespace msc {
         if (!path) return false;
 
         // If the stack isn't empty, save the current position
-        if (!file_stack.empty()) {
+        if (add_to_stack && !file_stack.empty()) {
             file_stack.top().pos = file.curPosition();
         }
 
@@ -150,10 +150,12 @@ namespace msc {
         if (file.isOpen()) file.close();
 
         // Create a new file element and push it to the stack
-        file_element_t file_element;
-        file_element.path = std::string(path);
-        file_element.pos  = 0;
-        file_stack.push(file_element);
+        if(add_to_stack) {
+            file_element_t file_element;
+            file_element.path = std::string(path);
+            file_element.pos  = 0;
+            file_stack.push(file_element);
+        }
 
         // Open file and return whether it was successful
         return file.open(path);

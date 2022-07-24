@@ -99,7 +99,7 @@ namespace preferences {
         DynamicJsonDocument config_doc(JSON_SIZE);
 
         // Open the file and read it into a buffer
-        if (!msc::open(PREFERENCES_PATH)) return;
+        if (!msc::open(PREFERENCES_PATH), false) return;
         msc::read(buffer, JSON_SIZE);
 
         // Deserialize the JSON document

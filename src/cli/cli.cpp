@@ -78,8 +78,9 @@ namespace cli {
         // help
         cli.addCmd("help", [](cmd* c) {
             Serial.println("[ = Available Commands =]");
-            Serial.println(cli.toString());
+            Serial.print(cli.toString());
             Serial.println("Enter any BadUSB Scripts to run it.");
+            Serial.println();
         }).setDescription(" Get a list of available commands.");
 
         // version
@@ -131,6 +132,11 @@ namespace cli {
             Command cmd(c);
             Argument arg = cmd.getArgument(0);
             attack::start(arg.getValue().c_str());
+            if(selector::mode() == SETUP) {
+                led::setColor(preferences::getSetupColor());
+            } else {
+                led::setColor(preferences::getIdleColor());
+            }
         }).setDescription(" Start a BadUSB Script.");
     }
 

@@ -15,7 +15,7 @@ namespace msc {
     bool changed();
     bool exists(const char* filename);
 
-    bool open(const char* path);
+    bool open(const char* path, bool add_to_stack = true);
     bool openNextFile();
     
     void close();
