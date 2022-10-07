@@ -427,6 +427,17 @@ namespace duckparser {
         line_list_destroy(l);
     }
 
+    // https://github.com/hathach/tinyusb/blob/fd5bb6e5db8e8e997d66775e689cc73f149e7fc1/src/class/hid/hid.h#L153
+    // GAMEPAD PRESS button&dpad
+    // GAMEPAD RELEASE button&dpad
+    // GAMEPAD CLICK button&dpad / GAMEPAD button&dpad
+    // GAMEPAD direction amount
+
+    // Consumer
+    // https://github.com/hathach/tinyusb/blob/fd5bb6e5db8e8e997d66775e689cc73f149e7fc1/examples/device/hid_composite/src/main.c#L155
+    // KEYCODE 2bytecode
+    // Codes: https://github.com/hathach/tinyusb/blob/ae531a79f654d566790a4daae350730cdc0a01e9/src/class/hid/hid.h#L790
+
     int getRepeats() {
         return repeat_num;
     }
