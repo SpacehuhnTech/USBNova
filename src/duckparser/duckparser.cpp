@@ -243,8 +243,8 @@ namespace duckparser {
                 in_ml_comment = true;
                 ignore_delay  = true;
             }
-            // default_delay/DEFAULT_DELAY (set default delay per command)
-            else if (compare(cmd->str, cmd->len, "default_delay", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
+            // DEFAULTDELAY/DEFAULT_DELAY (set default delay per command)
+            else if (compare(cmd->str, cmd->len, "DEFAULTDELAY", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "DEFAULT_DELAY", CASE_SENSETIVE)) {
                 default_delay = to_uint(line_str, line_str_len);
                 ignore_delay  = true;
             }
