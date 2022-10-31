@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "SdFat.h"
+#include <cstdint> // uint8_t
+#include <cstddef> // size_t
 
 namespace msc {
     bool init();

@@ -20,12 +20,18 @@ void update() {
 }
 
 void setup() {
+    led::init();
+    
     // Start Serial (for debug)
     debug_init();
 
     // Initialize memory and check for problems
     if (!msc::init()) {
         led::setColor(255, 0, 0, 200);
+        while(true) {
+            debugln("Couldnt init SD");
+            delay(1000);
+        }
         return;
     }
 

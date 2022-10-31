@@ -9,10 +9,8 @@
 #include <stack>
 
 #include <SPI.h>
-#include <Adafruit_SPIFlash.h>
+#include <SdFat.h>
 #include <Adafruit_TinyUSB.h>
-
-#include "format.h"
 
 namespace msc {
     // ===== PRIVATE ===== //
@@ -23,12 +21,10 @@ namespace msc {
 
     std::stack<file_element_t> file_stack;
 
-    Adafruit_FlashTransport_SPI flashTransport(EXTERNAL_FLASH_USE_CS, EXTERNAL_FLASH_USE_SPI);
-    Adafruit_SPIFlash flash(&flashTransport);
+    SdFat sd;
     Adafruit_USBD_MSC usb_msc;
 
-    FatFileSystem fatfs;
-    FatFile file;
+    SdFile file;
 
     bool fs_changed = false; // Flag which goes to true when PC write to flash
     bool in_line    = false;
@@ -37,79 +33,80 @@ namespace msc {
     // Copy disk's data to buffer (up to bufsize) and
     // return number of copied bytes (must be multiple of block size)
     int32_t read_cb(uint32_t lba, void* buffer, uint32_t bufsize) {
-        // Note: SPIFLash Block API: readBlocks/writeBlocks/syncBlocks
-        // already include 4K sector caching internally. We don't need to cache it, yahhhh!!
-        return flash.readBlocks(lba, (uint8_t*)buffer, bufsize / 512) ? bufsize : -1;
+        bool rc;
+
+        #if SD_FAT_VERSION >= 20000
+        rc = sd.card()->readSectors(lba, (uint8_t*) buffer, bufsize/512);
+        #else
+        rc = sd.card()->readBlocks(lba, (uint8_t*) buffer, bufsize/512);
+        #endif
+
+        return rc ? bufsize : -1;
     }
 
     // Callback invoked when received WRITE10 command.
     // Process data in buffer to disk's storage and
     // return number of written bytes (must be multiple of block size)
     int32_t write_cb(uint32_t lba, uint8_t* buffer, uint32_t bufsize) {
-        digitalWrite(LED_BUILTIN, HIGH);
+        bool rc;
 
-        // Note: SPIFLash Block API: readBlocks/writeBlocks/syncBlocks
-        // already include 4K sector caching internally. We don't need to cache it, yahhhh!!
-        return flash.writeBlocks(lba, buffer, bufsize / 512) ? bufsize : -1;
+        #if SD_FAT_VERSION >= 20000
+        rc = sd.card()->writeSectors(lba, buffer, bufsize/512);
+        #else
+        rc = sd.card()->writeBlocks(lba, buffer, bufsize/512);
+        #endif
+
+        return rc ? bufsize : -1;
     }
 
     // Callback invoked when WRITE10 command is completed (status received and accepted by host).
     // used to flush any pending cache.
     void flush_cb(void) {
-        // sync with flash
-        flash.syncBlocks();
+        #if SD_FAT_VERSION >= 20000
+        sd.card()->syncDevice();
+        #else
+        sd.card()->syncBlocks();
+        #endif
 
         // clear file system's cache to force refresh
-        fatfs.cacheClear();
+        sd.cacheClear();
 
         fs_changed = true;
-
-        digitalWrite(LED_BUILTIN, LOW);
     }
 
     // ===== PUBLIC ===== //
     bool init() {
-        if(!flash.begin()) {
-            debugln("Couldn't find flash chip!");
+        if(!sd.begin(SD_CS, SD_SCK_MHZ(12))) {
+            debugln("Couldn't init SD Card!");
             return false;
-        }
-
-        // Try formatting the drive if initialization failed
-        if(!fatfs.begin(&flash)) {
-            format();
-
-            if(!fatfs.begin(&flash)) {
-                debugln("Couldn't mount flash!");
-                return false;
-            }
         }
 
         return true;
     }
     
     bool format(const char* drive_name) {
-        return format::start(drive_name);
+        return false;//format::start(drive_name);
     }
     
     void print() {
-        File file;
-        FatFile rdir;
-        rdir.open("/");
-
-        // Open next file in root.
-        // Warning, openNext starts at the current directory position
-        // so a rewind of the directory may be required.
-        while(file.openNext(&rdir, O_RDONLY)) {
-            file.printFileSize(&Serial);
-            Serial.write(' ');
-            file.printName(&Serial);
-            if (file.isDir()) {
-                // Indicate a directory.
-                Serial.write('/');
-            }
-            Serial.println();
-            file.close();
+        Serial.println("Available files:");
+        SdFile root;
+        root.open("/");
+        
+        while ( file.openNext(&root, O_RDONLY) ) {
+        file.printFileSize(&Serial);
+        Serial.write(' ');
+        file.printName(&Serial);
+        if ( file.isDir() )
+        {
+            // Indicate a directory.
+            Serial.write('/');
         }
+        Serial.println();
+        file.close();
+        }
+
+        root.close();
     }
 
     void setID(const char* vid, const char* pid, const char* rev) {
@@ -117,8 +114,14 @@ namespace msc {
     }
 
     void enableDrive() {
+#if SD_FAT_VERSION >= 20000
+        uint32_t block_count = sd.card()->sectorCount();
+#else
+        uint32_t block_count = sd.card()->cardSize();
+#endif
+
         usb_msc.setReadWriteCallback(read_cb, write_cb, flush_cb);
-        usb_msc.setCapacity(flash.size() / 512, 512);
+        usb_msc.setCapacity(block_count, 512);
         usb_msc.setUnitReady(true);
         usb_msc.begin();
     }
@@ -131,7 +134,7 @@ namespace msc {
     }
     
     bool exists(const char* filename) {
-        return fatfs.exists(filename);
+        return sd.exists(filename);
     }
 
     bool open(const char* path, bool add_to_stack) {
@@ -258,7 +261,7 @@ namespace msc {
     }
 
     size_t write(const char* path, const char* buffer, size_t len) {
-        FatFile wfile;
+        SdFile wfile;
         wfile.open(path, (O_RDWR | O_CREAT));
         if (!wfile.isOpen()) return 0;
 

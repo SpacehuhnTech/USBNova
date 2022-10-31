@@ -5,11 +5,11 @@
 #include "../../config.h"
 
 #include <Arduino.h>           // pinMode(), analogWrite(), millis()
-#include <Adafruit_NeoPixel.h> // Adafruit_NeoPixel
 
 namespace led {
     // ========== PRIVATE ========= //
-    Adafruit_NeoPixel led { 1, LED_PIN, NEO_GRB + NEO_KHZ800 };
+    int pin { LED_PIN };
+    bool enabled { true };
 
     int blink_color[3] { 0, 0, 0 };
     unsigned long blink_intv { 0 };
@@ -17,24 +17,19 @@ namespace led {
     bool blink_flag { false };
 
     void change_color(int r, int g, int b) {
-        for (size_t i = 0; i<led.numPixels(); i++) {
-            led.setPixelColor(i, r, g, b);
+        if (enabled) {
+            digitalWrite(pin, (r+g+b));
         }
-
-        led.show();
     }
 
     // ========== PUBLIC ========= //
     void init() {
-        led.begin();
-        led.show();
     }
 
-    void setEnable(bool enabled) {
-        if (enabled) {
-            led.setBrightness(255);
-        } else {
-            led.setBrightness(0);
+    void setEnable(bool _enabled) {
+        if (!_enabled) {
+            enabled = _enabled;
+            digitalWrite(pin, 0);
         }
     }
 

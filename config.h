@@ -5,7 +5,7 @@
 #define VERSION "0.0.1"
 
 // ===== DEBUG Settings ===== //
-#define ENABLE_DEBUG
+//#define ENABLE_DEBUG
 #define DEBUG_PORT Serial
 #define DEBUG_BAUD 115200
 
@@ -13,10 +13,16 @@
 #define READ_BUFFER 2048
 
 // ===== LED Settings ===== //
-#define LED_PIN 11
+#define LED_PIN 4
+
+// ===== SD Settings ===== //
+#define SD_CS 1
+#define SD_READ_BUFFER 2048
 
 // ===== SELECTOR SWITCH ===== //
-#define SELECTOR A0
+#define SELECTOR A7
+#define SELECTOR_2 A6
+#define SELECTOR_3 A3
 
 // ===== Parser Settings ===== //
 #define CASE_SENSETIVE false

@@ -37,9 +37,9 @@ namespace preferences {
 
     std::string main_script { "main.script" };
 
-    int attack_color[4] { 128, 0, 0, 0 };
-    int setup_color[4] { 0, 0, 20, 0 };
-    int idle_color[4] { 0, 30, 0, 0 };
+    int attack_color[4] { 0, 0, 0, 0 };
+    int setup_color[4] { 255, 0, 0, 0 };
+    int idle_color[4] { 0, 0, 0, 0 };
 
     bool format { false };
     std::string drive_name { "USB Nova" };
@@ -211,18 +211,18 @@ namespace preferences {
 
         main_script = "main.script";
 
-        attack_color[0] = 128;
+        attack_color[0] = 0;
         attack_color[1] = 0;
         attack_color[2] = 0;
         attack_color[3] = 0;
 
-        setup_color[0] = 0;
+        setup_color[0] = 255;
         setup_color[1] = 0;
-        setup_color[2] = 20;
+        setup_color[2] = 0;
         setup_color[3] = 0;
 
         idle_color[0] = 0;
-        idle_color[1] = 30;
+        idle_color[1] = 0;
         idle_color[2] = 0;
         idle_color[3] = 0;
 
