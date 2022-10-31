@@ -12,8 +12,6 @@
 #include "src/tasks/tasks.h"
 #include "src/cli/cli.h"
 
-bool started = false;
-
 void update() {
     led::update();
     // cli::update();
@@ -92,7 +90,6 @@ void setup() {
     // Setup CLI
     cli::init();
 
-    started = true;
     debugln("[Started]");
 }
 
@@ -100,7 +97,13 @@ void loop() {
     taks:update();
     cli::update();
 
-    if (started && selector::changed() && selector::read() == ATTACK) {
+    if(selector::read() != ATTACK) return;
+
+    // Only start the attack if run-on-indicator is disabled, or indicator actually changed
+    if(preferences::getRunOnIndicator() && hid::indicatorChanged()) {
+        attack::start();                            // Run script
+        led::setColor(preferences::getIdleColor()); // Set LED to green
+    } else if (selector::changed()) {
         // ==========  Setup Mode ==========  //
         if (selector::mode() == SETUP) {
             preferences::load();                         // Reload the settings (in case the main script path changed)
@@ -111,10 +114,8 @@ void loop() {
         // ==========  Attack Mode ==========  //
         else if (selector::mode() == ATTACK) {
             // Only start the attack if run-on-indicator is disabled, or indicator actually changed
-            if (!preferences::getRunOnIndicator() || hid::indicatorChanged()) {
-                attack::start();                            // Run script
-                led::setColor(preferences::getIdleColor()); // Set LED to green
-            }
+            attack::start();                            // Run script
+            led::setColor(preferences::getIdleColor()); // Set LED to green
         }
     }
 }
