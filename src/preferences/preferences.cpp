@@ -81,11 +81,11 @@ namespace preferences {
         root["default_delay"]  = default_delay;
 
         root["main_script"] = main_script;
-
+/*
         add_array(root, "attack_color", attack_color, 4);
         add_array(root, "setup_color", setup_color, 4);
         add_array(root, "idle_color", idle_color, 4);
-
+*/
         root["disable_capslock"] = disable_capslock;
         root["run_on_indicator"]  = run_on_indicator;
 
@@ -130,11 +130,11 @@ namespace preferences {
         if (!config_doc.containsKey("default_delay")) config_doc["default_delay"] = default_delay;
 
         if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
-
+/*
         if (!config_doc.containsKey("attack_color")) add_array(config_doc, "attack_color", attack_color, 4);
         if (!config_doc.containsKey("setup_color")) add_array(config_doc, "setup_color", setup_color, 4);
         if (!config_doc.containsKey("idle_color")) add_array(config_doc, "idle_color", idle_color, 4);
-
+*/
         if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
         if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
         
@@ -156,11 +156,11 @@ namespace preferences {
         default_delay  = config_doc["default_delay"].as<int>();
 
         main_script = config_doc["main_script"].as<std::string>();
-
+/*
         read_array(config_doc, "attack_color", attack_color, 4);
         read_array(config_doc, "setup_color", setup_color, 4);
         read_array(config_doc, "idle_color", idle_color, 4);
-
+*/
         // Format Flash (Drive name/Disk label max 11 characters)
         format = config_doc.containsKey("format");
         if (format) {
@@ -210,7 +210,7 @@ namespace preferences {
         default_delay = 5;
 
         main_script = "main.script";
-
+/*
         attack_color[0] = 0;
         attack_color[1] = 0;
         attack_color[2] = 0;
@@ -225,7 +225,7 @@ namespace preferences {
         idle_color[1] = 0;
         idle_color[2] = 0;
         idle_color[3] = 0;
-
+*/
         format = false;
         drive_name = "USB Nova";
 
