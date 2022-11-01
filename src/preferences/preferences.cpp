@@ -34,10 +34,10 @@ namespace preferences {
 
     std::string default_layout { "US" };
     int default_delay { 5 };
-
+/*
     std::string main_script { "main.script" };
-
-    int attack_color[4] { 0, 0, 0, 0 };
+*/
+    int attack_color[4] { 255, 0, 0, 1000 };
     int setup_color[4] { 255, 0, 0, 0 };
     int idle_color[4] { 0, 0, 0, 0 };
 
@@ -79,9 +79,9 @@ namespace preferences {
 
         root["default_layout"] = default_layout;
         root["default_delay"]  = default_delay;
-
-        root["main_script"] = main_script;
 /*
+        root["main_script"] = main_script;
+
         add_array(root, "attack_color", attack_color, 4);
         add_array(root, "setup_color", setup_color, 4);
         add_array(root, "idle_color", idle_color, 4);
@@ -128,9 +128,9 @@ namespace preferences {
 
         if (!config_doc.containsKey("default_layout")) config_doc["default_layout"] = default_layout;
         if (!config_doc.containsKey("default_delay")) config_doc["default_delay"] = default_delay;
-
-        if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
 /*
+        if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
+
         if (!config_doc.containsKey("attack_color")) add_array(config_doc, "attack_color", attack_color, 4);
         if (!config_doc.containsKey("setup_color")) add_array(config_doc, "setup_color", setup_color, 4);
         if (!config_doc.containsKey("idle_color")) add_array(config_doc, "idle_color", idle_color, 4);
@@ -154,9 +154,9 @@ namespace preferences {
 
         default_layout = config_doc["default_layout"].as<std::string>();
         default_delay  = config_doc["default_delay"].as<int>();
-
-        main_script = config_doc["main_script"].as<std::string>();
 /*
+        main_script = config_doc["main_script"].as<std::string>();
+
         read_array(config_doc, "attack_color", attack_color, 4);
         read_array(config_doc, "setup_color", setup_color, 4);
         read_array(config_doc, "idle_color", idle_color, 4);
@@ -208,9 +208,9 @@ namespace preferences {
 
         default_layout = "US";
         default_delay = 5;
-
-        main_script = "main.script";
 /*
+        main_script = "main.script";
+
         attack_color[0] = 0;
         attack_color[1] = 0;
         attack_color[2] = 0;
@@ -291,11 +291,11 @@ namespace preferences {
     int getDefaultDelay() {
         return default_delay;
     }
-
+/*
     std::string getMainScript() {
         return main_script;
     }
-
+*/
     int* getAttackColor() {
         return attack_color;
     }

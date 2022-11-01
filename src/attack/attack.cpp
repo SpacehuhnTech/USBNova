@@ -11,6 +11,7 @@
 #include "../led/led.h"
 #include "../hid/hid.h"
 #include "../hid/keyboard.h"
+#include "../selector/selector.h"
 
 namespace attack {
     // ====== PRIVATE ====== //
@@ -31,7 +32,7 @@ namespace attack {
         }
 
         // Open main BadUSB script
-        msc::open(preferences::getMainScript().c_str());
+        msc::open(path);
 
         // Read and parse file
         char buffer[READ_BUFFER];
@@ -98,6 +99,13 @@ namespace attack {
     }
 
     void start() {
-        start(preferences::getMainScript().c_str());
+        // Get switch position
+        int pos = selector::position();
+
+        // Find file that starts with that number
+        std::string path = msc::find(pos);
+
+        // If script was found, start running it
+        if(path != "") start(path.c_str());
     }
 }

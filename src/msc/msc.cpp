@@ -5,7 +5,6 @@
 #include "../../config.h"
 #include "../../debug.h"
 
-#include <string>
 #include <stack>
 
 #include <SPI.h>
@@ -90,20 +89,20 @@ namespace msc {
     
     void print() {
         Serial.println("Available files:");
+        if (file.isOpen()) file.close();
         SdFile root;
         root.open("/");
         
         while ( file.openNext(&root, O_RDONLY) ) {
-        file.printFileSize(&Serial);
-        Serial.write(' ');
-        file.printName(&Serial);
-        if ( file.isDir() )
-        {
-            // Indicate a directory.
-            Serial.write('/');
-        }
-        Serial.println();
-        file.close();
+            file.printFileSize(&Serial);
+            Serial.write(' ');
+            file.printName(&Serial);
+            if ( file.isDir() ) {
+                // Indicate a directory.
+                Serial.write('/');
+            }
+            Serial.println();
+            file.close();
         }
 
         root.close();
@@ -272,5 +271,27 @@ namespace msc {
         debugln(written);
 
         return written;
+    }
+    
+    std::string find(const int num) {
+        char buffer[64];
+        std::string file_name;
+        bool found { false };
+
+        // Go through file in root directory
+        if (file.isOpen()) file.close();
+        SdFile root;
+        root.open("/");
+        
+        while (!found && file.openNext(&root, O_RDONLY)) {
+            file.getName(buffer, 64);
+            file_name = std::string(buffer);
+            found = !file.isDir() && (buffer[0] == (num+'0'));
+            file.close();
+        }
+
+        root.close();
+
+        return file_name;
     }
 }

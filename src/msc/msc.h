@@ -4,6 +4,7 @@
 
 #include <cstdint> // uint8_t
 #include <cstddef> // size_t
+#include <string> // std::string
 
 namespace msc {
     bool init();
@@ -29,4 +30,6 @@ namespace msc {
     bool getInLine();
 
     size_t write(const char* path, const char* buffer, size_t len);
+
+    std::string find(const int num);
 }

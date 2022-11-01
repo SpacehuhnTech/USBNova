@@ -12,5 +12,7 @@ namespace selector {
     Mode mode();
     Mode read();
 
+    int position();
+
     bool changed();
 }

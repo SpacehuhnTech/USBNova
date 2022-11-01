@@ -20,7 +20,7 @@
 #define SD_READ_BUFFER 2048
 
 // ===== SELECTOR SWITCH ===== //
-#define SELECTOR A7
+#define SELECTOR_1 A7
 #define SELECTOR_2 A6
 #define SELECTOR_3 A3
 
