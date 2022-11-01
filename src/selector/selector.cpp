@@ -25,7 +25,7 @@ namespace selector {
         pinMode(SELECTOR_2, INPUT_PULLUP);
         pinMode(SELECTOR_3, INPUT_PULLUP);
     
-        attachInterrupt(digitalPinToInterrupt(SELECTOR_3), isr, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(SELECTOR_2), isr, CHANGE);
 
         initial_mode = read();
     }

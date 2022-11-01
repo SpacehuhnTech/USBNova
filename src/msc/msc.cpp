@@ -89,7 +89,11 @@ namespace msc {
     
     void print() {
         Serial.println("Available files:");
+
+        // Close file(s)
         if (file.isOpen()) file.close();
+        while (!file_stack.empty()) file_stack.pop();
+        
         SdFile root;
         root.open("/");
         
@@ -278,8 +282,11 @@ namespace msc {
         std::string file_name;
         bool found { false };
 
-        // Go through file in root directory
+        // Close current file(s)
         if (file.isOpen()) file.close();
+        while (!file_stack.empty()) file_stack.pop();
+
+        // Go through file in root directory
         SdFile root;
         root.open("/");
         
@@ -292,6 +299,6 @@ namespace msc {
 
         root.close();
 
-        return file_name;
+        return found ? file_name : "";
     }
 }
