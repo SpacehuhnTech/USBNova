@@ -25,10 +25,10 @@ void setup() {
 
     // Initialize memory and check for problems
     if (!msc::init()) {
+        debugln("Couldnt init SD");
         led::setColor(255, 0, 0, 200);
         while(true) {
-            debugln("Couldnt init SD");
-            delay(1000);
+            taks:update();
         }
         return;
     }
