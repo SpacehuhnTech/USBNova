@@ -92,14 +92,16 @@ namespace msc {
     }
     
     void print() {
-        File file;
-        FatFile rdir;
-        rdir.open("/");
+        Serial.println("Available files:");
 
-        // Open next file in root.
-        // Warning, openNext starts at the current directory position
-        // so a rewind of the directory may be required.
-        while(file.openNext(&rdir, O_RDONLY)) {
+        // Close file(s)
+        if (file.isOpen()) file.close();
+        while (!file_stack.empty()) file_stack.pop();
+        
+        SdFile root;
+        root.open("/");
+        
+        while ( file.openNext(&root, O_RDONLY) ) {
             file.printFileSize(&Serial);
             Serial.write(' ');
             file.printName(&Serial);

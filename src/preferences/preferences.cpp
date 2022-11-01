@@ -101,6 +101,7 @@ namespace preferences {
         // Open the file and read it into a buffer
         if (!msc::open(PREFERENCES_PATH), false) return;
         msc::read(buffer, JSON_SIZE);
+        msc::close();
 
         // Deserialize the JSON document
         DeserializationError error = deserializeJson(config_doc, buffer);
