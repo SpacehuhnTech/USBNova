@@ -26,24 +26,24 @@ namespace preferences {
     bool enable_hid { true };
 
     std::string hid_vid { "16D0" };
-    std::string hid_pid { "11A4" };
+    std::string hid_pid { "103F" };
     std::string hid_rev { "0100" };
 
-    std::string msc_vid { "SpHuhn" }; // max. 8 chars
-    std::string msc_pid { "USB Nova" }; // max. 16 chars
+    std::string msc_vid { "Maltrncs" }; // max. 8 chars
+    std::string msc_pid { "MalDuino" }; // max. 16 chars
     std::string msc_rev { "1.0" }; // max. 4 chars
 
     std::string default_layout { "US" };
     int default_delay { 5 };
-/*
-    std::string main_script { "main.script" };
-*/
+
+    // std::string main_script { "main.script" };
+
     int attack_color[4] { 255, 0, 0, 1000 };
     int setup_color[4] { 255, 0, 0, 0 };
     int idle_color[4] { 0, 0, 0, 0 };
 
     bool format { false };
-    std::string drive_name { "USB Nova" };
+    std::string drive_name { "MalDuino" };
 
     bool disable_capslock { true };
     bool run_on_indicator { false };
@@ -209,11 +209,11 @@ namespace preferences {
         enable_hid = true;
 
         hid_vid = "16D0";
-        hid_pid = "11A4";
+        hid_pid = "103F";
         hid_rev = "0100";
 
-        msc_vid = "SpHuhn";
-        msc_pid = "USB Nova";
+        msc_vid = "Maltrncs";
+        msc_pid = "MalDuino";
         msc_rev = "1.0";
 
         default_layout = "US";
@@ -237,7 +237,7 @@ namespace preferences {
         idle_color[3] = 0;
 
         format = false;
-        drive_name = "USB Nova";
+        drive_name = "MalDuino";
 */
         disable_capslock = true;
         run_on_indicator = false;
