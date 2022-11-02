@@ -81,7 +81,7 @@ void setup() {
     selector::changed();
 
     // Start attack
-    if (selector::mode() == ATTACK && !preferences::getRunOnIndicator()) {
+    if (selector::mode() == ATTACK && !preferences::getRunOnIndicator() && !preferences::getRunOnMSC()) {
         delay(preferences::getInitialDelay()); // Wait to give computer time to init keyboard
         attack::start(); // Start keystroke injection attack
         led::setColor(preferences::getIdleColor()); // Set LED to green
@@ -94,15 +94,20 @@ void setup() {
 }
 
 void loop() {
-    taks:update();
+    tasks::update();
     cli::update();
 
     if(selector::read() != ATTACK) return;
 
     // Only start the attack if run-on-indicator is disabled, or indicator actually changed
-    if(preferences::getRunOnIndicator() && hid::indicatorChanged()) {
+    if((preferences::getRunOnIndicator() && hid::indicatorChanged()) || (preferences::getRunOnMSC() && msc::changed())) {
         attack::start();                            // Run script
         led::setColor(preferences::getIdleColor()); // Set LED to green
+        // Don't run again
+        while(true) {
+            tasks::update();
+            cli::update();
+        }
     } else if (selector::changed()) {
         // ==========  Setup Mode ==========  //
         if (selector::mode() == SETUP) {
