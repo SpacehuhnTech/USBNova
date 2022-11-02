@@ -25,8 +25,10 @@ namespace preferences {
     bool enable_led { true };
     bool enable_hid { true };
 
-    std::string hid_vid { "16D0" };
-    std::string hid_pid { "103F" };
+    std::string hid1_vid { "16D0" };
+    std::string hid1_pid { "103F" };
+    std::string hid2_vid { "16D0" };
+    std::string hid2_pid { "103F" };
     std::string hid_rev { "0100" };
 
     std::string msc_vid { "Maltrncs" }; // max. 8 chars
@@ -72,8 +74,10 @@ namespace preferences {
         //root["enable_led"] = enable_led;
         root["enable_hid"] = enable_hid;
 
-        root["hid_vid"] = hid_vid;
-        root["hid_pid"] = hid_pid;
+        root["hid1_vid"] = hid1_vid;
+        root["hid1_pid"] = hid1_pid;
+        root["hid2_vid"] = hid2_vid;
+        root["hid2_pid"] = hid2_pid;
         root["hid_rev"] = hid_rev;
 
         root["msc_vid"] = msc_vid;
@@ -124,8 +128,10 @@ namespace preferences {
         //if (!config_doc.containsKey("enable_led")) config_doc["enable_led"] = enable_led;
         if (!config_doc.containsKey("enable_hid")) config_doc["enable_hid"] = enable_hid;
 
-        if (!config_doc.containsKey("hid_vid")) config_doc["hid_vid"] = hid_vid;
-        if (!config_doc.containsKey("hid_pid")) config_doc["hid_pid"] = hid_pid;
+        if (!config_doc.containsKey("hid1_vid")) config_doc["hid1_vid"] = hid1_vid;
+        if (!config_doc.containsKey("hid1_pid")) config_doc["hid1_pid"] = hid1_pid;
+        if (!config_doc.containsKey("hid2_vid")) config_doc["hid2_vid"] = hid2_vid;
+        if (!config_doc.containsKey("hid2_pid")) config_doc["hid2_pid"] = hid2_pid;
         if (!config_doc.containsKey("hid_rev")) config_doc["hid_rev"] = hid_rev;
 
         if (!config_doc.containsKey("msc_vid")) config_doc["msc_vid"] = msc_vid;
@@ -152,8 +158,10 @@ namespace preferences {
         //enable_led = config_doc["enable_led"].as<bool>();
         enable_hid = config_doc["enable_hid"].as<bool>();
 
-        hid_vid = config_doc["hid_vid"].as<std::string>();
-        hid_pid = config_doc["hid_pid"].as<std::string>();
+        hid1_vid = config_doc["hid1_vid"].as<std::string>();
+        hid1_pid = config_doc["hid1_pid"].as<std::string>();
+        hid2_vid = config_doc["hid2_vid"].as<std::string>();
+        hid2_pid = config_doc["hid2_pid"].as<std::string>();
         hid_rev = config_doc["hid_rev"].as<std::string>();
 
         msc_vid = config_doc["msc_vid"].as<std::string>();
@@ -208,8 +216,10 @@ namespace preferences {
         //enable_led = true;
         enable_hid = true;
 
-        hid_vid = "16D0";
-        hid_pid = "103F";
+        hid1_vid = "16D0";
+        hid1_pid = "103F";
+        hid2_vid = "16D0";
+        hid2_pid = "103F";
         hid_rev = "0100";
 
         msc_vid = "Maltrncs";
@@ -275,12 +285,20 @@ namespace preferences {
         return enable_hid;
     }
 
-    uint16_t getHidVid() {
-        return std::stoi(hid_vid, nullptr, 16);
+    uint16_t getHid1Vid() {
+        return std::stoi(hid1_vid, nullptr, 16);
     }
 
-    uint16_t getHidPid() {
-        return std::stoi(hid_pid, nullptr, 16);
+    uint16_t getHid1Pid() {
+        return std::stoi(hid1_pid, nullptr, 16);
+    }
+    
+    uint16_t getHid2Vid() {
+        return std::stoi(hid2_vid, nullptr, 16);
+    }
+
+    uint16_t getHid2Pid() {
+        return std::stoi(hid2_pid, nullptr, 16);
     }
 
     uint16_t getHidRev() {

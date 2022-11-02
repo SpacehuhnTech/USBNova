@@ -14,8 +14,10 @@ namespace preferences {
     bool ledEnabled();
     bool hidEnabled();
 
-    uint16_t getHidVid();
-    uint16_t getHidPid();
+    uint16_t getHid1Vid();
+    uint16_t getHid1Pid();
+    uint16_t getHid2Vid();
+    uint16_t getHid2Pid();
     uint16_t getHidRev();
 
     std::string getMscVid();

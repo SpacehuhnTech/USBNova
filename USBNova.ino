@@ -33,14 +33,20 @@ void setup() {
         }
         return;
     }
+    
+    // Read mode from selector switch
+    selector::init();
 
     // Load setting and set USB Device IDs
     preferences::load();
-    hid::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
-    msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
 
-    // Read mode from selector switch
-    selector::init();
+    if(selector::position() == 2) {
+        hid::setID(preferences::getHid2Vid(), preferences::getHid2Pid(), preferences::getHidRev());
+    } else {
+        hid::setID(preferences::getHid1Vid(), preferences::getHid1Pid(), preferences::getHidRev());
+    }
+    
+    msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());
     
     // Start Keyboard
     if (selector::mode() == ATTACK || preferences::hidEnabled()) {
