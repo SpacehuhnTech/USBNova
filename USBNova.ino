@@ -76,6 +76,16 @@ void setup() {
     if (!msc::exists(PREFERENCES_PATH)) {
         preferences::save();
     }
+    
+    // Create 1.txt file if it doesn't exist yet
+    if (msc::find(1) == "") {
+        msc::write("1.txt", "# Hello World\n", 14);
+    }
+    
+    // Create 2.txt file if it doesn't exist yet
+    if (msc::find(2) == "") {
+        msc::write("2.txt", "# Hello World\n", 14);
+    }
 
     // Setup background tasks
     tasks::setCallback(update);
