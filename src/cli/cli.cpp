@@ -92,7 +92,7 @@ namespace cli {
             Serial.println("Made with <3 by Spacehuhn (spacehuhn.com)");
             Serial.println();
         }).setDescription(" Print the firmware version.");
-
+        /*
         // format
         cli.addCmd("format", [](cmd* c) {
             led::setColor(255, 255, 255);
@@ -107,7 +107,7 @@ namespace cli {
             Serial.println("Done formatting!");
             Serial.println();
         }).setDescription(" Fromat the internal memory.");
-
+        */
         // reset
         cli.addCmd("reset", [](cmd* c) {
             preferences::reset();
