@@ -12,6 +12,7 @@ namespace preferences {
 
     bool mscEnabled();
     bool ledEnabled();
+    bool hidEnabled();
 
     uint16_t getHidVid();
     uint16_t getHidPid();
