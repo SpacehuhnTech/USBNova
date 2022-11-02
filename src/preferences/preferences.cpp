@@ -168,13 +168,13 @@ namespace preferences {
         read_array(config_doc, "attack_color", attack_color, 4);
         read_array(config_doc, "setup_color", setup_color, 4);
         read_array(config_doc, "idle_color", idle_color, 4);
-
+*/
         // Format Flash (Drive name/Disk label max 11 characters)
         format = config_doc.containsKey("format");
         if (format) {
             drive_name = config_doc["format"].as<std::string>().substr(0, 11);
         }
-*/
+
         disable_capslock = config_doc["disable_capslock"].as<bool>();
         run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
         run_on_msc = config_doc["run_on_msc"].as<bool>();
@@ -235,10 +235,10 @@ namespace preferences {
         idle_color[1] = 0;
         idle_color[2] = 0;
         idle_color[3] = 0;
-
+*/
         format = false;
         drive_name = "MalDuino";
-*/
+
         disable_capslock = true;
         run_on_indicator = false;
         run_on_msc = false;

@@ -11,6 +11,7 @@
 #include "src/duckparser/duckparser.h"
 #include "src/tasks/tasks.h"
 #include "src/cli/cli.h"
+#include "src/msc/format.h"
 
 void update() {
     led::update();
@@ -64,12 +65,12 @@ void setup() {
     // Attack settings
     keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
     duckparser::setDefaultDelay(preferences::getDefaultDelay());
-    /*
+    
     // Format Flash (if specified in preferences.json)
     if ((selector::mode() == SETUP) && preferences::getFormat()) {
         led::setColor(255, 255, 255);
         msc::format(preferences::getDriveName().c_str());
-    }*/
+    }
 
     // Create preferences file if it doesn't exist yet
     if (!msc::exists(PREFERENCES_PATH)) {

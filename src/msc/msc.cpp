@@ -4,6 +4,7 @@
 
 #include "../../config.h"
 #include "../../debug.h"
+#include "format.h"
 
 #include <stack>
 
@@ -84,7 +85,7 @@ namespace msc {
     }
     
     bool format(const char* drive_name) {
-        return false;//format::start(drive_name);
+        return format::start(drive_name);
     }
     
     void print() {
