@@ -290,6 +290,7 @@ namespace duckparser {
 
                 ignore_delay = true;
             }
+            /*
             // LED
             else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
                 // i.e. LED R SOLID
@@ -302,7 +303,7 @@ namespace duckparser {
                         color = led::Color::RED;
                     } else if (compare(w->str, w->len, "G", CASE_SENSETIVE)) {
                         color = led::Color::GREEN;
-                    } else { /* if (compare(w->str, w->len, "B", CASE_SENSETIVE)) */
+                    } else { // if (compare(w->str, w->len, "B", CASE_SENSETIVE))
                         color = led::Color::BLUE;
                     }
 
@@ -314,7 +315,7 @@ namespace duckparser {
                         mode = led::Mode::SLOW;
                     } else if (compare(w->str, w->len, "FAST", CASE_SENSETIVE)) {
                         mode = led::Mode::FAST;
-                    } else { /* if (compare(w->str, w->len, "OFF", CASE_SENSETIVE)) */
+                    } else { // if (compare(w->str, w->len, "OFF", CASE_SENSETIVE))
                         mode = led::Mode::OFF;
                     }
 
@@ -340,6 +341,7 @@ namespace duckparser {
 
                 ignore_delay = true;
             }
+            */
             // KEYCODE
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;
