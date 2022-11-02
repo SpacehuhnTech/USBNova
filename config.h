@@ -5,7 +5,7 @@
 #define VERSION "0.0.1"
 
 // ===== DEBUG Settings ===== //
-#define ENABLE_DEBUG
+//#define ENABLE_DEBUG
 #define DEBUG_PORT Serial
 #define DEBUG_BAUD 115200
 
