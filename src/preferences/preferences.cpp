@@ -49,7 +49,6 @@ namespace preferences {
 
     bool disable_capslock { true };
     bool run_on_indicator { false };
-    bool run_on_msc { false };
 
     int initial_delay { 1000 };
 
@@ -94,8 +93,7 @@ namespace preferences {
         add_array(root, "idle_color", idle_color, 4);
 */
         root["disable_capslock"] = disable_capslock;
-        root["run_on_indicator"] = run_on_indicator;
-        root["run_on_msc"] = run_on_msc;
+        root["run_on_indicator"]  = run_on_indicator;
 
         root["initial_delay"] = initial_delay;
     }
@@ -149,7 +147,6 @@ namespace preferences {
 */
         if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
         if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
-        if (!config_doc.containsKey("run_on_msc")) config_doc["run_on_msc"] = run_on_msc;
         
         if (!config_doc.containsKey("initial_delay")) config_doc["initial_delay"] = initial_delay;
 
@@ -185,7 +182,6 @@ namespace preferences {
 
         disable_capslock = config_doc["disable_capslock"].as<bool>();
         run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
-        run_on_msc = config_doc["run_on_msc"].as<bool>();
         
         initial_delay  = config_doc["initial_delay"].as<int>();
     }
@@ -251,7 +247,6 @@ namespace preferences {
 
         disable_capslock = true;
         run_on_indicator = false;
-        run_on_msc = false;
 
         initial_delay = 1000;
     }
@@ -355,10 +350,6 @@ namespace preferences {
 
     bool getRunOnIndicator() {
         return run_on_indicator;
-    }
-
-    bool getRunOnMSC() {
-        return run_on_msc;
     }
     
     int getInitialDelay() {
