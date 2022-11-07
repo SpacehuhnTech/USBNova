@@ -108,6 +108,11 @@ void loop() {
         // ==========  Setup Mode ==========  //
         if (selector::mode() == SETUP && preferences::hidEnabled()) {
             preferences::load();                         // Reload the settings (in case the main script path changed)
+            
+            // Attack settings
+            keyboard::setLocale(locale::get(preferences::getDefaultLayout().c_str()));
+            duckparser::setDefaultDelay(preferences::getDefaultDelay());
+            
             attack::start();                             // Start keystroke injection attack
             led::setColor(preferences::getSetupColor()); // Set LED to blue
         }
