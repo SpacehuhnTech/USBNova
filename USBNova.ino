@@ -120,6 +120,7 @@ void loop() {
 
     // Only start the attack if run-on-indicator is disabled, or indicator actually changed
     if(preferences::getRunOnIndicator() && hid::indicatorChanged()) {
+        delay(100);
         attack::start();                            // Run script
         led::setColor(preferences::getIdleColor()); // Set LED to green
         // Don't run again
