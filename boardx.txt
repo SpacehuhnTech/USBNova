@@ -1,0 +1,70 @@
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+# -----------------------------------
+# MalDuino
+# -----------------------------------
+adafruit_qtpy_m0_malduino.name=MalDuino
+
+# VID/PID for Bootloader, Arduino & CircuitPython
+adafruit_qtpy_m0_malduino.vid.0=0x16D0
+adafruit_qtpy_m0_malduino.pid.0=0x103F
+adafruit_qtpy_m0_malduino.vid.1=0x16D0
+adafruit_qtpy_m0_malduino.pid.1=0x103F
+adafruit_qtpy_m0_malduino.vid.2=0x16D0
+adafruit_qtpy_m0_malduino.pid.2=0x103F
+
+# Upload
+adafruit_qtpy_m0_malduino.upload.tool=bossac18
+adafruit_qtpy_m0_malduino.upload.protocol=sam-ba
+adafruit_qtpy_m0_malduino.upload.maximum_size=262144
+adafruit_qtpy_m0_malduino.upload.offset=0x2000
+adafruit_qtpy_m0_malduino.upload.use_1200bps_touch=true
+adafruit_qtpy_m0_malduino.upload.wait_for_upload_port=true
+adafruit_qtpy_m0_malduino.upload.native_usb=true
+
+# Build
+adafruit_qtpy_m0_malduino.build.mcu=cortex-m0plus
+adafruit_qtpy_m0_malduino.build.f_cpu=48000000L
+adafruit_qtpy_m0_malduino.build.usb_product="MalDuino"
+adafruit_qtpy_m0_malduino.build.usb_manufacturer="Maltronics"
+adafruit_qtpy_m0_malduino.build.board=QTPY_M0
+adafruit_qtpy_m0_malduino.build.core=arduino
+adafruit_qtpy_m0_malduino.build.extra_flags=-D__SAMD21E18A__ -DCRYSTALLESS -DADAFRUIT_QTPY_M0 -DARDUINO_SAMD_ZERO -DARM_MATH_CM0PLUS {build.usb_flags}
+adafruit_qtpy_m0_malduino.build.ldscript=linker_scripts/gcc/flash_with_bootloader.ld
+adafruit_qtpy_m0_malduino.build.openocdscript=openocd_scripts/qtpy_m0.cfg
+adafruit_qtpy_m0_malduino.build.variant=qtpy_m0
+adafruit_qtpy_m0_malduino.build.variant_system_lib=
+adafruit_qtpy_m0_malduino.build.vid=0x16D0
+adafruit_qtpy_m0_malduino.build.pid=0x103F
+adafruit_qtpy_m0_malduino.bootloader.tool=openocd
+adafruit_qtpy_m0_malduino.bootloader.file=qtpyM0/bootloader-qtpy_m0.bin
+
+# Menu
+adafruit_qtpy_m0_malduino.menu.opt.small=Small (-Os) (standard)
+adafruit_qtpy_m0_malduino.menu.opt.small.build.flags.optimize=-Os
+adafruit_qtpy_m0_malduino.menu.opt.fast=Fast (-O2)
+adafruit_qtpy_m0_malduino.menu.opt.fast.build.flags.optimize=-O2
+adafruit_qtpy_m0_malduino.menu.opt.faster=Faster (-O3)
+adafruit_qtpy_m0_malduino.menu.opt.faster.build.flags.optimize=-O3
+adafruit_qtpy_m0_malduino.menu.opt.fastest=Fastest (-Ofast)
+adafruit_qtpy_m0_malduino.menu.opt.fastest.build.flags.optimize=-Ofast
+adafruit_qtpy_m0_malduino.menu.opt.dragons=Here be dragons (-Ofast -funroll-loops)
+adafruit_qtpy_m0_malduino.menu.opt.dragons.build.flags.optimize=-Ofast -funroll-loops
+adafruit_qtpy_m0_malduino.menu.usbstack.arduino=Arduino
+adafruit_qtpy_m0_malduino.menu.usbstack.tinyusb=TinyUSB
+adafruit_qtpy_m0_malduino.menu.usbstack.tinyusb.build.flags.usbstack=-DUSE_TINYUSB
+adafruit_qtpy_m0_malduino.menu.debug.off=Off
+adafruit_qtpy_m0_malduino.menu.debug.on=On
+adafruit_qtpy_m0_malduino.menu.debug.on.build.flags.debug=-g
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
