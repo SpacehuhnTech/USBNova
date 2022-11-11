@@ -23,6 +23,7 @@ namespace preferences {
     // ========== PRIVATE ========= //
     bool enable_msc { false };
     bool enable_led { true };
+    bool enable_hid { true };
 
     std::string hid_vid { "16D0" };
     std::string hid_pid { "11A4" };
@@ -68,6 +69,7 @@ namespace preferences {
     void toJson(JsonDocument& root) {
         root["enable_msc"] = enable_msc;
         root["enable_led"] = enable_led;
+        root["enable_hid"] = enable_hid;
 
         root["hid_vid"] = hid_vid;
         root["hid_pid"] = hid_pid;
@@ -118,6 +120,7 @@ namespace preferences {
         // === Add missing values === //
         if (!config_doc.containsKey("enable_msc")) config_doc["enable_msc"] = enable_msc;
         if (!config_doc.containsKey("enable_led")) config_doc["enable_led"] = enable_led;
+        if (!config_doc.containsKey("enable_hid")) config_doc["enable_hid"] = enable_hid;
 
         if (!config_doc.containsKey("hid_vid")) config_doc["hid_vid"] = hid_vid;
         if (!config_doc.containsKey("hid_pid")) config_doc["hid_pid"] = hid_pid;
@@ -144,6 +147,7 @@ namespace preferences {
         // === Fetch values === //
         enable_msc = config_doc["enable_msc"].as<bool>();
         enable_led = config_doc["enable_led"].as<bool>();
+        enable_hid = config_doc["enable_hid"].as<bool>();
 
         hid_vid = config_doc["hid_vid"].as<std::string>();
         hid_pid = config_doc["hid_pid"].as<std::string>();
@@ -198,6 +202,7 @@ namespace preferences {
     void reset() {
         enable_msc = false;
         enable_led = true;
+        enable_hid = true;
 
         hid_vid = "16D0";
         hid_pid = "11A4";
@@ -259,6 +264,10 @@ namespace preferences {
 
     bool ledEnabled() {
         return enable_led;
+    }
+
+    bool hidEnabled() {
+        return enable_hid;
     }
 
     uint16_t getHidVid() {

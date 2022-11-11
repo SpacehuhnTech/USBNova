@@ -36,7 +36,9 @@ void setup() {
     selector::init();
     
     // Start Keyboard
-    hid::init();
+    if (selector::mode() == ATTACK || preferences::hidEnabled()) {
+        hid::init();
+    } 
 
     // Start USB Drive
     if (preferences::mscEnabled() || (selector::mode() == SETUP)){
@@ -99,7 +101,7 @@ void loop() {
         led::setColor(preferences::getIdleColor()); // Set LED to green
     } else if (selector::changed()) {
         // ==========  Setup Mode ==========  //
-        if (selector::mode() == SETUP) {
+        if (selector::mode() == SETUP && preferences::hidEnabled()) {
             preferences::load();                         // Reload the settings (in case the main script path changed)
             attack::start();                             // Start keystroke injection attack
             led::setColor(preferences::getSetupColor()); // Set LED to blue
