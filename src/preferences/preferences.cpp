@@ -36,7 +36,7 @@ namespace preferences {
     std::string default_layout { "US" };
     int default_delay { 5 };
 
-    std::string main_script { "main.script" };
+    std::string main_script { "main_script.txt" };
 
     int attack_color[4] { 128, 0, 0, 0 };
     int setup_color[4] { 0, 0, 20, 0 };
@@ -215,7 +215,7 @@ namespace preferences {
         default_layout = "US";
         default_delay = 5;
 
-        main_script = "main.script";
+        main_script = "main_script.txt";
 
         attack_color[0] = 128;
         attack_color[1] = 0;

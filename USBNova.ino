@@ -69,6 +69,11 @@ void setup() {
     if (!msc::exists(PREFERENCES_PATH)) {
         preferences::save();
     }
+    
+    // Create main_script.txt if it doesn't exist yet
+    if (!msc::exists(preferences::getMainScript().c_str())) {
+        msc::write(preferences::getMainScript().c_str(), "# Hello World\n", 14);
+    }
 
     // Setup background tasks
     tasks::setCallback(update);
