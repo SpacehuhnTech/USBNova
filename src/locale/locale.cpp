@@ -85,15 +85,15 @@ namespace locale {
     hid_locale_t *get(const char *name) {
         if (strncmp(name, "BE_MAC", 6) == 0) return &locale_be_mac;
         else if (strncmp(name, "BG_MAC", 6) == 0) return &locale_bg_mac;
-        else if (strncmp(name, "CA_FR_MAC", 9) == 0) return &locale_ca_fr_mac;
-        else if (strncmp(name, "CH_DE_MAC", 9) == 0) return &locale_ch_de_mac;
-        else if (strncmp(name, "CH_FR_MAC", 9) == 0) return &locale_ch_fr_mac;
+        else if (strncmp(name, "CA-FR_MAC", 9) == 0) return &locale_ca_fr_mac;
+        else if (strncmp(name, "CH-DE_MAC", 9) == 0) return &locale_ch_de_mac;
+        else if (strncmp(name, "CH-FR_MAC", 9) == 0) return &locale_ch_fr_mac;
         else if (strncmp(name, "CZ_MAC", 6) == 0) return &locale_cz_mac;
         else if (strncmp(name, "DE_MAC", 6) == 0) return &locale_de_mac;
         else if (strncmp(name, "DK_MAC", 6) == 0) return &locale_dk_mac;
         else if (strncmp(name, "EE_MAC", 6) == 0) return &locale_ee_mac;
         else if (strncmp(name, "ES_MAC", 6) == 0) return &locale_es_mac;
-        else if (strncmp(name, "ES_LA_MAC", 9) == 0) return &locale_es_la_mac;
+        else if (strncmp(name, "ES-LA_MAC", 9) == 0) return &locale_es_la_mac;
         else if (strncmp(name, "FI_MAC", 6) == 0) return &locale_fi_mac;
         else if (strncmp(name, "FR_MAC", 6) == 0) return &locale_fr_mac;
         else if (strncmp(name, "GB_MAC", 6) == 0) return &locale_gb_mac;
@@ -108,7 +108,7 @@ namespace locale {
         else if (strncmp(name, "NO_MAC", 6) == 0) return &locale_no_mac;
         else if (strncmp(name, "PL_MAC", 6) == 0) return &locale_pl_mac;
         else if (strncmp(name, "PT_MAC", 6) == 0) return &locale_pt_mac;
-        else if (strncmp(name, "PT_BR_MAC", 9) == 0) return &locale_pt_br_mac;
+        else if (strncmp(name, "PT-BR_MAC", 9) == 0) return &locale_pt_br_mac;
         else if (strncmp(name, "RO_MAC", 6) == 0) return &locale_ro_mac;
         else if (strncmp(name, "RU_MAC", 6) == 0) return &locale_ru_mac;
         else if (strncmp(name, "SE_MAC", 6) == 0) return &locale_se_mac;
