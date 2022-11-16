@@ -72,7 +72,9 @@ void setup() {
     
     // Create main_script.txt if it doesn't exist yet
     if (!msc::exists(preferences::getMainScript().c_str())) {
-        msc::write(preferences::getMainScript().c_str(), "# Hello World\n", 14);
+        char message[21];
+        sprintf(message, "# USB Nova (v%s)\n", VERSION);
+        msc::write(preferences::getMainScript().c_str(), message, 20);
     }
 
     // Setup background tasks
