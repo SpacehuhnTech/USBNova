@@ -104,7 +104,7 @@ namespace duckparser {
         else if (compare(str, len, "SHIFT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LSHIFT);
         else if (compare(str, len, "ALT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LALT);
         else if (compare(str, len, "ALTGR", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_RALT);
-        else if (compare(str, len, "WINDOWS", CASE_SENSETIVE) || compare(str, len, "GUI", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LMETA);
+        else if (compare(str, len, "WINDOWS", CASE_SENSETIVE) || compare(str, len, "GUI", CASE_SENSETIVE) || compare(str, len, "COMMAND", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LMETA);
 
         // Numpad Keys
 
