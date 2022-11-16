@@ -1,8 +1,17 @@
-# USBNova
+![USB Nova Logo](https://usbnova.com/img/about/nova_yellow.png)
+![USB Nova Photo](https://usbnova.com/img/home/nova2-small.png)
 
-Source code of the USB Nova firmware.
+Get firmware updates on the [release page](https://github.com/SpacehuhnTech/USBNova/releases)
 
 For documentation, please visit: [usbnova.com](https://usbnova.com/)
+
+<a href='https://spacehuhn.store/products/usb-nova' target='_blank'>
+  <img height='36' style={{border:0,height:'36px'}} src='https://usbnova.com/img/about/buy.png' border='0' alt='Buy Now' />
+</a>
+&nbsp;
+<a href='https://ko-fi.com/G2G75FA4V' target='_blank'>
+  <img height='36' style={{border:0,height:'36px'}} src='https://usbnova.com/img/about/kofi_button.png' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+</a>
 
 ## Compile using Arduino-CLI
 Install [Arduino-CLI](https://arduino.github.io/arduino-cli/0.28/installation/).  
