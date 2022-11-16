@@ -1,13 +1,19 @@
 # USBNova
 
-## Arduino-CLI
-* Install it (Download it and add it to PATH)
-* Initiate it `arduino-cli config init` (it is saved at `C:\Users\username\AppData\Local\Arduino15\arduino-cli.yaml`)
-* Update cores `arduino-cli core update-index`
-* Install core `arduino-cli core install adafruit:samd`
-* Check your boards `arduino-cli board list`
-* Compile `arduino-cli compile --profile adafruit_qtpy_m0`
-* Upload `arduino-cli upload -p COM3`
-* Compile and upload `arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0:opt=small,usbstack=tinyusb,debug=off -u -p COM3`
-* Compile export `arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0:opt=small,usbstack=tinyusb,debug=off --output-dir build/`
-* Convert to uf2 `uf2conv build/USBNova.ino.bin -o build/USBNova.ino.uf2`
+Source code of the USB Nova firmware.
+
+For documentation, please visit: [usbnova.com](https://usbnova.com/)
+
+## Compile using Arduino-CLI
+Install [Arduino-CLI](https://arduino.github.io/arduino-cli/0.28/installation/).  
+Add `https://adafruit.github.io/arduino-board-index/package_adafruit_index.json` to the additional board manager URLs.  
+Edit boards.txt in `/packages/adafruit/hardware/samd/<version>/` and add [boards.txt](boards.txt).  
+
+Compile and upload:  
+`arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0_nova:usbstack=tinyusb,debug=off -u -p <PORT>`
+
+Compile and export:  
+`arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0_nova:usbstack=tinyusb,debug=off --output-dir build/`
+
+Convert to uf2:  
+`uf2conv build/USBNova.ino.bin -o build/USBNova.ino.uf2`
