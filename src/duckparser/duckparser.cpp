@@ -266,6 +266,24 @@ namespace duckparser {
 
                 in_string = !line_end;
             }
+            // STRING (-> type each character & press enter)
+            else if (in_string || compare(cmd->str, cmd->len, "STRINGLN", CASE_SENSETIVE)) {
+                // Type the entire line
+                if (in_string) {
+                    type(n->str, n->len);
+                }
+                // Type the everything after "STRINGLN "
+                else {
+                    type(line_str, line_str_len);
+                }
+
+                if(line_end) {
+                    keyboard::pressKey(KEY_ENTER);
+                    release();
+                }
+
+                in_string = !line_end;
+            }
             // REPEAT (-> repeat last command n times)
             else if (compare(cmd->str, cmd->len, "REPEAT", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "REPLAY", CASE_SENSETIVE)) {
                 repeat_num   = to_uint(line_str, line_str_len) + 1;
