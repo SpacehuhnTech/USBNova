@@ -67,6 +67,8 @@ namespace preferences {
     }
 
     void toJson(JsonDocument& root) {
+        root["$schema"] = "https://raw.githubusercontent.com/SpacehuhnTech/USBNova/main/schema.json";
+
         root["enable_msc"] = enable_msc;
         root["enable_led"] = enable_led;
         root["enable_hid"] = enable_hid;
