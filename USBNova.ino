@@ -28,6 +28,7 @@ void setup() {
     }
 
     // Load setting and set USB Device IDs
+    preferences::reset();
     preferences::load();
     hid::setID(preferences::getHidVid(), preferences::getHidPid(), preferences::getHidRev());
     msc::setID(preferences::getMscVid().c_str(), preferences::getMscPid().c_str(), preferences::getMscRev().c_str());

@@ -21,48 +21,40 @@
 
 namespace preferences {
     // ========== PRIVATE ========= //
-    bool enable_msc { false };
-    bool enable_led { true };
-    bool enable_hid { true };
+    bool enable_msc;
+    bool enable_led;
+    bool enable_hid;
 
-    std::string hid_vid { "16D0" };
-    std::string hid_pid { "11A4" };
-    std::string hid_rev { "0100" };
+    std::string hid_vid;
+    std::string hid_pid;
+    std::string hid_rev;
 
-    std::string msc_vid { "SpHuhn" }; // max. 8 chars
-    std::string msc_pid { "USB Nova" }; // max. 16 chars
-    std::string msc_rev { "1.0" }; // max. 4 chars
+    std::string msc_vid; // max. 8 chars
+    std::string msc_pid; // max. 16 chars
+    std::string msc_rev; // max. 4 chars
 
-    std::string default_layout { "US" };
-    int default_delay { 5 };
+    std::string default_layout;
+    int default_delay;
 
-    std::string main_script { "main_script.txt" };
+    std::string main_script;
 
-    int attack_color[4] { 128, 0, 0, 0 };
-    int setup_color[4] { 0, 0, 20, 0 };
-    int idle_color[4] { 0, 30, 0, 0 };
+    int attack_color[4];
+    int setup_color[4];
+    int idle_color[4];
 
-    bool format { false };
-    std::string drive_name { "USB Nova" };
+    bool format;
+    std::string drive_name; 
 
-    bool disable_capslock { true };
-    bool run_on_indicator { false };
+    bool disable_capslock;
+    bool run_on_indicator;
 
-    int initial_delay { 1000 };
+    int initial_delay;
 
     // Array help functions
     void add_array(JsonDocument& doc, const char* name, int* array, int size) {
         JsonArray jarr = doc.createNestedArray(name);
         for(size_t i = 0; i < size; ++i) {
             jarr.add(array[i]);
-        }
-    }
-
-    void read_array(JsonDocument& doc, const char* name, int* array, int size) {
-        JsonArray jarr = doc[name].as<JsonArray>();
-
-        for (size_t i = 0; i<jarr.size() && i<size; ++i) {
-            array[i] = jarr[i].as<int>();
         }
     }
 
@@ -96,18 +88,34 @@ namespace preferences {
         root["initial_delay"] = initial_delay;
     }
 
+    void read_array(JsonDocument& doc, const char* name, int* array, int size) {
+        JsonVariant val = doc[name];
+        if(val.isNull()) return;
+
+        JsonArray jarr = val.as<JsonArray>();
+
+        for (size_t i = 0; i<jarr.size() && i<size; ++i) {
+            array[i] = jarr[i].as<int>();
+        }
+    }
+
+    template <typename T>
+    void read_item(JsonDocument& doc, const char* name, T& val) {
+        JsonVariant new_val = doc[name];
+        if(new_val.isNull()) return;
+        val = new_val.as<T>();
+    }
+
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
-        char* buffer = (char*)malloc(JSON_SIZE);
+        char* buffer = (char*)calloc(JSON_SIZE, sizeof(char));
         DynamicJsonDocument config_doc(JSON_SIZE);
 
         // Open the file and read it into a buffer
         if (!msc::open(PREFERENCES_PATH), false) return;
         size_t read = msc::read(buffer, JSON_SIZE);
         msc::close();
-        
-        buffer[read] = '\0';
 
         // Deserialize the JSON document
         DeserializationError error = deserializeJson(config_doc, buffer);
@@ -121,50 +129,23 @@ namespace preferences {
             return;
         }
 
-        // === Add missing values === //
-        if (!config_doc.containsKey("enable_msc")) config_doc["enable_msc"] = enable_msc;
-        if (!config_doc.containsKey("enable_led")) config_doc["enable_led"] = enable_led;
-        if (!config_doc.containsKey("enable_hid")) config_doc["enable_hid"] = enable_hid;
-
-        if (!config_doc.containsKey("hid_vid")) config_doc["hid_vid"] = hid_vid;
-        if (!config_doc.containsKey("hid_pid")) config_doc["hid_pid"] = hid_pid;
-        if (!config_doc.containsKey("hid_rev")) config_doc["hid_rev"] = hid_rev;
-
-        if (!config_doc.containsKey("msc_vid")) config_doc["msc_vid"] = msc_vid;
-        if (!config_doc.containsKey("msc_pid")) config_doc["msc_pid"] = msc_pid;
-        if (!config_doc.containsKey("msc_rev")) config_doc["msc_rev"] = msc_rev;
-
-        if (!config_doc.containsKey("default_layout")) config_doc["default_layout"] = default_layout;
-        if (!config_doc.containsKey("default_delay")) config_doc["default_delay"] = default_delay;
-
-        if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
-
-        if (!config_doc.containsKey("attack_color")) add_array(config_doc, "attack_color", attack_color, 4);
-        if (!config_doc.containsKey("setup_color")) add_array(config_doc, "setup_color", setup_color, 4);
-        if (!config_doc.containsKey("idle_color")) add_array(config_doc, "idle_color", idle_color, 4);
-
-        if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
-        if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
-        
-        if (!config_doc.containsKey("initial_delay")) config_doc["initial_delay"] = initial_delay;
-
         // === Fetch values === //
-        enable_msc = config_doc["enable_msc"].as<bool>();
-        enable_led = config_doc["enable_led"].as<bool>();
-        enable_hid = config_doc["enable_hid"].as<bool>();
+        read_item<bool>(config_doc, "enable_msc", enable_msc);
+        read_item<bool>(config_doc, "enable_led", enable_led);
+        read_item<bool>(config_doc, "enable_hid", enable_hid);
 
-        hid_vid = config_doc["hid_vid"].as<std::string>();
-        hid_pid = config_doc["hid_pid"].as<std::string>();
-        hid_rev = config_doc["hid_rev"].as<std::string>();
+        read_item<std::string>(config_doc, "hid_vid", hid_vid);
+        read_item<std::string>(config_doc, "hid_pid", hid_pid);
+        read_item<std::string>(config_doc, "hid_rev", hid_rev);
 
-        msc_vid = config_doc["msc_vid"].as<std::string>();
-        msc_pid = config_doc["msc_pid"].as<std::string>();
-        msc_rev = config_doc["msc_rev"].as<std::string>();
+        read_item<std::string>(config_doc, "msc_vid", msc_vid);
+        read_item<std::string>(config_doc, "msc_pid", msc_pid);
+        read_item<std::string>(config_doc, "msc_rev", msc_rev);
 
-        default_layout = config_doc["default_layout"].as<std::string>();
-        default_delay  = config_doc["default_delay"].as<int>();
+        read_item<std::string>(config_doc, "default_layout", default_layout);
+        read_item<int>(config_doc, "default_delay", default_delay);
 
-        main_script = config_doc["main_script"].as<std::string>();
+        read_item<std::string>(config_doc, "main_script", main_script);
 
         read_array(config_doc, "attack_color", attack_color, 4);
         read_array(config_doc, "setup_color", setup_color, 4);
@@ -212,9 +193,9 @@ namespace preferences {
         hid_pid = "11A4";
         hid_rev = "0100";
 
-        msc_vid = "SpHuhn";
-        msc_pid = "USB Nova";
-        msc_rev = "1.0";
+        msc_vid = "SpHuhn"; // max. 8 chars
+        msc_pid = "USB Nova"; // max. 16 chars
+        msc_rev = "1.0"; // max. 4 chars
 
         default_layout = "US";
         default_delay = 5;
