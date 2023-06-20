@@ -14,7 +14,6 @@ namespace hid {
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
     uint8_t const desc_hid_report[] = {
-        // TUD_HID_REPORT_DESC_KEYBOARD()
         TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID::KEYBOARD)),
         TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID::MOUSE)),
         TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID::CONSUMER_CONTROL))
@@ -84,25 +83,25 @@ namespace hid {
         }
 
         // Wait until ready to send next report
-        while (!usb_hid.ready()){
+        while (!usb_hid.ready()) {
             delay(1);
         }
 
         usb_hid.keyboardReport(RID::KEYBOARD, modifier, keys);
     }
-    
+
     void sendMouseReport(uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal) {
         if (TinyUSBDevice.suspended()) {
             // Wake up host if we are in suspend mode
             // and REMOTE_WAKEUP feature is enabled by host
             TinyUSBDevice.remoteWakeup();
         }
-        
+
         // Wait until ready to send next report
-        while (!usb_hid.ready()){
+        while (!usb_hid.ready()) {
             delay(1);
         }
-        
+
         usb_hid.mouseReport(RID::MOUSE, buttons, x, y, vertical, horizontal);
     }
 

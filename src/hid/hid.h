@@ -7,9 +7,9 @@
 namespace hid {
     // Report ID
     enum RID {
-        KEYBOARD = 1,
-        MOUSE = 2,
-        CONSUMER_CONTROL = 3, // Media, volume etc ..
+        KEYBOARD         = 0,
+        MOUSE            = 1,
+        CONSUMER_CONTROL = 2, // Media, volume etc ..
     };
 
     void init();
