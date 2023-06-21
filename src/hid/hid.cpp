@@ -55,8 +55,8 @@ namespace hid {
     // ====== PUBLIC ====== //
     void init() {
         // Notes: following commented-out functions has no affect on ESP32
-        // usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
-        // usb_hid.setPollInterval(2);
+        usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
+        usb_hid.setPollInterval(2);
         // usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
         // usb_hid.setStringDescriptor("TinyUSB Keyboard");
 
