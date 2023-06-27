@@ -2,10 +2,10 @@
 
 #pragma once
 
-#define VERSION "1.1.2"
+#define VERSION "1.1.3"
 
 // ===== DEBUG Settings ===== //
-//#define ENABLE_DEBUG
+// #define ENABLE_DEBUG
 #define DEBUG_PORT Serial
 #define DEBUG_BAUD 115200
 
@@ -13,10 +13,20 @@
 #define READ_BUFFER 2048
 
 // ===== LED Settings ===== //
+
+#if defined(ARDUINO_ARCH_RP2040)
+#define LED_PIN 12
+#else // if defined(ARDUINO_ARCH_RP2040)
 #define LED_PIN 11
+#endif // if defined(ARDUINO_ARCH_RP2040)
 
 // ===== SELECTOR SWITCH ===== //
+
+#if defined(ARDUINO_ARCH_RP2040)
+#define SELECTOR 13
+#else // if defined(ARDUINO_ARCH_RP2040)
 #define SELECTOR A0
+#endif // if defined(ARDUINO_ARCH_RP2040)
 
 // ===== Parser Settings ===== //
 #define CASE_SENSETIVE false

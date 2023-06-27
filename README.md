@@ -25,4 +25,5 @@ Compile and export:
 `arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0_nova:usbstack=tinyusb,debug=off --output-dir build/`
 
 Convert to uf2:  
-`uf2conv build/USBNova.ino.bin -o build/USBNova.ino.uf2`
+`uf2conv build/USBNova.ino.bin -o build/USBNova.ino.uf2`  
+(To install uf2conv, install rust, then `cargo install uf2conv`) 

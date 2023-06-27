@@ -19,7 +19,16 @@
 
 namespace format {
     // ========== PRIVATE ========= //
+#if defined(ARDUINO_ARCH_RP2040)
+    // RP2040 use same flash device that store code for file system. Therefore we
+    // only need to specify start address and size (no need SPI or SS)
+    // By default (start=0, size=0), values that match file system setting in
+    // 'Tools->Flash Size' menu selection will be used.
+    Adafruit_FlashTransport_RP2040 flashTransport;
+#else // if defined(ARDUINO_ARCH_RP2040)
     Adafruit_FlashTransport_SPI flashTransport(EXTERNAL_FLASH_USE_CS, EXTERNAL_FLASH_USE_SPI);
+#endif // if defined(ARDUINO_ARCH_RP2040)
+
     Adafruit_SPIFlash flash(&flashTransport);
 
     // file system object from SdFat
