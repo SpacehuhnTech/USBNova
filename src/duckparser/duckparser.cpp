@@ -161,12 +161,16 @@ namespace duckparser {
         if (offset > time) return;
         else time -= offset;
 
-        sleep_start_time = millis();
-        unsigned long sleep_end_time = sleep_start_time + time;
+        if (time < 50) {
+            delay(time);
+        } else {
+            sleep_start_time = millis();
+            unsigned long sleep_end_time = sleep_start_time + time;
 
-        while (millis() < sleep_end_time) {
-            delay(1);
-            tasks::update();
+            while (millis() < sleep_end_time) {
+                delay(1);
+                tasks::update();
+            }
         }
     }
 
@@ -190,19 +194,20 @@ namespace duckparser {
         bool ignore_delay;
 
         while (n) {
-            ignore_delay = false;
-            loop_begin   = false;
-            loop_end     = false;
-
             word_list* wl  = n->words;
             word_node* cmd = wl->first;
 
             // String of the entire line excluding the command keyword (i.e. "STRING ")
-            const char* line_str = cmd->str + cmd->len + 1;
-            size_t line_str_len  = n->len - cmd->len - 1;
+            bool has_line_str    = cmd->next;
+            const char* line_str = has_line_str ? (cmd->str + cmd->len + 1) : nullptr;
+            size_t line_str_len  = has_line_str ? (n->len - cmd->len - 1) : 0;
 
             char last_char = n->str[n->len];
             bool line_end  = last_char == '\r' || last_char == '\n';
+
+            ignore_delay = false;
+            loop_begin   = false;
+            loop_end     = false;
 
             // Check if we're in a multi line comment
             if (in_ml_comment) {
@@ -277,7 +282,7 @@ namespace duckparser {
                     type(line_str, line_str_len);
                 }
 
-                if(line_end) {
+                if (line_end) {
                     keyboard::pressKey(KEY_ENTER);
                     release();
                 }
