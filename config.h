@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define VERSION "1.1.3"
+#define VERSION "1.2.0"
 
 // ===== DEBUG Settings ===== //
 // #define ENABLE_DEBUG
