@@ -23,9 +23,14 @@ Compile and upload:
 
 Compile and export:  
 `arduino-cli compile --fqbn adafruit:samd:adafruit_qtpy_m0_nova:usbstack=tinyusb,debug=off --output-dir build/`
-- or (for RP2040 models) -  
-`arduino-cli compile --fqbn rp2040:rp2040:generic:flash=16777216_15728640,usbstack=tinyusb,boot2=boot2_w25q128jvxq_4_padded_checksum --output-dir build/`
 
 Convert to uf2:  
 `uf2conv build/USBNova.ino.bin -o build/USBNova.ino.uf2`  
 (To install uf2conv, install rust, then `cargo install uf2conv`) 
+
+---
+
+For RP2040:  
+`arduino-cli compile --fqbn rp2040:rp2040:generic:flash=16777216_15728640,usbstack=tinyusb --output-dir build/`
+`elf2uf2-rs build/USBNova.ino.elf build/USBNova.ino.uf2`
+(To install `cargo install elf2uf2-rs`)
