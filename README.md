@@ -32,5 +32,5 @@ Convert to uf2:
 
 For RP2040:  
 `arduino-cli compile --fqbn rp2040:rp2040:generic:flash=16777216_15728640,usbstack=tinyusb --output-dir build/`
-`elf2uf2-rs build/USBNova.ino.elf build/USBNova.ino.uf2`
+(usually not required, but just in case: `elf2uf2-rs build/USBNova.ino.elf build/USBNova.ino.uf2`)
 (To install `cargo install elf2uf2-rs`)
