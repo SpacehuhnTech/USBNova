@@ -271,7 +271,7 @@ namespace duckparser {
 
                 in_string = !line_end;
             }
-            // STRING (-> type each character & press enter)
+            // STRINGLN (-> type each character & press enter)
             else if (in_string || compare(cmd->str, cmd->len, "STRINGLN", CASE_SENSETIVE)) {
                 // Type the entire line
                 if (in_string) {
