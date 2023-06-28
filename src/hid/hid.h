@@ -18,6 +18,7 @@ namespace hid {
     void init();
     void setID(uint16_t vid, uint16_t pid, uint16_t version);
     void setSerial(std::string serialstr);
+    void setManufacturer(std::string manufacturerstr);
 
     bool mounted();
 

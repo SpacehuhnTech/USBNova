@@ -29,6 +29,7 @@ namespace preferences {
     std::string pid;
     std::string version;
     std::string serial;
+    std::string manufacturer;
 
     std::string default_layout;
     int default_delay;
@@ -63,10 +64,11 @@ namespace preferences {
         root["enable_led"] = enable_led;
         root["enable_hid"] = enable_hid;
 
-        root["vid"]     = vid;
-        root["pid"]     = pid;
-        root["version"] = version;
+        root["vid"]          = vid;
+        root["pid"]          = pid;
+        root["version"]      = version;
         root["serial"]       = serial;
+        root["manufacturer"] = manufacturer;
 
         root["default_layout"] = default_layout;
         root["default_delay"]  = default_delay;
@@ -135,6 +137,7 @@ namespace preferences {
         read_item<std::string>(config_doc, "pid", pid);
         read_item<std::string>(config_doc, "version", version);
         read_item<std::string>(config_doc, "serial", serial);
+        read_item<std::string>(config_doc, "manufacturer", manufacturer);
 
         read_item<std::string>(config_doc, "default_layout", default_layout);
         read_item<int>(config_doc, "default_delay", default_delay);
@@ -183,10 +186,11 @@ namespace preferences {
         enable_led = true;
         enable_hid = true;
 
-        vid     = "16D0";
-        pid     = "11A4";
-        version = "0100";
+        vid          = "16D0";
+        pid          = "11A4";
+        version      = "0100";
         serial       = "1337";
+        manufacturer = "SpacehuhnTech";
 
         default_layout = "US";
         default_delay  = 5;
@@ -260,6 +264,10 @@ namespace preferences {
 
     std::string getSerial() {
         return serial;
+    }
+
+    std::string getManufacturer() {
+        return manufacturer;
     }
 
     std::string getDefaultLayout() {

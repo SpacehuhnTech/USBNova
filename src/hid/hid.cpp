@@ -12,6 +12,7 @@ namespace hid {
     bool    indicator_read    = false; // If initial indicator was read
 
     std::string serial       = "1337";
+    std::string manufacturer = "SpacehuhnTech";
 
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
@@ -76,6 +77,11 @@ namespace hid {
     void setSerial(std::string serialstr) {
         hid::serial = serialstr;
         TinyUSBDevice.setSerialDescriptor(serial.c_str());
+    }
+
+    void setManufacturer(std::string manufacturerstr) {
+        hid::manufacturer = manufacturerstr;
+        TinyUSBDevice.setManufacturerDescriptor(manufacturer.c_str());
     }
 
     bool mounted() {

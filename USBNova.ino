@@ -32,6 +32,7 @@ void setup() {
     preferences::load();
     hid::setID(preferences::getVID(), preferences::getPID(), preferences::getVersion());
     hid::setSerial(preferences::getSerial());
+    hid::setManufacturer(preferences::getManufacturer());
 
     // Read mode from selector switch
     selector::init();

@@ -83,12 +83,22 @@
                     "minLength": 4,
                     "maxLength": 4
                 },
-                "rev": {
+                "version": {
                     "type": "string",
                     "title": "USB Product Revision (0100 => 1.0)",
                     "default": "0100",
                     "minLength": 4,
                     "maxLength": 4
+                },
+                "serial": {
+                    "type": "string",
+                    "title": "USB Serial Number Descriptor",
+                    "default": "1337"
+                },
+                "manufacturer": {
+                    "type": "string",
+                    "title": "USB Manufacturer Descriptor",
+                    "default": "SpacehuhnTech"
                 },
                 "default_layout": {
                     "type": "string",

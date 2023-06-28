@@ -19,6 +19,7 @@ namespace preferences {
     uint16_t getVersion();
 
     std::string getSerial();
+    std::string getManufacturer();
 
     std::string getDefaultLayout();
     int getDefaultDelay();
