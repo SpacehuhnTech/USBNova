@@ -61,9 +61,9 @@
                     "title": "Enable HID in setup mode",
                     "default": true
                 },
-                "hid_vid": {
+                "vid": {
                     "type": "string",
-                    "title": "USB Keyboard Vendor ID",
+                    "title": "USB Vendor ID",
                     "pattern": "^[0-9A-F]{4}$",
                     "default": "16D0",
                     "examples": [
@@ -72,9 +72,9 @@
                     "minLength": 4,
                     "maxLength": 4
                 },
-                "hid_pid": {
+                "pid": {
                     "type": "string",
-                    "title": "USB Keyboard Product ID",
+                    "title": "USB Product ID",
                     "pattern": "^[0-9A-F]{4}$",
                     "default": "11A4",
                     "examples": [
@@ -83,27 +83,12 @@
                     "minLength": 4,
                     "maxLength": 4
                 },
-                "hid_rev": {
+                "rev": {
                     "type": "string",
-                    "title": "USB Keyboard Product Revision",
+                    "title": "USB Product Revision (0100 => 1.0)",
                     "default": "0100",
                     "minLength": 4,
                     "maxLength": 4
-                },
-                "msc_vid": {
-                    "type": "string",
-                    "title": "USB Mass Storage Vendor ID",
-                    "default": "SpHuhn"
-                },
-                "msc_pid": {
-                    "type": "string",
-                    "title": "USB Mass Storage Product ID",
-                    "default": "USB Nova"
-                },
-                "msc_rev": {
-                    "type": "string",
-                    "title": "USB Mass Storage Product Revision",
-                    "default": "1.0"
                 },
                 "default_layout": {
                     "type": "string",

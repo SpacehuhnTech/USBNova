@@ -14,13 +14,9 @@ namespace preferences {
     bool ledEnabled();
     bool hidEnabled();
 
-    uint16_t getHidVid();
-    uint16_t getHidPid();
-    uint16_t getHidRev();
-
-    std::string getMscVid();
-    std::string getMscPid();
-    std::string getMscRev();
+    uint16_t getVID();
+    uint16_t getPID();
+    uint16_t getVersion();
 
     std::string getDefaultLayout();
     int getDefaultDelay();
@@ -33,7 +29,7 @@ namespace preferences {
 
     bool getFormat();
     std::string getDriveName();
-    
+
     bool getDisableCapslock();
     bool getRunOnIndicator();
 

@@ -124,10 +124,6 @@ namespace msc {
         }
     }
 
-    void setID(const char* vid, const char* pid, const char* rev) {
-        usb_msc.setID(vid, pid, rev); // Max. 8, 16, 4 characters
-    }
-
     void enableDrive() {
         usb_msc.setReadWriteCallback(read_cb, write_cb, flush_cb);
         usb_msc.setCapacity(flash.size() / 512, 512);

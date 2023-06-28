@@ -25,13 +25,9 @@ namespace preferences {
     bool enable_led;
     bool enable_hid;
 
-    std::string hid_vid;
-    std::string hid_pid;
-    std::string hid_rev;
-
-    std::string msc_vid; // max. 8 chars
-    std::string msc_pid; // max. 16 chars
-    std::string msc_rev; // max. 4 chars
+    std::string vid;
+    std::string pid;
+    std::string version;
 
     std::string default_layout;
     int default_delay;
@@ -43,7 +39,7 @@ namespace preferences {
     int idle_color[4];
 
     bool format;
-    std::string drive_name; 
+    std::string drive_name;
 
     bool disable_capslock;
     bool run_on_indicator;
@@ -53,7 +49,8 @@ namespace preferences {
     // Array help functions
     void add_array(JsonDocument& doc, const char* name, int* array, int size) {
         JsonArray jarr = doc.createNestedArray(name);
-        for(size_t i = 0; i < size; ++i) {
+
+        for (size_t i = 0; i < size; ++i) {
             jarr.add(array[i]);
         }
     }
@@ -65,13 +62,9 @@ namespace preferences {
         root["enable_led"] = enable_led;
         root["enable_hid"] = enable_hid;
 
-        root["hid_vid"] = hid_vid;
-        root["hid_pid"] = hid_pid;
-        root["hid_rev"] = hid_rev;
-
-        root["msc_vid"] = msc_vid;
-        root["msc_pid"] = msc_pid;
-        root["msc_rev"] = msc_rev;
+        root["vid"]     = vid;
+        root["pid"]     = pid;
+        root["version"] = version;
 
         root["default_layout"] = default_layout;
         root["default_delay"]  = default_delay;
@@ -83,14 +76,15 @@ namespace preferences {
         add_array(root, "idle_color", idle_color, 4);
 
         root["disable_capslock"] = disable_capslock;
-        root["run_on_indicator"]  = run_on_indicator;
+        root["run_on_indicator"] = run_on_indicator;
 
         root["initial_delay"] = initial_delay;
     }
 
     void read_array(JsonDocument& doc, const char* name, int* array, int size) {
         JsonVariant val = doc[name];
-        if(val.isNull()) return;
+
+        if (val.isNull()) return;
 
         JsonArray jarr = val.as<JsonArray>();
 
@@ -99,10 +93,11 @@ namespace preferences {
         }
     }
 
-    template <typename T>
+    template<typename T>
     void read_item(JsonDocument& doc, const char* name, T& val) {
         JsonVariant new_val = doc[name];
-        if(new_val.isNull()) return;
+
+        if (new_val.isNull()) return;
         val = new_val.as<T>();
     }
 
@@ -134,13 +129,9 @@ namespace preferences {
         read_item<bool>(config_doc, "enable_led", enable_led);
         read_item<bool>(config_doc, "enable_hid", enable_hid);
 
-        read_item<std::string>(config_doc, "hid_vid", hid_vid);
-        read_item<std::string>(config_doc, "hid_pid", hid_pid);
-        read_item<std::string>(config_doc, "hid_rev", hid_rev);
-
-        read_item<std::string>(config_doc, "msc_vid", msc_vid);
-        read_item<std::string>(config_doc, "msc_pid", msc_pid);
-        read_item<std::string>(config_doc, "msc_rev", msc_rev);
+        read_item<std::string>(config_doc, "vid", vid);
+        read_item<std::string>(config_doc, "pid", pid);
+        read_item<std::string>(config_doc, "version", version);
 
         read_item<std::string>(config_doc, "default_layout", default_layout);
         read_item<int>(config_doc, "default_delay", default_delay);
@@ -158,9 +149,9 @@ namespace preferences {
         }
 
         disable_capslock = config_doc["disable_capslock"].as<bool>();
-        run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
-        
-        initial_delay  = config_doc["initial_delay"].as<int>();
+        run_on_indicator = config_doc["run_on_indicator"].as<bool>();
+
+        initial_delay = config_doc["initial_delay"].as<int>();
     }
 
     void save() {
@@ -183,22 +174,18 @@ namespace preferences {
         debug("Saved ");
         debugln(PREFERENCES_PATH);
     }
-    
+
     void reset() {
         enable_msc = false;
         enable_led = true;
         enable_hid = true;
 
-        hid_vid = "16D0";
-        hid_pid = "11A4";
-        hid_rev = "0100";
-
-        msc_vid = "SpHuhn"; // max. 8 chars
-        msc_pid = "USB Nova"; // max. 16 chars
-        msc_rev = "1.0"; // max. 4 chars
+        vid     = "16D0";
+        pid     = "11A4";
+        version = "0100";
 
         default_layout = "US";
-        default_delay = 5;
+        default_delay  = 5;
 
         main_script = "main_script.txt";
 
@@ -217,7 +204,7 @@ namespace preferences {
         idle_color[2] = 0;
         idle_color[3] = 0;
 
-        format = false;
+        format     = false;
         drive_name = "USB Nova";
 
         disable_capslock = true;
@@ -225,7 +212,7 @@ namespace preferences {
 
         initial_delay = 1000;
     }
-    
+
     void print() {
         // Create a new JSON document (and string buffer)
         DynamicJsonDocument json_doc(JSON_SIZE);
@@ -255,28 +242,16 @@ namespace preferences {
         return enable_hid;
     }
 
-    uint16_t getHidVid() {
-        return std::stoi(hid_vid, nullptr, 16);
+    uint16_t getVID() {
+        return std::stoi(vid, nullptr, 16);
     }
 
-    uint16_t getHidPid() {
-        return std::stoi(hid_pid, nullptr, 16);
+    uint16_t getPID() {
+        return std::stoi(pid, nullptr, 16);
     }
 
-    uint16_t getHidRev() {
-        return std::stoi(hid_rev, nullptr, 16);
-    }
-
-    std::string getMscVid() {
-        return msc_vid;
-    }
-
-    std::string getMscPid() {
-        return msc_pid;
-    }
-
-    std::string getMscRev() {
-        return msc_rev;
+    uint16_t getVersion() {
+        return std::stoi(version, nullptr, 16);
     }
 
     std::string getDefaultLayout() {
@@ -318,7 +293,7 @@ namespace preferences {
     bool getRunOnIndicator() {
         return run_on_indicator;
     }
-    
+
     int getInitialDelay() {
         return initial_delay;
     }
