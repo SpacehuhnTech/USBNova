@@ -28,6 +28,7 @@ namespace preferences {
     std::string vid;
     std::string pid;
     std::string version;
+    std::string serial;
 
     std::string default_layout;
     int default_delay;
@@ -65,6 +66,7 @@ namespace preferences {
         root["vid"]     = vid;
         root["pid"]     = pid;
         root["version"] = version;
+        root["serial"]       = serial;
 
         root["default_layout"] = default_layout;
         root["default_delay"]  = default_delay;
@@ -132,6 +134,7 @@ namespace preferences {
         read_item<std::string>(config_doc, "vid", vid);
         read_item<std::string>(config_doc, "pid", pid);
         read_item<std::string>(config_doc, "version", version);
+        read_item<std::string>(config_doc, "serial", serial);
 
         read_item<std::string>(config_doc, "default_layout", default_layout);
         read_item<int>(config_doc, "default_delay", default_delay);
@@ -183,6 +186,7 @@ namespace preferences {
         vid     = "16D0";
         pid     = "11A4";
         version = "0100";
+        serial       = "1337";
 
         default_layout = "US";
         default_delay  = 5;
@@ -252,6 +256,10 @@ namespace preferences {
 
     uint16_t getVersion() {
         return std::stoi(version, nullptr, 16);
+    }
+
+    std::string getSerial() {
+        return serial;
     }
 
     std::string getDefaultLayout() {

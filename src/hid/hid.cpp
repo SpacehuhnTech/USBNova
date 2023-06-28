@@ -11,6 +11,8 @@ namespace hid {
     bool    indicator_changed = false; // Whether or not any indicator changed since last time
     bool    indicator_read    = false; // If initial indicator was read
 
+    std::string serial       = "1337";
+
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
     uint8_t const desc_hid_report[] = {
@@ -56,7 +58,7 @@ namespace hid {
     void init() {
         // Notes: following commented-out functions has no affect on ESP32
         usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
-        usb_hid.setPollInterval(2);
+        // usb_hid.setPollInterval(2);
         // usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
         // usb_hid.setStringDescriptor("TinyUSB Keyboard");
 
@@ -69,6 +71,11 @@ namespace hid {
     void setID(uint16_t vid, uint16_t pid, uint16_t version) {
         TinyUSBDevice.setID(vid, pid);
         TinyUSBDevice.setDeviceVersion(version);
+    }
+
+    void setSerial(std::string serialstr) {
+        hid::serial = serialstr;
+        TinyUSBDevice.setSerialDescriptor(serial.c_str());
     }
 
     bool mounted() {

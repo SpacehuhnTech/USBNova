@@ -5,6 +5,7 @@
 #include "../../config.h"
 
 #include <cstdint> // uint8_t
+#include <string>  // std::string
 
 namespace hid {
     // Report ID
@@ -16,6 +17,8 @@ namespace hid {
 
     void init();
     void setID(uint16_t vid, uint16_t pid, uint16_t version);
+    void setSerial(std::string serialstr);
+
     bool mounted();
 
     void sendKeyboardReport(uint8_t modifier, uint8_t* keys);
