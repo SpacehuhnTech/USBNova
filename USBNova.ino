@@ -27,16 +27,18 @@ void setup() {
         return;
     }
 
+    // Read mode from selector switch
+    selector::init();
+
     // Load setting and set USB Device IDs
     preferences::reset();
     preferences::load();
+    if (selector::mode() == SETUP) preferences::save();
+
     hid::setID(preferences::getVID(), preferences::getPID(), preferences::getVersion());
     hid::setSerial(preferences::getSerial());
     hid::setManufacturer(preferences::getManufacturer());
     hid::setProduct(preferences::getProduct());
-
-    // Read mode from selector switch
-    selector::init();
 
     // Start Keyboard
     if ((selector::mode() == ATTACK) || preferences::hidEnabled()) {
