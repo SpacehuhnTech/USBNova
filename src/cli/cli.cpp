@@ -11,13 +11,13 @@
 #include "../attack/attack.h"
 #include "../msc/msc.h"
 #include "../../config.h"
-#include "../msc/format.h"
+#include "../../debug.h"
 
 #define BUFFER_SIZE 1024
 
 namespace cli {
     // ====== PRIVATE ====== //
-    SimpleCLI  cli;
+    SimpleCLI cli;
     char buffer[BUFFER_SIZE];
 
     // Copied from https://github.com/SpacehuhnTech/esp8266_deauther/blob/b70dc19579e7af65857726ae45e3e477899942ac/esp8266_deauther/cli.cpp#L1602
@@ -60,38 +60,38 @@ namespace cli {
 
     // ====== PUBLIC ====== //
     void init() {
-        Serial.begin(115200);
-        
+        // Serial.begin(115200);
+
         // error
         cli.setOnError([](cmd_error* e) {
             CommandError cmdError(e);
 
-            Serial.print("ERROR: ");
-            Serial.println(cmdError.toString());
+            debugF("ERROR: ");
+            debugln(cmdError.toString());
 
             if (cmdError.hasCommand()) {
-                Serial.print("Did you mean \"");
-                Serial.print(cmdError.getCommand().toString());
-                Serial.println("\"?");
+                debugF("Did you mean \"");
+                debug(cmdError.getCommand().toString());
+                debuglnF("\"?");
             }
         });
 
         // help
         cli.addCmd("help", [](cmd* c) {
-            Serial.println("[ = Available Commands =]");
-            Serial.print(cli.toString());
-            Serial.println("Enter any BadUSB Scripts to run it.");
-            Serial.println();
+            debuglnF("[ = Available Commands =]");
+            debug(cli.toString());
+            debuglnF("Enter any BadUSB Scripts to run it.");
+            debugln();
         }).setDescription(" Get a list of available commands.");
 
         // version
         cli.addCmd("version", [](cmd* c) {
-            Serial.println("[ = USB Nova =]");
-            Serial.print("Version ");
-            Serial.println(VERSION);
-            Serial.println("Source: https://github.com/spacehuhntech/usbnova");
-            Serial.println("Made with <3 by Spacehuhn (spacehuhn.com)");
-            Serial.println();
+            debuglnF("[ = USB Nova =]");
+            debugF("Version ");
+            debugln(VERSION);
+            debuglnF("Source: https://github.com/spacehuhntech/usbnova");
+            debuglnF("Made with <3 by Spacehuhn (spacehuhn.com)");
+            debugln();
         }).setDescription(" Print the firmware version.");
         
         // format
@@ -99,25 +99,25 @@ namespace cli {
             led::setColor(255, 255, 255);
             msc::format(preferences::getDriveName().c_str());
             preferences::save();
-            if(selector::mode() == SETUP) {
+            if (selector::mode() == SETUP) {
                 led::setColor(preferences::getSetupColor());
             } else {
                 led::setColor(preferences::getIdleColor());
             }
-            
-            Serial.println("Done formatting!");
-            Serial.println();
+
+            debuglnF("Done formatting!");
+            debugln();
         }).setDescription(" Fromat the internal memory.");
         
         // reset
         cli.addCmd("reset", [](cmd* c) {
             preferences::reset();
             preferences::save();
-            
-            Serial.println("Done resetting!");
-            Serial.println();
+
+            debuglnF("Done resetting!");
+            debugln();
         }).setDescription(" Reset the preferences.");
-        
+
         // TODO: preferences
         cli.addSingleArgCmd("preferences", [](cmd* c) {
             preferences::print();
@@ -133,7 +133,7 @@ namespace cli {
             Command cmd(c);
             Argument arg = cmd.getArgument(0);
             attack::start(arg.getValue().c_str());
-            if(selector::mode() == SETUP) {
+            if (selector::mode() == SETUP) {
                 led::setColor(preferences::getSetupColor());
             } else {
                 led::setColor(preferences::getIdleColor());

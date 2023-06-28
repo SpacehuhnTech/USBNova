@@ -3,6 +3,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "config.h"
 
 #ifdef ENABLE_DEBUG
 
@@ -16,7 +17,7 @@
 
 #else /* ifdef ENABLE_DEBUG */
 
-#define debug_init() 0
+#define debug_init() Serial.end();
 
 #define debugF(...) 0
 #define debuglnF(...) 0

@@ -1,0 +1,284 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$ref": "#/$defs/preferences",
+    "$defs": {
+        "color": {
+            "type": "array",
+            "prefixItems": [
+                {
+                    "type": "integer",
+                    "title": "Red",
+                    "description": "From 0 to 255",
+                    "minimum": 0,
+                    "maximum": 255
+                },
+                {
+                    "type": "integer",
+                    "title": "Green",
+                    "description": "From 0 to 255",
+                    "minimum": 0,
+                    "maximum": 255
+                },
+                {
+                    "type": "integer",
+                    "title": "Blue",
+                    "description": "From 0 to 255",
+                    "minimum": 0,
+                    "maximum": 255
+                },
+                {
+                    "type": "integer",
+                    "title": "Blink-Interval",
+                    "description": "The blink interval in milliseconds, 0 means it's not blinking.",
+                    "minimum": 0
+                }
+            ],
+            "additionalItems": false,
+            "minItems": 4,
+            "maxItems": 4
+        },
+        "preferences": {
+            "title": "Preferences",
+            "description": "Preferences for your USB Nova",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "$schema": {
+                    "type": "string"
+                },
+                "enable_msc": {
+                    "type": "boolean",
+                    "title": "Enable USB mass storage (USB drive) in attack mode",
+                    "default": false
+                },
+                "enable_hid": {
+                    "type": "boolean",
+                    "title": "Enable HID in setup mode",
+                    "default": true
+                },
+                "vid1": {
+                    "type": "string",
+                    "title": "USB Vendor ID",
+                    "pattern": "^[0-9A-F]{4}$",
+                    "default": "16D0",
+                    "examples": [
+                        "05AC"
+                    ],
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "pid1": {
+                    "type": "string",
+                    "title": "USB Product ID",
+                    "pattern": "^[0-9A-F]{4}$",
+                    "default": "103F",
+                    "examples": [
+                        "0250"
+                    ],
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "version1": {
+                    "type": "string",
+                    "title": "USB Product Revision (0100 => 1.0)",
+                    "default": "0100",
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "serial1": {
+                    "type": "string",
+                    "title": "USB Serial Number Descriptor",
+                    "default": "1337"
+                },
+                "manufacturer1": {
+                    "type": "string",
+                    "title": "USB Manufacturer Descriptor",
+                    "default": "Maltronics"
+                },
+                "product1": {
+                    "type": "string",
+                    "title": "USB Product Descriptor",
+                    "default": "MalDuino"
+                },
+                "vid2": {
+                    "type": "string",
+                    "title": "USB Vendor ID",
+                    "pattern": "^[0-9A-F]{4}$",
+                    "default": "16D0",
+                    "examples": [
+                        "05AC"
+                    ],
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "pid2": {
+                    "type": "string",
+                    "title": "USB Product ID",
+                    "pattern": "^[0-9A-F]{4}$",
+                    "default": "103F",
+                    "examples": [
+                        "0250"
+                    ],
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "version2": {
+                    "type": "string",
+                    "title": "USB Product Revision (0100 => 1.0)",
+                    "default": "0100",
+                    "minLength": 4,
+                    "maxLength": 4
+                },
+                "serial2": {
+                    "type": "string",
+                    "title": "USB Serial Number Descriptor",
+                    "default": "1337"
+                },
+                "manufacturer2": {
+                    "type": "string",
+                    "title": "USB Manufacturer Descriptor",
+                    "default": "Maltronics"
+                },
+                "product2": {
+                    "type": "string",
+                    "title": "USB Product Descriptor",
+                    "default": "MalDuino"
+                },
+                "default_layout": {
+                    "type": "string",
+                    "title": "Default Keyboard Layout",
+                    "enum": [
+                        "BE",
+                        "BE_MAC",
+                        "BG",
+                        "BG_MAC",
+                        "CA_CM",
+                        "CA_FR",
+                        "CA_FR_MAC",
+                        "CH_DE",
+                        "CH_FR",
+                        "CH_DE_MAC",
+                        "CH_FR_MAC",
+                        "CZ",
+                        "CZ_MAC",
+                        "DE",
+                        "DE_MAC",
+                        "DK",
+                        "DK_MAC",
+                        "EE",
+                        "EE_MAC",
+                        "ES",
+                        "ES_MAC",
+                        "ES_LA",
+                        "ES_LA_MAC",
+                        "FI",
+                        "FI_MAC",
+                        "FR",
+                        "FR_MAC",
+                        "GB",
+                        "GB_MAC",
+                        "GR",
+                        "GR_MAC",
+                        "HU",
+                        "HU_MAC",
+                        "IE",
+                        "IN",
+                        "IN_MAC",
+                        "IS",
+                        "IS_MAC",
+                        "IT",
+                        "IT_MAC",
+                        "LT",
+                        "LT_MAC",
+                        "LV",
+                        "LV_MAC",
+                        "NL",
+                        "NL_MAC",
+                        "NO",
+                        "NO_MAC",
+                        "PL",
+                        "PL_MAC",
+                        "PT_BR",
+                        "PT_BR_MAC",
+                        "PT",
+                        "PT_MAC",
+                        "RO",
+                        "RO_MAC",
+                        "RU",
+                        "RU_MAC",
+                        "SE",
+                        "SE_MAC",
+                        "SI",
+                        "SI_MAC",
+                        "SK",
+                        "SK_MAC",
+                        "TR",
+                        "TR_MAC",
+                        "UA",
+                        "UA_MAC",
+                        "US",
+                        "US_MAC"
+                    ],
+                    "default": "US"
+                },
+                "default_delay": {
+                    "type": "integer",
+                    "title": "Default delay between each line",
+                    "default": 5,
+                    "minimum": 0
+                },
+                "main_script": {
+                    "type": "string",
+                    "title": "Name of your BadUSB script",
+                    "default": "main_script.txt"
+                },
+                "attack_color": {
+                    "$ref": "#/$defs/color",
+                    "title": "LED color for attack mode",
+                    "default": [
+                        128,
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "setup_color": {
+                    "$ref": "#/$defs/color",
+                    "title": "LED color for setup mode",
+                    "default": [
+                        0,
+                        0,
+                        20,
+                        0
+                    ]
+                },
+                "idle_color": {
+                    "$ref": "#/$defs/color",
+                    "title": "LED color for finished attack",
+                    "default": [
+                        0,
+                        30,
+                        0,
+                        0
+                    ]
+                },
+                "disable_capslock": {
+                    "type": "boolean",
+                    "title": "Turn off capslock before starting attack (only work on Windows)",
+                    "default": true
+                },
+                "run_on_indicator": {
+                    "type": "boolean",
+                    "title": "Start script when the user presses capslock, numlock, or another indicator key (only work on Windows)",
+                    "default": false
+                },
+                "initial_delay": {
+                    "type": "integer",
+                    "title": "Startup delay",
+                    "default": 1000,
+                    "minimum": 0
+                }
+            }
+        }
+    }
+}

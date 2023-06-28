@@ -20,7 +20,7 @@ namespace attack {
     void start(const char* path) {
         // If script doesn't exist, don't do anything
         if (!msc::exists(path)) return;
-        
+
         // Set attack color
         led::setColor(preferences::getAttackColor());
 
@@ -42,25 +42,26 @@ namespace attack {
         uint32_t cur_pos  = 0;
         int repeats       = 0;
 
-        // For LOOP_START and LOOP_END
+        // For LOOP_BEGIN and LOOP_END
         uint32_t start_pos = 0;
         int loops          = 0;
 
         while (true) {
-            debug("Reading line...");
+            debugF("Reading line...");
             if (!msc::getInLine()) cur_pos = msc::getPosition();
             len = msc::readLine(buffer, READ_BUFFER);
-            debugln(len);
-            //debugln(std::string(buffer, len-1).c_str());
 
             // Reached end of file
             if (len == 0) {
-                debugln("Reached end of file");
+                debuglnF("Reached end of file");
                 if (msc::openNextFile()) continue;
                 else break;
             }
 
-            debug("Parsing...");
+            debugln(len);
+            debugln(std::string(buffer, len-1).c_str());
+
+            debugF("Parsing...");
             duckparser::parse(buffer, len);
 
             // For REPEAT/REPLAY
@@ -77,7 +78,7 @@ namespace attack {
 
             if (!msc::getInLine()) prev_pos = cur_pos;
 
-            // For LOOP_START/LOOP_STOP
+            // For LOOP_BEGIN/LOOP_END
             if (duckparser::loopBegin()) {
                 start_pos = msc::getPosition();
                 loops     = duckparser::getLoops();
@@ -92,10 +93,9 @@ namespace attack {
                 msc::open(path.c_str());
             }
 
-            debugln("OK");
+            debuglnF("OK");
         }
-
-        debugln("Attack finished");
+        debuglnF("Attack finished");
     }
 
     void start() {

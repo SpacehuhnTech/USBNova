@@ -83,11 +83,11 @@ namespace msc {
 
         return true;
     }
-    
+
     bool format(const char* drive_name) {
         return format::start(drive_name);
     }
-    
+
     void print() {
         Serial.println("Available files:");
 
@@ -100,21 +100,17 @@ namespace msc {
         
         while ( file.openNext(&root, O_RDONLY) ) {
             file.printFileSize(&Serial);
-            Serial.write(' ');
+            debugF(" ");
             file.printName(&Serial);
             if ( file.isDir() ) {
                 // Indicate a directory.
-                Serial.write('/');
+                debugF("/");
             }
-            Serial.println();
+            debugln();
             file.close();
         }
 
         root.close();
-    }
-
-    void setID(const char* vid, const char* pid, const char* rev) {
-        usb_msc.setID(vid, pid, rev); // Max. 8, 16, 4 characters
     }
 
     void enableDrive() {
@@ -136,7 +132,7 @@ namespace msc {
         fs_changed = false;
         return tmp;
     }
-    
+
     bool exists(const char* filename) {
         return sd.exists(filename);
     }
@@ -157,7 +153,7 @@ namespace msc {
         if (file.isOpen()) file.close();
 
         // Create a new file element and push it to the stack
-        if(add_to_stack) {
+        if (add_to_stack) {
             file_element_t file_element;
             file_element.path = std::string(path);
             file_element.pos  = 0;

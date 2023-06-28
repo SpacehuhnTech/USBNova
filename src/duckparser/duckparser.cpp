@@ -104,7 +104,7 @@ namespace duckparser {
         else if (compare(str, len, "SHIFT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LSHIFT);
         else if (compare(str, len, "ALT", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LALT);
         else if (compare(str, len, "ALTGR", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_RALT);
-        else if (compare(str, len, "WINDOWS", CASE_SENSETIVE) || compare(str, len, "GUI", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LMETA);
+        else if (compare(str, len, "WINDOWS", CASE_SENSETIVE) || compare(str, len, "GUI", CASE_SENSETIVE) || compare(str, len, "COMMAND", CASE_SENSETIVE)) keyboard::pressModifier(KEY_MOD_LMETA);
 
         // Numpad Keys
 
@@ -161,12 +161,16 @@ namespace duckparser {
         if (offset > time) return;
         else time -= offset;
 
-        sleep_start_time = millis();
-        unsigned long sleep_end_time = sleep_start_time + time;
+        if (time < 50) {
+            delay(time);
+        } else {
+            sleep_start_time = millis();
+            unsigned long sleep_end_time = sleep_start_time + time;
 
-        while (millis() < sleep_end_time) {
-            delay(1);
-            tasks::update();
+            while (millis() < sleep_end_time) {
+                delay(1);
+                tasks::update();
+            }
         }
     }
 
@@ -190,19 +194,20 @@ namespace duckparser {
         bool ignore_delay;
 
         while (n) {
-            ignore_delay = false;
-            loop_begin   = false;
-            loop_end     = false;
-
             word_list* wl  = n->words;
             word_node* cmd = wl->first;
 
             // String of the entire line excluding the command keyword (i.e. "STRING ")
-            const char* line_str = cmd->str + cmd->len + 1;
-            size_t line_str_len  = n->len - cmd->len - 1;
+            bool has_line_str    = cmd->next;
+            const char* line_str = has_line_str ? (cmd->str + cmd->len + 1) : nullptr;
+            size_t line_str_len  = has_line_str ? (n->len - cmd->len - 1) : 0;
 
             char last_char = n->str[n->len];
             bool line_end  = last_char == '\r' || last_char == '\n';
+
+            ignore_delay = false;
+            loop_begin   = false;
+            loop_end     = false;
 
             // Check if we're in a multi line comment
             if (in_ml_comment) {
@@ -266,6 +271,24 @@ namespace duckparser {
 
                 in_string = !line_end;
             }
+            // STRINGLN (-> type each character & press enter)
+            else if (in_string || compare(cmd->str, cmd->len, "STRINGLN", CASE_SENSETIVE)) {
+                // Type the entire line
+                if (in_string) {
+                    type(n->str, n->len);
+                }
+                // Type the everything after "STRINGLN "
+                else {
+                    type(line_str, line_str_len);
+                }
+
+                if (line_end) {
+                    keyboard::pressKey(KEY_ENTER);
+                    release();
+                }
+
+                in_string = !line_end;
+            }
             // REPEAT (-> repeat last command n times)
             else if (compare(cmd->str, cmd->len, "REPEAT", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "REPLAY", CASE_SENSETIVE)) {
                 repeat_num   = to_uint(line_str, line_str_len) + 1;
@@ -290,9 +313,10 @@ namespace duckparser {
 
                 ignore_delay = true;
             }
+
             /*
-            // LED
-            else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
+               // LED
+               else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
                 // i.e. LED R SOLID
                 if (wl->size == 3) {
                     word_node* w = cmd->next;
@@ -340,8 +364,8 @@ namespace duckparser {
                 }
 
                 ignore_delay = true;
-            }
-            */
+               }
+             */
             // KEYCODE
             else if (compare(cmd->str, cmd->len, "KEYCODE", CASE_SENSETIVE)) {
                 word_node* w = cmd->next;

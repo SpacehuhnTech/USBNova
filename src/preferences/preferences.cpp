@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 #include "../msc/msc.h"
 
-#define JSON_SIZE 1536
+#define JSON_SIZE 2048
 
 /*
    How to add new settings:
@@ -21,92 +21,116 @@
 
 namespace preferences {
     // ========== PRIVATE ========= //
-    bool enable_msc { false };
-    bool enable_led { true };
-    bool enable_hid { true };
+    bool enable_msc;
+    bool enable_led;
+    bool enable_hid;
 
-    std::string hid1_vid { "16D0" };
-    std::string hid1_pid { "103F" };
-    std::string hid2_vid { "16D0" };
-    std::string hid2_pid { "103F" };
-    std::string hid_rev { "0100" };
+    std::string vid1;
+    std::string pid1;
+    std::string version1;
+    std::string serial1;
+    std::string manufacturer1;
+    std::string product1;
 
-    std::string msc_vid { "Maltrncs" }; // max. 8 chars
-    std::string msc_pid { "MalDuino" }; // max. 16 chars
-    std::string msc_rev { "1.0" }; // max. 4 chars
+    std::string vid2;
+    std::string pid2;
+    std::string version2;
+    std::string serial2;
+    std::string manufacturer2;
+    std::string product2;
 
-    std::string default_layout { "US" };
-    int default_delay { 5 };
+    std::string default_layout;
+    int default_delay;
 
-    // std::string main_script { "main.script" };
+    // std::string main_script;
 
-    int attack_color[4] { 255, 0, 0, 1000 };
-    int setup_color[4] { 255, 0, 0, 0 };
-    int idle_color[4] { 0, 0, 0, 0 };
+    int attack_color[4];
+    int setup_color[4];
+    int idle_color[4];
 
-    bool format { false };
-    std::string drive_name { "MalDuino" };
+    bool format;
+    std::string drive_name;
 
-    bool disable_capslock { true };
-    bool run_on_indicator { false };
+    bool disable_capslock;
+    bool run_on_indicator;
 
-    int initial_delay { 1000 };
+    int initial_delay;
 
     // Array help functions
     void add_array(JsonDocument& doc, const char* name, int* array, int size) {
         JsonArray jarr = doc.createNestedArray(name);
-        for(size_t i = 0; i < size; ++i) {
+
+        for (size_t i = 0; i < size; ++i) {
             jarr.add(array[i]);
         }
     }
 
+    void toJson(JsonDocument& root) {
+        root["$schema"] = "https://raw.githubusercontent.com/SpacehuhnTech/USBNova/malduino/schema.json";
+
+        root["enable_msc"] = enable_msc;
+        root["enable_led"] = enable_led;
+        root["enable_hid"] = enable_hid;
+
+        root["vid1"]          = vid1;
+        root["pid1"]          = pid1;
+        root["version1"]      = version1;
+        root["serial1"]       = serial1;
+        root["manufacturer1"] = manufacturer1;
+        root["product1"]      = product1;
+
+        root["vid2"]          = vid2;
+        root["pid2"]          = pid2;
+        root["version2"]      = version2;
+        root["serial2"]       = serial2;
+        root["manufacturer2"] = manufacturer2;
+        root["product2"]      = product2;
+
+        root["default_layout"] = default_layout;
+        root["default_delay"]  = default_delay;
+
+        /*
+                root["main_script"] = main_script;
+
+                add_array(root, "attack_color", attack_color, 4);
+                add_array(root, "setup_color", setup_color, 4);
+                add_array(root, "idle_color", idle_color, 4);
+         */
+        root["disable_capslock"] = disable_capslock;
+        root["run_on_indicator"] = run_on_indicator;
+
+        root["initial_delay"] = initial_delay;
+    }
+
     void read_array(JsonDocument& doc, const char* name, int* array, int size) {
-        JsonArray jarr = doc[name].as<JsonArray>();
+        JsonVariant val = doc[name];
+
+        if (val.isNull()) return;
+
+        JsonArray jarr = val.as<JsonArray>();
 
         for (size_t i = 0; i<jarr.size() && i<size; ++i) {
             array[i] = jarr[i].as<int>();
         }
     }
 
-    void toJson(JsonDocument& root) {
-        root["enable_msc"] = enable_msc;
-        //root["enable_led"] = enable_led;
-        root["enable_hid"] = enable_hid;
+    template<typename T>
+    void read_item(JsonDocument& doc, const char* name, T& val) {
+        JsonVariant new_val = doc[name];
 
-        root["hid1_vid"] = hid1_vid;
-        root["hid1_pid"] = hid1_pid;
-        root["hid2_vid"] = hid2_vid;
-        root["hid2_pid"] = hid2_pid;
-        root["hid_rev"] = hid_rev;
-
-        root["msc_vid"] = msc_vid;
-        root["msc_pid"] = msc_pid;
-        root["msc_rev"] = msc_rev;
-
-        root["default_layout"] = default_layout;
-        root["default_delay"]  = default_delay;
-/*
-        root["main_script"] = main_script;
-
-        add_array(root, "attack_color", attack_color, 4);
-        add_array(root, "setup_color", setup_color, 4);
-        add_array(root, "idle_color", idle_color, 4);
-*/
-        root["disable_capslock"] = disable_capslock;
-        root["run_on_indicator"]  = run_on_indicator;
-
-        root["initial_delay"] = initial_delay;
+        if (new_val.isNull()) return;
+        val = new_val.as<T>();
     }
 
     // ======== PUBLIC ======== //
     void load() {
         // Read config file
-        char* buffer = (char*)malloc(JSON_SIZE);
+        char* buffer = (char*)calloc(JSON_SIZE, sizeof(char));
         DynamicJsonDocument config_doc(JSON_SIZE);
 
         // Open the file and read it into a buffer
         if (!msc::open(PREFERENCES_PATH), false) return;
-        msc::read(buffer, JSON_SIZE);
+        size_t read = msc::read(buffer, JSON_SIZE);
         msc::close();
 
         // Deserialize the JSON document
@@ -121,59 +145,34 @@ namespace preferences {
             return;
         }
 
-        // === Add missing values === //
-        if (!config_doc.containsKey("enable_msc")) config_doc["enable_msc"] = enable_msc;
-        //if (!config_doc.containsKey("enable_led")) config_doc["enable_led"] = enable_led;
-        if (!config_doc.containsKey("enable_hid")) config_doc["enable_hid"] = enable_hid;
-
-        if (!config_doc.containsKey("hid1_vid")) config_doc["hid1_vid"] = hid1_vid;
-        if (!config_doc.containsKey("hid1_pid")) config_doc["hid1_pid"] = hid1_pid;
-        if (!config_doc.containsKey("hid2_vid")) config_doc["hid2_vid"] = hid2_vid;
-        if (!config_doc.containsKey("hid2_pid")) config_doc["hid2_pid"] = hid2_pid;
-        if (!config_doc.containsKey("hid_rev")) config_doc["hid_rev"] = hid_rev;
-
-        if (!config_doc.containsKey("msc_vid")) config_doc["msc_vid"] = msc_vid;
-        if (!config_doc.containsKey("msc_pid")) config_doc["msc_pid"] = msc_pid;
-        if (!config_doc.containsKey("msc_rev")) config_doc["msc_rev"] = msc_rev;
-
-        if (!config_doc.containsKey("default_layout")) config_doc["default_layout"] = default_layout;
-        if (!config_doc.containsKey("default_delay")) config_doc["default_delay"] = default_delay;
-/*
-        if (!config_doc.containsKey("main_script")) config_doc["main_script"] = main_script;
-
-        if (!config_doc.containsKey("attack_color")) add_array(config_doc, "attack_color", attack_color, 4);
-        if (!config_doc.containsKey("setup_color")) add_array(config_doc, "setup_color", setup_color, 4);
-        if (!config_doc.containsKey("idle_color")) add_array(config_doc, "idle_color", idle_color, 4);
-*/
-        if (!config_doc.containsKey("disable_capslock")) config_doc["disable_capslock"] = disable_capslock;
-        if (!config_doc.containsKey("run_on_indicator")) config_doc["run_on_indicator"] = run_on_indicator;
-        
-        if (!config_doc.containsKey("initial_delay")) config_doc["initial_delay"] = initial_delay;
-
         // === Fetch values === //
-        enable_msc = config_doc["enable_msc"].as<bool>();
-        //enable_led = config_doc["enable_led"].as<bool>();
-        enable_hid = config_doc["enable_hid"].as<bool>();
+        read_item<bool>(config_doc, "enable_msc", enable_msc);
+        read_item<bool>(config_doc, "enable_led", enable_led);
+        read_item<bool>(config_doc, "enable_hid", enable_hid);
 
-        hid1_vid = config_doc["hid1_vid"].as<std::string>();
-        hid1_pid = config_doc["hid1_pid"].as<std::string>();
-        hid2_vid = config_doc["hid2_vid"].as<std::string>();
-        hid2_pid = config_doc["hid2_pid"].as<std::string>();
-        hid_rev = config_doc["hid_rev"].as<std::string>();
+        read_item<std::string>(config_doc, "vid1", vid1);
+        read_item<std::string>(config_doc, "pid1", pid1);
+        read_item<std::string>(config_doc, "version1", version1);
+        read_item<std::string>(config_doc, "serial1", serial1);
+        read_item<std::string>(config_doc, "manufacturer1", manufacturer1);
+        read_item<std::string>(config_doc, "product1", product1);
 
-        msc_vid = config_doc["msc_vid"].as<std::string>();
-        msc_pid = config_doc["msc_pid"].as<std::string>();
-        msc_rev = config_doc["msc_rev"].as<std::string>();
+        read_item<std::string>(config_doc, "vid2", vid2);
+        read_item<std::string>(config_doc, "pid2", pid2);
+        read_item<std::string>(config_doc, "version2", version2);
+        read_item<std::string>(config_doc, "serial2", serial2);
+        read_item<std::string>(config_doc, "manufacturer2", manufacturer2);
+        read_item<std::string>(config_doc, "product2", product2);
 
-        default_layout = config_doc["default_layout"].as<std::string>();
-        default_delay  = config_doc["default_delay"].as<int>();
-/*
-        main_script = config_doc["main_script"].as<std::string>();
+        read_item<std::string>(config_doc, "default_layout", default_layout);
+        read_item<int>(config_doc, "default_delay", default_delay);
 
-        read_array(config_doc, "attack_color", attack_color, 4);
-        read_array(config_doc, "setup_color", setup_color, 4);
-        read_array(config_doc, "idle_color", idle_color, 4);
-*/
+        // read_item<std::string>(config_doc, "main_script", main_script);
+
+        // read_array(config_doc, "attack_color", attack_color, 4);
+        // read_array(config_doc, "setup_color", setup_color, 4);
+        // read_array(config_doc, "idle_color", idle_color, 4);
+
         // Format Flash (Drive name/Disk label max 11 characters)
         format = config_doc.containsKey("format");
         if (format) {
@@ -181,9 +180,9 @@ namespace preferences {
         }
 
         disable_capslock = config_doc["disable_capslock"].as<bool>();
-        run_on_indicator  = config_doc["run_on_indicator"].as<bool>();
-        
-        initial_delay  = config_doc["initial_delay"].as<int>();
+        run_on_indicator = config_doc["run_on_indicator"].as<bool>();
+
+        initial_delay = config_doc["initial_delay"].as<int>();
     }
 
     void save() {
@@ -206,31 +205,35 @@ namespace preferences {
         debug("Saved ");
         debugln(PREFERENCES_PATH);
     }
-    
+
     void reset() {
         enable_msc = false;
-        //enable_led = true;
+        enable_led = true;
         enable_hid = true;
 
-        hid1_vid = "16D0";
-        hid1_pid = "103F";
-        hid2_vid = "16D0";
-        hid2_pid = "103F";
-        hid_rev = "0100";
+        vid1          = "16D0";
+        pid1          = "103F";
+        version1      = "0100";
+        serial1       = "1337";
+        manufacturer1 = "Maltronics";
+        product1      = "MalDuino";
 
-        msc_vid = "Maltrncs";
-        msc_pid = "MalDuino";
-        msc_rev = "1.0";
+        vid2          = "16D0";
+        pid2          = "103F";
+        version2      = "0100";
+        serial2       = "1337";
+        manufacturer2 = "Maltronics";
+        product2      = "MalDuino";
 
         default_layout = "US";
-        default_delay = 5;
-/*
-        main_script = "main.script";
+        default_delay  = 5;
+
+        // main_script = "main_script.txt";
 
         attack_color[0] = 0;
-        attack_color[1] = 0;
         attack_color[2] = 0;
         attack_color[3] = 0;
+        attack_color[1] = 0;
 
         setup_color[0] = 255;
         setup_color[1] = 0;
@@ -241,16 +244,16 @@ namespace preferences {
         idle_color[1] = 0;
         idle_color[2] = 0;
         idle_color[3] = 0;
-*/
-        format = false;
-        drive_name = "MalDuino";
+
+        format     = false;
+        drive_name = "USB Nova";
 
         disable_capslock = true;
         run_on_indicator = false;
 
         initial_delay = 1000;
     }
-    
+
     void print() {
         // Create a new JSON document (and string buffer)
         DynamicJsonDocument json_doc(JSON_SIZE);
@@ -280,36 +283,52 @@ namespace preferences {
         return enable_hid;
     }
 
-    uint16_t getHid1Vid() {
-        return std::stoi(hid1_vid, nullptr, 16);
+    uint16_t getVID1() {
+        return std::stoi(vid1, nullptr, 16);
     }
 
-    uint16_t getHid1Pid() {
-        return std::stoi(hid1_pid, nullptr, 16);
-    }
-    
-    uint16_t getHid2Vid() {
-        return std::stoi(hid2_vid, nullptr, 16);
+    uint16_t getPID1() {
+        return std::stoi(pid1, nullptr, 16);
     }
 
-    uint16_t getHid2Pid() {
-        return std::stoi(hid2_pid, nullptr, 16);
+    uint16_t getVersion1() {
+        return std::stoi(version1, nullptr, 16);
     }
 
-    uint16_t getHidRev() {
-        return std::stoi(hid_rev, nullptr, 16);
+    std::string getSerial1() {
+        return serial1;
     }
 
-    std::string getMscVid() {
-        return msc_vid;
+    std::string getManufacturer1() {
+        return manufacturer1;
     }
 
-    std::string getMscPid() {
-        return msc_pid;
+    std::string getProduct1() {
+        return product1;
     }
 
-    std::string getMscRev() {
-        return msc_rev;
+    uint16_t getVID2() {
+        return std::stoi(vid2, nullptr, 16);
+    }
+
+    uint16_t getPID2() {
+        return std::stoi(pid2, nullptr, 16);
+    }
+
+    uint16_t getVersion2() {
+        return std::stoi(version2, nullptr, 16);
+    }
+
+    std::string getSerial2() {
+        return serial2;
+    }
+
+    std::string getManufacturer2() {
+        return manufacturer2;
+    }
+
+    std::string getProduct2() {
+        return product2;
     }
 
     std::string getDefaultLayout() {
@@ -319,11 +338,12 @@ namespace preferences {
     int getDefaultDelay() {
         return default_delay;
     }
-/*
-    std::string getMainScript() {
-        return main_script;
-    }
-*/
+
+    /*
+        std::string getMainScript() {
+            return main_script;
+        }
+     */
     int* getAttackColor() {
         return attack_color;
     }
@@ -351,7 +371,7 @@ namespace preferences {
     bool getRunOnIndicator() {
         return run_on_indicator;
     }
-    
+
     int getInitialDelay() {
         return initial_delay;
     }

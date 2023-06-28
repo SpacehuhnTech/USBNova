@@ -65,9 +65,9 @@ namespace duckparser {
 
             // comparison incorrect or string checked until the end and templ_str not checked until the end
             if (!res || ((a == str_len - 1) &&
-                        (templ_str[b + 1] != ',') &&
-                        (templ_str[b + 1] != '/') &&
-                        (templ_str[b + 1] != '\0'))) {
+                         (templ_str[b + 1] != ',') &&
+                         (templ_str[b + 1] != '/') &&
+                         (templ_str[b + 1] != '\0'))) {
                 // fast forward to next comma
                 while (b < key_len && templ_str[b] != ',') b++;
                 res = 1;
@@ -81,8 +81,8 @@ namespace duckparser {
         // comparison correct AND string checked until the end AND templ_str checked until the end
         if (res && (a == str_len) &&
             ((templ_str[b] == ',') ||
-            (templ_str[b] == '/') ||
-            (templ_str[b] == '\0'))) return COMPARE_EQUAL;  // res_i
+             (templ_str[b] == '/') ||
+             (templ_str[b] == '\0'))) return COMPARE_EQUAL;  // res_i
 
         return COMPARE_UNEQUAL;
     }
@@ -295,19 +295,22 @@ namespace duckparser {
             // in_quotes = (curr == '"' && !escaped) ? !in_quotes : in_quotes;
             // delimiter = !in_quotes && !escaped && curr == ';' && next == ';';
 
-            linebreak = !in_quotes && (curr == '\r' || curr == '\n');
+            linebreak = /*!in_quotes && */ (curr == '\r' || curr == '\n');
 
-            endofline = stri == len || curr == '\0';
+            // skip \n after \r (windows linebreak)
+            if (/*!in_quotes && */ (curr == '\r') && (next == '\n')) ++stri;
+
+            endofline = (stri == len) || (curr == '\0');
 
             if (linebreak || endofline || delimiter) {
                 size_t llen = stri - ls; // length of line
 
                 // for every line, parse_words and add to list
-                //if (llen > 0) {
+                if (llen > 0) {
                     n        = line_node_create(&str[ls], llen);
                     n->words = parse_words(&str[ls], llen);
                     line_list_push(l, n);
-                //}
+                }
 
                 if (delimiter) ++stri;
 

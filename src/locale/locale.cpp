@@ -78,22 +78,22 @@
 
 namespace locale {
     // ===== PUBLIC ===== //
-    hid_locale_t *get_default() {
+    hid_locale_t* get_default() {
         return &locale_us_win;
     }
 
-    hid_locale_t *get(const char *name) {
+    hid_locale_t* get(const char* name) {
         if (strncmp(name, "BE_MAC", 6) == 0) return &locale_be_mac;
         else if (strncmp(name, "BG_MAC", 6) == 0) return &locale_bg_mac;
-        else if (strncmp(name, "CA_FR_MAC", 9) == 0) return &locale_ca_fr_mac;
-        else if (strncmp(name, "CH_DE_MAC", 9) == 0) return &locale_ch_de_mac;
-        else if (strncmp(name, "CH_FR_MAC", 9) == 0) return &locale_ch_fr_mac;
+        else if ((strncmp(name, "CA-FR_MAC", 9) == 0) || (strncmp(name, "CA_FR_MAC", 9) == 0)) return &locale_ca_fr_mac;
+        else if ((strncmp(name, "CH-DE_MAC", 9) == 0) || (strncmp(name, "CH_DE_MAC", 9) == 0)) return &locale_ch_de_mac;
+        else if ((strncmp(name, "CH-FR_MAC", 9) == 0) || (strncmp(name, "CH_FR_MAC", 9) == 0)) return &locale_ch_fr_mac;
         else if (strncmp(name, "CZ_MAC", 6) == 0) return &locale_cz_mac;
         else if (strncmp(name, "DE_MAC", 6) == 0) return &locale_de_mac;
         else if (strncmp(name, "DK_MAC", 6) == 0) return &locale_dk_mac;
         else if (strncmp(name, "EE_MAC", 6) == 0) return &locale_ee_mac;
         else if (strncmp(name, "ES_MAC", 6) == 0) return &locale_es_mac;
-        else if (strncmp(name, "ES_LA_MAC", 9) == 0) return &locale_es_la_mac;
+        else if ((strncmp(name, "ES-LA_MAC", 9) == 0) || (strncmp(name, "ES_LA_MAC", 9) == 0)) return &locale_es_la_mac;
         else if (strncmp(name, "FI_MAC", 6) == 0) return &locale_fi_mac;
         else if (strncmp(name, "FR_MAC", 6) == 0) return &locale_fr_mac;
         else if (strncmp(name, "GB_MAC", 6) == 0) return &locale_gb_mac;
@@ -108,7 +108,7 @@ namespace locale {
         else if (strncmp(name, "NO_MAC", 6) == 0) return &locale_no_mac;
         else if (strncmp(name, "PL_MAC", 6) == 0) return &locale_pl_mac;
         else if (strncmp(name, "PT_MAC", 6) == 0) return &locale_pt_mac;
-        else if (strncmp(name, "PT_BR_MAC", 9) == 0) return &locale_pt_br_mac;
+        else if ((strncmp(name, "PT-BR_MAC", 9) == 0) || (strncmp(name, "PT_BR_MAC", 9) == 0)) return &locale_pt_br_mac;
         else if (strncmp(name, "RO_MAC", 6) == 0) return &locale_ro_mac;
         else if (strncmp(name, "RU_MAC", 6) == 0) return &locale_ru_mac;
         else if (strncmp(name, "SE_MAC", 6) == 0) return &locale_se_mac;
@@ -119,15 +119,15 @@ namespace locale {
         else if (strncmp(name, "US_MAC", 6) == 0) return &locale_us_mac;
         else if (strncmp(name, "BE", 2) == 0) return &locale_be_win;
         else if (strncmp(name, "BG", 2) == 0) return &locale_bg_win;
-        else if (strncmp(name, "CA-CMS", 6) == 0) return &locale_ca_cms_win;
-        else if (strncmp(name, "CA-FR", 5) == 0) return &locale_ca_fr_win;
-        else if (strncmp(name, "CH-DE", 5) == 0) return &locale_ch_de_win;
-        else if (strncmp(name, "CH-FR", 5) == 0) return &locale_ch_fr_win;
+        else if ((strncmp(name, "CA-CMS", 6) == 0) || (strncmp(name, "CA_CMS", 6) == 0)) return &locale_ca_cms_win;
+        else if ((strncmp(name, "CA-FR", 5) == 0) || (strncmp(name, "CA_FR", 5) == 0)) return &locale_ca_fr_win;
+        else if ((strncmp(name, "CH-DE", 5) == 0) || (strncmp(name, "CH_DE", 5) == 0)) return &locale_ch_de_win;
+        else if ((strncmp(name, "CH-FR", 5) == 0) || (strncmp(name, "CH_FR", 5) == 0)) return &locale_ch_fr_win;
         else if (strncmp(name, "CZ", 2) == 0) return &locale_cz_win;
         else if (strncmp(name, "DE", 2) == 0) return &locale_de_win;
         else if (strncmp(name, "DK", 2) == 0) return &locale_dk_win;
         else if (strncmp(name, "EE", 2) == 0) return &locale_ee_win;
-        else if (strncmp(name, "ES-LA", 5) == 0) return &locale_es_la_win;
+        else if ((strncmp(name, "ES-LA", 5) == 0) || (strncmp(name, "ES_LA", 5) == 0)) return &locale_es_la_win;
         else if (strncmp(name, "ES", 2) == 0) return &locale_es_win;
         else if (strncmp(name, "FI", 2) == 0) return &locale_fi_win;
         else if (strncmp(name, "FR", 2) == 0) return &locale_fr_win;
@@ -143,7 +143,7 @@ namespace locale {
         else if (strncmp(name, "NL", 2) == 0) return &locale_nl_win;
         else if (strncmp(name, "NO", 2) == 0) return &locale_no_win;
         else if (strncmp(name, "PL", 2) == 0) return &locale_pl_win;
-        else if (strncmp(name, "PT-BR", 5) == 0) return &locale_pt_br_win;
+        else if ((strncmp(name, "PT-BR", 5) == 0) || (strncmp(name, "PT_BR", 5) == 0)) return &locale_pt_br_win;
         else if (strncmp(name, "PT", 2) == 0) return &locale_pt_win;
         else if (strncmp(name, "RO", 2) == 0) return &locale_ro_win;
         else if (strncmp(name, "RU", 2) == 0) return &locale_ru_win;

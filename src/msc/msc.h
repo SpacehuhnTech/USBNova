@@ -11,7 +11,6 @@ namespace msc {
     bool format(const char* drive_name = "MalDuino");
     void print();
 
-    void setID(const char* vid, const char* pid, const char* rev);
     void enableDrive();
 
     bool changed();
@@ -19,7 +18,7 @@ namespace msc {
 
     bool open(const char* path, bool add_to_stack = true);
     bool openNextFile();
-    
+
     void close();
 
     uint32_t getPosition();

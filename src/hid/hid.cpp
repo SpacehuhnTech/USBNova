@@ -11,10 +11,13 @@ namespace hid {
     bool    indicator_changed = false; // Whether or not any indicator changed since last time
     bool    indicator_read    = false; // If initial indicator was read
 
+    std::string serial       = "0100";
+    std::string manufacturer = "Maltronics";
+    std::string product      = "MalDuino";
+
     // HID report descriptor using TinyUSB's template
     // Single Report (no ID) descriptor
     uint8_t const desc_hid_report[] = {
-        // TUD_HID_REPORT_DESC_KEYBOARD()
         TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID::KEYBOARD)),
         TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID::MOUSE)),
         TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID::CONSUMER_CONTROL))
@@ -56,7 +59,7 @@ namespace hid {
     // ====== PUBLIC ====== //
     void init() {
         // Notes: following commented-out functions has no affect on ESP32
-        // usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
+        usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
         // usb_hid.setPollInterval(2);
         // usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
         // usb_hid.setStringDescriptor("TinyUSB Keyboard");
@@ -72,6 +75,21 @@ namespace hid {
         TinyUSBDevice.setDeviceVersion(version);
     }
 
+    void setSerial(std::string serialstr) {
+        hid::serial = serialstr;
+        TinyUSBDevice.setSerialDescriptor(serial.c_str());
+    }
+
+    void setManufacturer(std::string manufacturerstr) {
+        hid::manufacturer = manufacturerstr;
+        TinyUSBDevice.setManufacturerDescriptor(manufacturer.c_str());
+    }
+
+    void setProduct(std::string productstr) {
+        hid::product = productstr;
+        TinyUSBDevice.setProductDescriptor(product.c_str());
+    }
+
     bool mounted() {
         return TinyUSBDevice.mounted();
     }
@@ -84,25 +102,25 @@ namespace hid {
         }
 
         // Wait until ready to send next report
-        while (!usb_hid.ready()){
+        while (!usb_hid.ready()) {
             delay(1);
         }
 
         usb_hid.keyboardReport(RID::KEYBOARD, modifier, keys);
     }
-    
+
     void sendMouseReport(uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal) {
         if (TinyUSBDevice.suspended()) {
             // Wake up host if we are in suspend mode
             // and REMOTE_WAKEUP feature is enabled by host
             TinyUSBDevice.remoteWakeup();
         }
-        
+
         // Wait until ready to send next report
-        while (!usb_hid.ready()){
+        while (!usb_hid.ready()) {
             delay(1);
         }
-        
+
         usb_hid.mouseReport(RID::MOUSE, buttons, x, y, vertical, horizontal);
     }
 
