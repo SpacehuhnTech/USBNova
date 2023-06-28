@@ -100,6 +100,11 @@
                     "title": "USB Manufacturer Descriptor",
                     "default": "SpacehuhnTech"
                 },
+                "product": {
+                    "type": "string",
+                    "title": "USB Product Descriptor",
+                    "default": "USB Nova"
+                },
                 "default_layout": {
                     "type": "string",
                     "title": "Default Keyboard Layout",

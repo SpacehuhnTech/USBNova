@@ -20,6 +20,7 @@ namespace preferences {
 
     std::string getSerial();
     std::string getManufacturer();
+    std::string getProduct();
 
     std::string getDefaultLayout();
     int getDefaultDelay();

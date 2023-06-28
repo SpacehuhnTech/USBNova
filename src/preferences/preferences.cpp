@@ -30,6 +30,7 @@ namespace preferences {
     std::string version;
     std::string serial;
     std::string manufacturer;
+    std::string product;
 
     std::string default_layout;
     int default_delay;
@@ -69,6 +70,7 @@ namespace preferences {
         root["version"]      = version;
         root["serial"]       = serial;
         root["manufacturer"] = manufacturer;
+        root["product"]      = product;
 
         root["default_layout"] = default_layout;
         root["default_delay"]  = default_delay;
@@ -138,6 +140,7 @@ namespace preferences {
         read_item<std::string>(config_doc, "version", version);
         read_item<std::string>(config_doc, "serial", serial);
         read_item<std::string>(config_doc, "manufacturer", manufacturer);
+        read_item<std::string>(config_doc, "product", product);
 
         read_item<std::string>(config_doc, "default_layout", default_layout);
         read_item<int>(config_doc, "default_delay", default_delay);
@@ -191,6 +194,7 @@ namespace preferences {
         version      = "0100";
         serial       = "1337";
         manufacturer = "SpacehuhnTech";
+        product      = "USB Nova";
 
         default_layout = "US";
         default_delay  = 5;
@@ -268,6 +272,10 @@ namespace preferences {
 
     std::string getManufacturer() {
         return manufacturer;
+    }
+
+    std::string getProduct() {
+        return product;
     }
 
     std::string getDefaultLayout() {
