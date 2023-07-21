@@ -17,6 +17,8 @@ namespace led {
     bool blink_flag { false };
 
     void change_color(int r, int g, int b) {
+        if (LED_PIN < 0) return;
+
         for (size_t i = 0; i<led.numPixels(); i++) {
             led.setPixelColor(i, r, g, b);
         }
@@ -26,11 +28,15 @@ namespace led {
 
     // ========== PUBLIC ========= //
     void init() {
+        if (LED_PIN < 0) return;
+
         led.begin();
         led.show();
     }
 
     void setEnable(bool enabled) {
+        if (LED_PIN < 0) return;
+
         if (enabled) {
             led.setBrightness(255);
         } else {
@@ -49,7 +55,7 @@ namespace led {
         blink_color[1] = g;
         blink_color[2] = b;
         blink_intv     = intv;
-        blink_flag = false;
+        blink_flag     = false;
     }
 
     void setMode(Color color, Mode mode) {
