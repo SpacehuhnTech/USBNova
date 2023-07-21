@@ -17,6 +17,7 @@
 #include "mac/locale_fr_mac.h"
 #include "mac/locale_gb_mac.h"
 #include "mac/locale_gr_mac.h"
+#include "mac/locale_hr_mac.h"
 #include "mac/locale_hu_mac.h"
 #include "mac/locale_in_mac.h"
 #include "mac/locale_is_mac.h"
@@ -52,6 +53,7 @@
 #include "win/locale_fr_win.h"
 #include "win/locale_gb_win.h"
 #include "win/locale_gr_win.h"
+#include "win/locale_hr_win.h"
 #include "win/locale_hu_win.h"
 #include "win/locale_ie_win.h"
 #include "win/locale_in_win.h"
@@ -98,6 +100,7 @@ namespace locale {
         else if (strncmp(name, "FR_MAC", 6) == 0) return &locale_fr_mac;
         else if (strncmp(name, "GB_MAC", 6) == 0) return &locale_gb_mac;
         else if (strncmp(name, "GR_MAC", 6) == 0) return &locale_gr_mac;
+        else if (strncmp(name, "HR_MAC", 6) == 0) return &locale_hr_mac;
         else if (strncmp(name, "HU_MAC", 6) == 0) return &locale_hu_mac;
         else if (strncmp(name, "IN_MAC", 6) == 0) return &locale_in_mac;
         else if (strncmp(name, "IS_MAC", 6) == 0) return &locale_is_mac;
@@ -133,6 +136,7 @@ namespace locale {
         else if (strncmp(name, "FR", 2) == 0) return &locale_fr_win;
         else if (strncmp(name, "GB", 2) == 0) return &locale_gb_win;
         else if (strncmp(name, "GR", 2) == 0) return &locale_gr_win;
+        else if (strncmp(name, "HR", 2) == 0) return &locale_hr_win;
         else if (strncmp(name, "HU", 2) == 0) return &locale_hu_win;
         else if (strncmp(name, "IE", 2) == 0) return &locale_ie_win;
         else if (strncmp(name, "IN", 2) == 0) return &locale_in_win;
