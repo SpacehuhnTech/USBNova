@@ -44,7 +44,7 @@ namespace led {
         blink_color[1] = g;
         blink_color[2] = b;
         blink_intv     = intv;
-        blink_flag = false;
+        blink_flag     = false;
     }
 
     void setMode(Color color, Mode mode) {
