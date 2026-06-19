@@ -2,6 +2,7 @@
 
 #include "format.h"
 
+#include "spiconf.h"
 #include "config.h"
 #include "debug.h"
 
@@ -19,18 +20,6 @@
  */
 #include <SdFat.h>
 #include <sdios.h>
-
-// Try max SPI clock for an SD. Reduce SPI_CLOCK if errors occur.
-#define SPI_CLOCK SD_SCK_MHZ(12)
-
-// Try to select the best SD card configuration.
-#if HAS_SDIO_CLASS
-#define SD_CONFIG SdioConfig(FIFO_SDIO)
-#elif  ENABLE_DEDICATED_SPI
-#define SD_CONFIG SdSpiConfig(SD_CS, DEDICATED_SPI, SPI_CLOCK)
-#else  // HAS_SDIO_CLASS
-#define SD_CONFIG SdSpiConfig(SD_CS, SHARED_SPI, SPI_CLOCK)
-#endif  // HAS_SDIO_CLASS
 
 namespace format {
     // ========== PRIVATE ========= //

@@ -21,9 +21,7 @@ namespace led {
 
     void change_color(int r, int g, int b) {
 #if defined(LED_SIMPLE)
-        if (enabled) {
-            digitalWrite(LED_PIN, (r+g+b));
-        }
+        return;
 #else
         if (LED_PIN < 0) return;
 
@@ -49,8 +47,11 @@ namespace led {
 
     void setEnable(bool _enabled) {
 #ifdef LED_SIMPLE
-        if (!_enabled) {
-            enabled = _enabled;
+        enabled = _enabled;
+        if (_enabled) {
+            digitalWrite(LED_PIN, 1);
+        }
+        else {
             digitalWrite(LED_PIN, 0);
         }
 #else

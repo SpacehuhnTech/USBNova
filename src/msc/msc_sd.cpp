@@ -2,6 +2,7 @@
 
 #include "msc.h"
 
+#include "spiconf.h"
 #include "config.h"
 #include "debug.h"
 #include "format.h"
@@ -76,7 +77,7 @@ namespace msc {
 
     // ===== PUBLIC ===== //
     bool init() {
-        if (!sd.begin(SD_CS, SD_SCK_MHZ(12))) {
+        if (!sd.begin(SD_CONFIG)) {
             debugln("Couldn't init SD Card!");
             return false;
         }

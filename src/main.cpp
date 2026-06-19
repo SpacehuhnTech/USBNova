@@ -27,6 +27,15 @@ void setup() {
     // Start Serial (for debug) or disable it
     debug_init();
 
+#ifdef USE_CUSTOM_SPI_PINOUT    
+    // Setup SPI with custom pinout
+    SPI1.setSCK(SD_PIN_SCK);
+    SPI1.setTX(SD_PIN_MOSI);
+    SPI1.setRX(SD_PIN_MISO);
+    SPI1.setCS(SD_PIN_CS);
+    SPI1.begin();
+#endif
+
     // Initialize memory and check for problems
     bool msc_ok = msc::init();
     if (!msc_ok) {
@@ -45,6 +54,7 @@ void setup() {
     } else {
         // msc unavailable: keep defaults in preferences
     }
+
     if (selector::mode() == SETUP) preferences::save();
 
 #ifdef MULTI_SELECTOR
@@ -76,10 +86,16 @@ void setup() {
         msc::enableDrive();
     }
 
-    // LED settings
-    led::setEnable(preferences::ledEnabled());
+    #if !defined(LED_SIMPLE)
+        // Enable LED instantly if RGB LED
+        led::setEnable(preferences::ledEnabled());;
+    #endif
 
     if (selector::mode() == SETUP) {
+        #if defined(LED_SIMPLE)
+            // Simple LED is always on in setup mode if enabled
+            led::setEnable(preferences::ledEnabled());;
+        #endif
         led::setColor(preferences::getSetupColor());
     } else {
         led::setColor(preferences::getAttackColor());
@@ -127,9 +143,18 @@ void setup() {
 
     // Start attack
     if ((selector::mode() == ATTACK) && !preferences::getRunOnIndicator()) {
-        delay(preferences::getInitialDelay());      // Wait to give computer time to init keyboard
-        attack::start();                            // Start keystroke injection attack
-        led::setColor(preferences::getIdleColor()); // Set LED to green
+        delay(preferences::getInitialDelay()); // Wait to give computer time to init keyboard
+        #if defined(LED_SIMPLE)
+            // If Simple LED is enabled turn it on for duration of attack
+            led::setEnable(preferences::ledEnabled());
+        #endif
+        attack::start(); // Start keystroke injection attack
+        #if defined(LED_SIMPLE)
+            // Disable Simple LED after attack
+            led::setEnable(false);
+        #else
+            led::setColor(preferences::getIdleColor()); // Set LED to green
+        #endif
     }
 
     // Setup CLI

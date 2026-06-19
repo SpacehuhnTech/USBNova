@@ -106,7 +106,7 @@ namespace cli {
 
             debuglnF("Done formatting!");
             debugln();
-        }).setDescription(" Fromat the internal memory.");
+        }).setDescription(" Format the internal memory.");
 
         // reset
         cli.addCmd("reset", [](cmd* c) {

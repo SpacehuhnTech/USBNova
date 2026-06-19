@@ -266,7 +266,7 @@ namespace duckparser {
                 ignore_delay = true;
             }
             // CHARDELAY/CHARACTER_DELAY (set delay between each character typed)
-            else if (compare(cmd->str, cmd->len, "CHARACTER_DELAY", CASE_SENSETIVE)) {
+            else if (compare(cmd->str, cmd->len, "CHARACTER_DELAY", CASE_SENSETIVE) || compare(cmd->str, cmd->len, "CHAR_DELAY", CASE_SENSETIVE)) {
                 character_delay = to_uint(line_str, line_str_len);
                 ignore_delay    = true;
             }
@@ -326,7 +326,7 @@ namespace duckparser {
                 ignore_delay = true;
             }
             // LED
-#if !defined(LED_DISABLED)
+#if !defined(LED_SCRIPTING_CONTROL_DISABLED)
             else if (compare(cmd->str, cmd->len, "LED", CASE_SENSETIVE)) {
                 // i.e. LED R SOLID
                 if (wl->size == 3) {
